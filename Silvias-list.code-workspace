@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "../Silvias-list"
+		},
+		{
+			"path": "../silvias-list-parser"
+		},
+		{
+			"path": "."
+		}
+	],
+	"settings": {}
+}

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 import { talentPoolSchemaRefined } from '@/lib/validation/talentPoolSchema';
 
 /**
@@ -42,20 +42,8 @@ export async function POST(req: NextRequest) {
 
     const validatedData = validationResult.data;
 
-    // Initialize Supabase client with service role key
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!,
-      {
-        auth: {
-          autoRefreshToken: false,
-          persistSession: false
-        }
-      }
-    );
-
-    // Create profile with user-provided data
-    const { data: profile, error: profileError } = await supabase
+    // Create profile with user-provided data (using admin client)
+    const { data: profile, error: profileError } = await supabaseAdmin
       .from('user_profiles')
       .insert({
         // Contact Details (user-provided)
@@ -102,13 +90,15 @@ export async function POST(req: NextRequest) {
     }
 
     // Create parsing job
-    const { error: jobError } = await supabase
+    const { data: jobData, error: jobError } = await supabaseAdmin
       .from('cv_parsing_jobs')
       .insert({
         profile_id: profile.id,
         status: 'pending',
         job_type: 'talent_pool'
-      });
+      })
+      .select()
+      .single();
 
     if (jobError) {
       console.error('Failed to create parsing job:', jobError);
@@ -121,18 +111,17 @@ export async function POST(req: NextRequest) {
     const parserUrl = process.env.NEXT_PUBLIC_RAILWAY_API_URL;
     const parserApiKey = process.env.PARSER_API_KEY;
 
-    if (parserUrl && parserApiKey) {
+    if (parserUrl && parserApiKey && jobData) {
       // Fire and forget - don't await
-      fetch(`${parserUrl}/parse`, {
+      fetch(`${parserUrl}/api/v1/parse`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': parserApiKey
+          'x-internal-api-key': parserApiKey
         },
         body: JSON.stringify({
-          profileId: profile.id,
-          cvStoragePath: cvStoragePath,
-          email: profile.email
+          jobId: jobData.id,
+          storagePath: cvStoragePath
         })
       }).catch(err => {
         console.error('Parser trigger failed:', err);

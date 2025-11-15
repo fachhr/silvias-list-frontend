@@ -1,0 +1,60 @@
+# Netlify Configuration for Silvia's List Frontend
+# Next.js 15 Application with Server-Side API Routes
+
+[build]
+  # Build command - standard Next.js build
+  command = "npm run build"
+
+  # Output directory - Next.js build output
+  publish = ".next"
+
+  # Node.js version - match development environment
+  NODE_VERSION = "20"
+
+[build.environment]
+  # Next.js build optimization
+  NEXT_TELEMETRY_DISABLED = "1"
+
+# Function configuration for API routes
+[functions]
+  # Directory containing serverless functions (Next.js API routes)
+  directory = ".netlify/functions"
+
+  # Increase timeout for file upload operations (default is 10s)
+  # CV uploads can take a few seconds for 5MB files
+  timeout = 26
+
+  # Memory allocation for functions
+  memory = 1024
+
+# Headers for security and performance
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # Security headers
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+    # CORS headers (if needed for external services)
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
+    Access-Control-Allow-Headers = "Content-Type, Authorization"
+
+# Redirect rules (if needed)
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+  force = false
+
+# Environment variable configuration
+# IMPORTANT: Set these in Netlify UI, NOT in code
+# Go to: Site Settings → Environment Variables
+#
+# Required variables:
+# - NEXT_PUBLIC_SUPABASE_URL (public)
+# - NEXT_PUBLIC_SUPABASE_ANON_KEY (public)
+# - SUPABASE_SERVICE_ROLE_KEY (PRIVATE - server-side only)
+# - NEXT_PUBLIC_RAILWAY_API_URL (public)
+# - PARSER_API_KEY (PRIVATE - server-side only)

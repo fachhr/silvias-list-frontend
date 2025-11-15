@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 import { v4 as uuidv4 } from 'uuid';
 
 /**
@@ -55,24 +55,20 @@ export async function POST(req: NextRequest) {
     const fileExt = file.name.split('.').pop()?.toLowerCase() || 'pdf';
     const fileName = `${profileId}/cv.${fileExt}`;
 
-    // Initialize Supabase client with service role key for upload
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!,
-      {
-        auth: {
-          autoRefreshToken: false,
-          persistSession: false
-        }
-      }
-    );
-
     // Convert File to ArrayBuffer for upload
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    // Upload to Supabase Storage
-    const { data, error } = await supabase.storage
+    // Debug logging
+    console.log('[Upload] Attempting upload:', {
+      bucket: 'talent-pool-cvs',
+      fileName,
+      fileSize: buffer.length,
+      contentType: file.type
+    });
+
+    // Upload to Supabase Storage using admin client
+    const { data, error } = await supabaseAdmin.storage
       .from('talent-pool-cvs')
       .upload(fileName, buffer, {
         contentType: file.type,

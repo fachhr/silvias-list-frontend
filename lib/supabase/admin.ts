@@ -16,11 +16,13 @@ if (!supabaseServiceRoleKey) {
 // This client uses the SERVICE_ROLE_KEY for backend operations,
 // bypassing RLS. It should ONLY be used in secure backend environments.
 export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRoleKey, {
-  // Optional: you can add global fetch options or other client configurations here
-  // auth: {
-  //   autoRefreshToken: false,
-  //   persistSession: false
-  // }
+  auth: {
+    autoRefreshToken: false,
+    persistSession: false
+  }
 });
 
-console.log("Supabase Admin Client Initialized (SERVER SIDE)"); // For debugging, remove in production
+console.log("Supabase Admin Client Initialized (SERVER SIDE)");
+console.log("- URL:", supabaseUrl);
+console.log("- Key (first 20 chars):", supabaseServiceRoleKey?.substring(0, 20) + "...");
+console.log("- Key role:", supabaseServiceRoleKey?.includes('service_role') ? 'service_role ✓' : 'NOT service_role ⚠️');
