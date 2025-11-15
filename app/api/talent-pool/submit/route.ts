@@ -1,0 +1,162 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
+import { talentPoolSchemaRefined } from '@/lib/validation/talentPoolSchema';
+
+/**
+ * POST /api/talent-pool/submit
+ *
+ * Handles talent pool profile submission.
+ *
+ * Flow:
+ * 1. Validate form data
+ * 2. Create profile record in database (with user-provided fields only)
+ * 3. Create parsing job record
+ * 4. Trigger async parser service (non-blocking)
+ * 5. Return success response immediately
+ *
+ * Parser will fill remaining fields in background.
+ */
+export async function POST(req: NextRequest) {
+  try {
+    const body = await req.json();
+
+    // Remove cvFile from validation (already uploaded)
+    const { cvFile, cvStoragePath, originalFilename, ...formData } = body;
+
+    // Validate form data
+    const validationResult = talentPoolSchemaRefined.safeParse({
+      ...formData,
+      cvFile: new File([], 'dummy.pdf', { type: 'application/pdf' }) // Dummy for validation
+    });
+
+    if (!validationResult.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Validation failed',
+          details: validationResult.error.errors
+        },
+        { status: 400 }
+      );
+    }
+
+    const validatedData = validationResult.data;
+
+    // Initialize Supabase client with service role key
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      }
+    );
+
+    // Create profile with user-provided data
+    const { data: profile, error: profileError } = await supabase
+      .from('user_profiles')
+      .insert({
+        // Contact Details (user-provided)
+        contact_first_name: validatedData.contact_first_name,
+        contact_last_name: validatedData.contact_last_name,
+        email: validatedData.email,
+        linkedinUrl: validatedData.linkedinUrl || null,
+        country_code: validatedData.country_code,
+        phoneNumber: validatedData.phoneNumber,
+        years_of_experience: validatedData.years_of_experience,
+
+        // Job Preferences (user-provided)
+        working_capacity_percent: validatedData.working_capacity_percent,
+        available_from_date: validatedData.available_from_date,
+        desired_duration_months: validatedData.desired_duration_months,
+        desired_job_types: validatedData.desired_job_types,
+        desired_locations: validatedData.desired_locations,
+        desired_other_location: validatedData.desired_other_location || null,
+        desired_industries: validatedData.desired_industries,
+        salary_min: validatedData.salary_confidential ? null : validatedData.salary_min,
+        salary_max: validatedData.salary_confidential ? null : validatedData.salary_max,
+
+        // CV Info
+        cv_storage_path: cvStoragePath,
+        cv_original_filename: originalFilename,
+
+        // Terms & Participation
+        accepted_terms: true,
+        accepted_terms_at: new Date().toISOString(),
+        participates_in_talent_pool: true,
+
+        // All other fields are NULL and will be filled by parser
+        // (education_history, professional_experience, skills, etc.)
+      })
+      .select('id, email')
+      .single();
+
+    if (profileError) {
+      console.error('Profile creation error:', profileError);
+      return NextResponse.json(
+        { success: false, error: 'Failed to create profile' },
+        { status: 500 }
+      );
+    }
+
+    // Create parsing job
+    const { error: jobError } = await supabase
+      .from('cv_parsing_jobs')
+      .insert({
+        profile_id: profile.id,
+        status: 'pending',
+        job_type: 'talent_pool'
+      });
+
+    if (jobError) {
+      console.error('Failed to create parsing job:', jobError);
+      // Don't fail the request - parsing can be retried manually
+    }
+
+    // ========================================
+    // TRIGGER ASYNC PARSING (non-blocking)
+    // ========================================
+    const parserUrl = process.env.NEXT_PUBLIC_RAILWAY_API_URL;
+    const parserApiKey = process.env.PARSER_API_KEY;
+
+    if (parserUrl && parserApiKey) {
+      // Fire and forget - don't await
+      fetch(`${parserUrl}/parse`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': parserApiKey
+        },
+        body: JSON.stringify({
+          profileId: profile.id,
+          cvStoragePath: cvStoragePath,
+          email: profile.email
+        })
+      }).catch(err => {
+        console.error('Parser trigger failed:', err);
+        // Parsing can be retried via cron or manual trigger
+      });
+    } else {
+      console.warn('Parser service not configured - skipping automatic parsing');
+    }
+
+    // Return success immediately (parser runs in background)
+    return NextResponse.json({
+      success: true,
+      profileId: profile.id,
+      message: 'Profile submitted successfully'
+    });
+
+  } catch (error) {
+    console.error('Submit profile error:', error);
+    return NextResponse.json(
+      {
+        success: false,
+        error: error instanceof Error ? error.message : 'Submission failed'
+      },
+      { status: 500 }
+    );
+  }
+}
