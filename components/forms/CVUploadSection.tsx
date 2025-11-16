@@ -3,7 +3,6 @@
 import React, { useCallback, useState } from 'react';
 import { UploadIcon } from '../ui/icons/UploadIcon';
 import { CheckCircleIcon } from '../ui/icons/CheckCircleIcon';
-import { XIcon } from '../ui/icons/XIcon';
 
 interface CVUploadSectionProps {
   onFileSelect: (file: File | null) => void;
@@ -160,10 +159,7 @@ export function CVUploadSection({
       </div>
 
       {displayError && (
-        <div className="flex items-start space-x-2 text-sm text-red-600">
-          <XIcon className="h-5 w-5 flex-shrink-0 mt-0.5" />
-          <p>{displayError}</p>
-        </div>
+        <p className="error-message">{displayError}</p>
       )}
     </div>
   );

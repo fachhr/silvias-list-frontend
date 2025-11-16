@@ -3,7 +3,7 @@
 import React from 'react';
 import { UseFormRegister, FieldErrors } from 'react-hook-form';
 import { TalentPoolFormData } from '@/lib/validation/talentPoolSchema';
-import { PHONE_COUNTRY_CODE_OPTIONS, YEARS_OF_EXPERIENCE_OPTIONS } from '@/lib/formOptions';
+import { PHONE_COUNTRY_CODE_OPTIONS } from '@/lib/formOptions';
 
 interface ContactDetailsSectionProps {
   register: UseFormRegister<TalentPoolFormData>;
@@ -113,7 +113,7 @@ export function ContactDetailsSection({
               ))}
             </select>
             {errors.country_code && (
-              <p className="error-message text-xs">{errors.country_code.message}</p>
+              <p className="error-message">{errors.country_code.message}</p>
             )}
           </div>
 
@@ -137,21 +137,20 @@ export function ContactDetailsSection({
         <label htmlFor="years_of_experience" className="label-base">
           Years of Relevant Experience <span className="text-red-500">*</span>
         </label>
-        <select
+        <input
+          type="number"
           id="years_of_experience"
-          {...register('years_of_experience')}
+          {...register('years_of_experience', { valueAsNumber: true })}
           className={`input-base ${errors.years_of_experience ? 'input-error' : ''}`}
-        >
-          <option value="">Select experience level</option>
-          {YEARS_OF_EXPERIENCE_OPTIONS.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
+          placeholder="e.g., 3"
+          min="0"
+          max="50"
+          step="1"
+        />
         {errors.years_of_experience && (
           <p className="error-message">{errors.years_of_experience.message}</p>
         )}
+        <p className="text-xs text-gray-500 mt-1">Enter the number of years (0-50)</p>
       </div>
     </div>
   );
