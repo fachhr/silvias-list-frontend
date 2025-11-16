@@ -405,6 +405,17 @@ export const DURATION_OPTIONS = [
     { value: "12+ months", label: "12+ months" },
 ];
 
+export const NOTICE_PERIOD_OPTIONS = [
+    { value: "", label: "Please Select" },
+    { value: "1", label: "1 month" },
+    { value: "2", label: "2 months" },
+    { value: "3", label: "3 months" },
+    { value: "4", label: "4 months" },
+    { value: "5", label: "5 months" },
+    { value: "6", label: "6 months" },
+    { value: "7+", label: "7+ months" },
+];
+
 // --- Phone Country Codes ---
 // Complete list of international calling codes organized for optimal UX
 // Popular countries first (Swiss/European context), then alphabetically

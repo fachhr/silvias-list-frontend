@@ -51,16 +51,9 @@ export const talentPoolSchema = z.object({
   // JOB PREFERENCES (user-provided, required)
   // ============================================
 
-  // Available from date
-  available_from_date: z.string()
-    .min(1, 'Please select your availability date')
-    .refine((date) => {
-      // Validate date format (YYYY-MM-DD)
-      const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-      return dateRegex.test(date);
-    }, {
-      message: 'Invalid date format'
-    }),
+  // Notice period in months
+  notice_period_months: z.string()
+    .min(1, 'Please select your notice period'),
 
   // Locations (at least 1 required, max 5)
   desired_locations: z.array(z.string())
@@ -156,7 +149,7 @@ export const talentPoolContactSchema = talentPoolSchema.pick({
 });
 
 export const talentPoolPreferencesSchema = talentPoolSchema.pick({
-  available_from_date: true,
+  notice_period_months: true,
   desired_locations: true,
   desired_other_location: true,
   salary_min: true,

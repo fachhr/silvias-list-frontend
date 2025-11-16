@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
         phoneNumber: validatedData.phoneNumber,
 
         // Job Preferences (user-provided)
-        available_from_date: validatedData.available_from_date,
+        notice_period_months: validatedData.notice_period_months,
         desired_locations: validatedData.desired_locations,
         desired_other_location: validatedData.desired_other_location || null,
         salary_min: validatedData.salary_min,

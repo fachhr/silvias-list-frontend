@@ -4,7 +4,8 @@ import React, { useState } from 'react';
 import { UseFormRegister, FieldErrors, UseFormWatch, UseFormSetValue } from 'react-hook-form';
 import { TalentPoolFormData } from '@/lib/validation/talentPoolSchema';
 import {
-  LOCATION_OPTIONS
+  LOCATION_OPTIONS,
+  NOTICE_PERIOD_OPTIONS
 } from '@/lib/formOptions';
 
 interface PreferencesSectionProps {
@@ -49,20 +50,24 @@ export function PreferencesSection({
         </p>
       </div>
 
-      {/* Available From */}
+      {/* Notice Period */}
       <div>
-        <label htmlFor="available_from_date" className="label-base">
-          Available From <span className="text-red-500">*</span>
+        <label htmlFor="notice_period_months" className="label-base">
+          Notice Period <span className="text-red-500">*</span>
         </label>
-        <input
-          type="date"
-          id="available_from_date"
-          {...register('available_from_date')}
-          min={new Date().toISOString().split('T')[0]}
-          className={`input-base ${errors.available_from_date ? 'input-error' : ''}`}
-        />
-        {errors.available_from_date && (
-          <p className="error-message">{errors.available_from_date.message}</p>
+        <select
+          id="notice_period_months"
+          {...register('notice_period_months')}
+          className={`input-base ${errors.notice_period_months ? 'input-error' : ''}`}
+        >
+          {NOTICE_PERIOD_OPTIONS.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+        {errors.notice_period_months && (
+          <p className="error-message">{errors.notice_period_months.message}</p>
         )}
       </div>
 
