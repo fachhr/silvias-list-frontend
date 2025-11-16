@@ -324,3 +324,34 @@ a:hover { color: var(--dark-800); }
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
+
+/* Error Summary Component */
+.error-summary {
+  background-color: var(--error-bg);
+  border: 1px solid var(--error-color);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  margin-bottom: var(--space-lg);
+  animation: slideInFromTop 0.3s ease-out;
+}
+
+.error-summary h3 {
+  color: var(--error-color);
+  font-weight: 600;
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+/* Slide in animation for error summary */
+@keyframes slideInFromTop {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
