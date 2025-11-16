@@ -115,7 +115,7 @@ export function DualRangeSlider({
           width: 20px;
           height: 20px;
           border-radius: 50%;
-          background-color: #3b82f6;
+          background-color: var(--primary);
           border: none;
           box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
           cursor: pointer;
@@ -127,7 +127,7 @@ export function DualRangeSlider({
           width: 20px;
           height: 20px;
           border-radius: 50%;
-          background-color: #3b82f6;
+          background-color: var(--primary);
           border: none;
           box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
           cursor: pointer;
@@ -148,7 +148,7 @@ export function DualRangeSlider({
           position: absolute;
           height: 8px;
           width: 100%;
-          background-color: #e5e7eb;
+          background-color: var(--light-600);
           border-radius: 9999px;
           z-index: 1;
         }
@@ -156,7 +156,7 @@ export function DualRangeSlider({
         .slider__range {
           position: absolute;
           height: 8px;
-          background-color: #3b82f6;
+          background-color: var(--primary);
           border-radius: 9999px;
           z-index: 2;
         }

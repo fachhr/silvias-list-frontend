@@ -21,16 +21,16 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       lg: 'px-8 py-4 text-base',
     };
 
-    // Variant styles
+    // Variant styles - Premium Swiss Executive Energy Palette
     const variantStyles = {
-      // Primary: Professional dark button - high contrast and modern
-      primary: 'bg-[var(--dark-800)] text-white shadow-md hover:bg-[var(--dark)] hover:shadow-lg transform hover:scale-[1.02] active:scale-[0.98] disabled:bg-[var(--light-600)] disabled:text-[var(--dark-400)] disabled:shadow-none disabled:transform-none',
-      // Secondary: White with border - clean and professional
-      secondary: 'bg-white text-[var(--dark-800)] border-2 border-[var(--dark-800)] shadow-sm hover:bg-[var(--light-800)] hover:shadow-md transform hover:scale-[1.02] active:scale-[0.98] disabled:bg-[var(--light-600)] disabled:text-[var(--dark-400)] disabled:border-[var(--light-400)] disabled:shadow-none disabled:transform-none',
-      // Solid: Light gray with dark text - subtle but visible
-      solid: 'bg-[var(--light-800)] text-[var(--dark-800)] shadow hover:bg-[var(--light-600)] disabled:bg-[var(--light-600)] disabled:text-[var(--dark-400)]',
-      // Outline: Transparent with strong border - works on any background
-      outline: 'bg-transparent text-[var(--dark-800)] border-2 border-[var(--dark-800)] hover:bg-[var(--dark-800)] hover:text-white disabled:bg-transparent disabled:text-[var(--dark-400)] disabled:border-[var(--dark-400)]',
+      // Primary: Deep Navy - Trust, Exclusivity, Premium
+      primary: 'bg-[var(--primary)] text-white shadow-md hover:bg-[var(--primary-dark)] hover:shadow-lg transform hover:scale-[1.02] active:scale-[0.98] disabled:bg-[var(--light-600)] disabled:text-[var(--dark-400)] disabled:shadow-none disabled:transform-none',
+      // Secondary: White with navy border - Clean and professional
+      secondary: 'bg-white text-[var(--primary)] border-2 border-[var(--primary)] shadow-sm hover:bg-[var(--primary-alpha)] hover:shadow-md transform hover:scale-[1.02] active:scale-[0.98] disabled:bg-[var(--light-600)] disabled:text-[var(--dark-400)] disabled:border-[var(--light-400)] disabled:shadow-none disabled:transform-none',
+      // Solid: Light background with navy text
+      solid: 'bg-[var(--light-800)] text-[var(--primary)] shadow hover:bg-[var(--light-600)] disabled:bg-[var(--light-600)] disabled:text-[var(--dark-400)]',
+      // Outline: Transparent with navy border - works on any background
+      outline: 'bg-transparent text-[var(--foreground)] border-2 border-[var(--primary)] hover:bg-[var(--primary)] hover:text-white disabled:bg-transparent disabled:text-[var(--dark-400)] disabled:border-[var(--dark-400)]',
       // Ghost: Subtle, no border - for tertiary actions
       ghost: 'bg-transparent text-[var(--dark-600)] hover:bg-[var(--light-600)] hover:text-[var(--foreground)] disabled:bg-transparent disabled:text-[var(--dark-400)]',
     };

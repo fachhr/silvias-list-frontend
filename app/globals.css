@@ -26,37 +26,73 @@
 }
 
 /* --- Global CSS Variables --- */
+/* Premium Swiss Executive Energy Palette */
 :root {
-  --primary: #FFF200;
-  --primary-dark: #EFC000;
-  --primary-light: #FFF200;
-  --primary-alpha: rgba(255, 242, 0, 0.1);
-  --dark: #111111;
-  --dark-800: #333333;
-  --dark-600: #555555;
-  --dark-400: #777777;
+  /* Primary Brand Colors - Deep Navy (Trust, Exclusivity, Swiss Banking) */
+  --primary: #003D5B;
+  --primary-dark: #002845;
+  --primary-light: #005580;
+  --primary-alpha: rgba(0, 61, 91, 0.1);
+
+  /* Energy Accent - Burgundy Red (Refined Energy, Sophistication) */
+  --accent-energy: #800020;
+  --accent-energy-hover: #9B0026;
+  --accent-energy-alpha: rgba(128, 0, 32, 0.1);
+
+  /* Luxury Indicators - Champagne Gold (Premium Signals) */
+  --accent-gold: #D4AF37;
+  --accent-gold-muted: #C5B783;
+  --accent-gold-alpha: rgba(212, 175, 55, 0.1);
+
+  /* Warm Alternative Accent - Deep Copper (Commodity Connection) */
+  --accent-copper: #B87333;
+  --accent-copper-alpha: rgba(184, 115, 51, 0.1);
+
+  /* Neutral Scale - Dark Tones */
+  --dark: #1a1a1a;
+  --dark-800: #2c2c2c;
+  --dark-600: #4A4E69;
+  --dark-400: #6b7280;
+
+  /* Neutral Scale - Light Tones */
   --light: #FFFFFF;
-  --light-800: #F5F5F5;
-  --light-600: #EEEEEE;
-  --light-400: #DDDDDD;
-  --gray: #999999;
+  --light-800: #f8f9fa;
+  --light-600: #e9ecef;
+  --light-400: #dee2e6;
+  --gray: #8b8d98;
+
+  /* Typography */
   --font-body: 'Gilroy Light', Arial, sans-serif;
   --font-heading: 'Gilroy ExtraBold', Arial, sans-serif;
+
+  /* Spacing */
   --space-xs: 0.25rem;
   --space-sm: 0.5rem;
   --space-md: 1rem;
   --space-lg: 1.5rem;
   --space-xl: 2rem;
   --space-xxl: 3rem;
+
+  /* Border Radius */
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 12px;
   --radius-xl: 20px;
   --radius-round: 50%;
-  --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 10px rgba(0, 0, 0, 0.08);
-  --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.12);
-  --shadow-highlight: 0 0 20px rgba(255, 242, 0, 0.3);
+
+  /* Shadows (Light Mode) */
+  --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 10px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.15);
+  --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.2);
+  --shadow-highlight: 0 0 20px rgba(0, 61, 91, 0.15);
+
+  /* Premium Glows */
+  --glow-navy: 0 0 20px rgba(0, 61, 91, 0.4);
+  --glow-gold: 0 0 15px rgba(212, 175, 55, 0.25);
+  --glow-burgundy: 0 0 15px rgba(128, 0, 32, 0.3);
+
+  /* Transitions */
   --transition-fast-duration: 0.2s;
   --transition-medium-duration: 0.3s;
   --transition-slow-duration: 0.5s;
@@ -64,7 +100,11 @@
   --transition-fast: var(--transition-fast-duration) var(--transition-timing-function);
   --transition-medium: var(--transition-medium-duration) var(--transition-timing-function);
   --transition-slow: var(--transition-slow-duration) var(--transition-timing-function);
+
+  /* Layout */
   --container-width: 1200px;
+
+  /* Z-Index Scale */
   --z-overlay: 2000;
   --z-modal: 1500;
   --z-nav: 1000;
@@ -73,41 +113,89 @@
   --z-above: 10;
   --z-normal: 1;
   --z-below: -1;
-  --background: #ffffff;
-  --foreground: #171717;
-  --error-color: #D8000C;
-  --error-bg: #FFD2D2;
-  --success-color: #4F8A10;
-  --success-bg: #DFF2BF;
-  --button-text-on-primary: #333333;
+
+  /* Background & Foreground */
+  --background: #fafbfc;
+  --foreground: #1a1a1a;
+
+  /* Semantic Colors */
+  --error-color: #DC2626;
+  --error-bg: #fee2e2;
+  --success-color: #10B981;
+  --success-bg: #dcfce7;
+  --warning-color: #ea580c;
+  --warning-bg: #fed7aa;
+  --info-color: #0284c7;
+  --info-bg: #dbeafe;
+
+  /* Button Text */
+  --button-text-on-primary: #ffffff;
 }
 
 /* --- Dark Mode CSS Variables --- */
+/* Premium Dark Mode (Trading Platform Standard) */
 :root.dark {
-    --light: #1e1e1e;
-    --light-800: #2a2a2a;
-    --light-600: #3a3a3a;
-    --light-400: #4f4f4f;
-    --dark: #f8f8f8;
-    --dark-800: #e6e6e6;
-    --dark-600: #c8c8c8;
-    --dark-400: #a0a0a0;
-    --gray: #8a8a8a;
-    --primary: #FFF200;
-    --primary-dark: #EFC000;
-    --primary-light: #FFF566;
-    --primary-alpha: rgba(255, 224, 50, 0.15);
-    --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.2);
-    --shadow-md: 0 4px 10px rgba(0, 0, 0, 0.3);
-    --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.4);
-    --shadow-highlight: 0 0 20px rgba(255, 224, 50, 0.25);
-    --background: #121212;
-    --foreground: #ededed;
+    /* Backgrounds - Dark Mode Hierarchy */
+    --light: #1e1e1e;          /* Cards, inputs (elevated surface 1) */
+    --light-800: #2a2a2a;      /* Hover states, secondary panels (elevated surface 2) */
+    --light-600: #363636;      /* Modals, dropdowns (elevated surface 3) */
+    --light-400: #4f4f4f;      /* Borders, dividers */
+
+    /* Text - Dark Mode */
+    --dark: #ededed;           /* Primary text, headings */
+    --dark-800: #c8c8c8;       /* Secondary text, labels */
+    --dark-600: #a0a0a0;       /* Tertiary text, placeholders */
+    --dark-400: #8a8a8a;       /* Muted text, disabled */
+    --gray: #718096;           /* Gray text */
+
+    /* Primary Brand - Brighter for Dark Mode */
+    --primary: #1976d2;        /* Brighter navy for visibility */
+    --primary-dark: #1565c0;   /* Darker hover state */
+    --primary-light: #42a5f5;  /* Lighter active state */
+    --primary-alpha: rgba(25, 118, 210, 0.15);
+
+    /* Energy Accent - Brighter Burgundy for Dark */
+    --accent-energy: #e07856;  /* Brighter for visibility */
+    --accent-energy-hover: #f5a57a;
+    --accent-energy-alpha: rgba(224, 120, 86, 0.15);
+
+    /* Luxury Indicators - Adjusted for Dark */
+    --accent-gold: #D4AF37;    /* Keep gold consistent */
+    --accent-gold-muted: #C5B783;
+    --accent-gold-alpha: rgba(212, 175, 55, 0.15);
+
+    /* Copper - Adjusted for Dark */
+    --accent-copper: #D9A066;
+    --accent-copper-alpha: rgba(217, 160, 102, 0.15);
+
+    /* Shadows - Dark Mode */
+    --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 10px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.5);
+    --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.6);
+    --shadow-highlight: 0 0 20px rgba(25, 118, 210, 0.25);
+
+    /* Premium Glows - Dark Mode */
+    --glow-navy: 0 0 20px rgba(25, 118, 210, 0.5);
+    --glow-gold: 0 0 15px rgba(212, 175, 55, 0.35);
+    --glow-burgundy: 0 0 15px rgba(224, 120, 86, 0.4);
+
+    /* Background & Foreground */
+    --background: #121212;     /* True black background */
+    --foreground: #ededed;     /* Light text */
+
+    /* Semantic Colors - Dark Mode */
     --error-bg: rgba(127, 29, 29, 0.2);
-    --error-color: #FFBDBD;
-    --success-bg: #1E420A;
-    --success-color: #BDECB6;
-    --button-text-on-primary: #333333;
+    --error-color: #f87171;
+    --success-bg: rgba(34, 197, 94, 0.15);
+    --success-color: #4ade80;
+    --warning-bg: rgba(234, 88, 12, 0.15);
+    --warning-color: #fb923c;
+    --info-bg: rgba(2, 132, 199, 0.15);
+    --info-color: #38bdf8;
+
+    /* Button Text */
+    --button-text-on-primary: #ffffff;
 }
 
 /* --- Mobile Typography Optimization --- */
@@ -329,17 +417,17 @@ a:hover { color: var(--dark-800); }
 
 /* Error Summary Component */
 .error-summary {
-  background-color: rgba(220, 38, 38, 0.04);
-  border: 1px solid rgba(220, 38, 38, 0.3);
+  background-color: var(--error-bg);
+  border: 1px solid var(--error-color);
   border-radius: 6px;
   padding: 0.75rem 1rem;
   margin-bottom: 1.25rem;
   animation: slideInFromTop 0.3s ease-out;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
 }
 
 .error-summary h3 {
-  color: #DC2626;
+  color: var(--error-color);
   font-family: var(--font-body);
   font-weight: 400;
   font-size: 0.875rem;

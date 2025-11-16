@@ -9,8 +9,8 @@ export default function SuccessPage() {
         <div className="bg-[var(--light)] rounded-xl shadow-lg p-8 sm:p-12 text-center">
           {/* Success Icon */}
           <div className="mb-6 flex justify-center">
-            <div className="rounded-full bg-green-100 p-4">
-              <CheckCircleIcon className="h-16 w-16 text-green-500" />
+            <div className="rounded-full bg-[var(--success-bg)] p-4">
+              <CheckCircleIcon className="h-16 w-16 text-[var(--success-color)]" />
             </div>
           </div>
 
@@ -20,18 +20,18 @@ export default function SuccessPage() {
           </h1>
 
           {/* Success Message */}
-          <p className="text-lg text-gray-700 mb-6">
+          <p className="text-lg text-[var(--dark-600)] mb-6">
             Your profile has been successfully submitted to our talent pool.
           </p>
 
           {/* What Happens Next */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-left mb-8">
-            <h2 className="text-lg font-semibold text-blue-900 mb-4">
+          <div className="bg-[var(--info-bg)] border border-[var(--info-color)] rounded-lg p-6 text-left mb-8">
+            <h2 className="text-lg font-semibold text-[var(--foreground)] mb-4">
               What Happens Next?
             </h2>
-            <ul className="space-y-3 text-blue-800">
+            <ul className="space-y-3 text-[var(--dark-600)]">
               <li className="flex items-start">
-                <span className="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-blue-200 text-blue-900 font-semibold text-sm mr-3">
+                <span className="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-[var(--primary-alpha)] text-[var(--primary)] font-semibold text-sm mr-3">
                   1
                 </span>
                 <span>
@@ -39,7 +39,7 @@ export default function SuccessPage() {
                 </span>
               </li>
               <li className="flex items-start">
-                <span className="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-blue-200 text-blue-900 font-semibold text-sm mr-3">
+                <span className="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-[var(--primary-alpha)] text-[var(--primary)] font-semibold text-sm mr-3">
                   2
                 </span>
                 <span>
@@ -47,7 +47,7 @@ export default function SuccessPage() {
                 </span>
               </li>
               <li className="flex items-start">
-                <span className="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-blue-200 text-blue-900 font-semibold text-sm mr-3">
+                <span className="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-[var(--primary-alpha)] text-[var(--primary)] font-semibold text-sm mr-3">
                   3
                 </span>
                 <span>
@@ -58,10 +58,10 @@ export default function SuccessPage() {
           </div>
 
           {/* Additional Info */}
-          <div className="text-sm text-gray-600 space-y-2 mb-8">
+          <div className="text-sm text-[var(--dark-600)] space-y-2 mb-8">
             <p>
               <strong>Questions or updates?</strong> Feel free to reach out to us at{' '}
-              <a href="mailto:contact@silviaslist.com" className="text-primary hover:text-primary-dark underline">
+              <a href="mailto:contact@silviaslist.com" className="text-[var(--primary)] hover:text-[var(--primary-dark)] underline">
                 contact@silviaslist.com
               </a>
             </p>
@@ -86,9 +86,9 @@ export default function SuccessPage() {
         </div>
 
         {/* Footer Note */}
-        <p className="text-center text-sm text-gray-500 mt-8">
+        <p className="text-center text-sm text-[var(--dark-400)] mt-8">
           Your privacy is important to us. All data is handled according to our{' '}
-          <Link href="/terms" className="text-primary hover:text-primary-dark underline">
+          <Link href="/terms" className="text-[var(--primary)] hover:text-[var(--primary-dark)] underline">
             Terms & Conditions
           </Link>
           .

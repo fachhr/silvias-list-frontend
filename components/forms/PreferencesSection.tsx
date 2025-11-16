@@ -83,7 +83,7 @@ export function PreferencesSection({
               key={location.value}
               className={`
                 flex items-center p-2 rounded cursor-pointer transition-colors
-                ${selectedLocations.includes(location.value) ? 'bg-primary/10 border border-primary' : 'hover:bg-gray-50'}
+                ${selectedLocations.includes(location.value) ? 'bg-[var(--primary-alpha)] border border-[var(--primary)]' : 'hover:bg-[var(--light-800)]'}
                 ${!selectedLocations.includes(location.value) && selectedLocations.length >= 5 ? 'opacity-50 cursor-not-allowed' : ''}
               `}
             >
@@ -92,9 +92,9 @@ export function PreferencesSection({
                 checked={selectedLocations.includes(location.value)}
                 onChange={() => toggleLocation(location.value)}
                 disabled={!selectedLocations.includes(location.value) && selectedLocations.length >= 5}
-                className="h-4 w-4 text-primary border-gray-300 rounded focus:ring-primary accent-primary"
+                className="h-4 w-4 text-[var(--primary)] border-[var(--light-400)] rounded focus:ring-[var(--primary)] accent-[var(--primary)]"
               />
-              <span className="ml-2 text-sm text-gray-700">{location.label}</span>
+              <span className="ml-2 text-sm text-[var(--dark-600)]">{location.label}</span>
             </label>
           ))}
         </div>
@@ -112,7 +112,7 @@ export function PreferencesSection({
           <p className="error-message">{errors.desired_locations.message}</p>
         )}
         {selectedLocations.length > 0 && (
-          <p className="text-xs text-gray-500 mt-2">
+          <p className="text-xs text-[var(--dark-400)] mt-2">
             {selectedLocations.length} of 5 selected: {selectedLocations.join(', ')}
           </p>
         )}

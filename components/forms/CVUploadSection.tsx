@@ -105,19 +105,19 @@ export function CVUploadSection({
         onDragLeave={handleDragLeave}
         className={`
           relative border-2 border-dashed rounded-lg p-8 text-center transition-all
-          ${isDragging && !disabled ? 'border-primary bg-primary-alpha scale-[1.02]' : ''}
-          ${displayError ? 'border-red-500 bg-red-50 ring-2 ring-red-200' : 'border-gray-300'}
-          ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:border-primary hover:bg-gray-50'}
-          ${selectedFile && !displayError ? 'border-green-500 bg-green-50' : ''}
+          ${isDragging && !disabled ? 'border-[var(--primary)] bg-[var(--primary-alpha)] scale-[1.02]' : ''}
+          ${displayError ? 'border-[var(--error-color)] bg-[var(--error-bg)] ring-2 ring-[var(--error-color)]/30' : 'border-[var(--light-400)]'}
+          ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:border-[var(--primary)] hover:bg-[var(--light-800)]'}
+          ${selectedFile && !displayError ? 'border-[var(--success-color)] bg-[var(--success-bg)]' : ''}
         `}
       >
         {selectedFile && !displayError ? (
           // File selected state
           <div className="space-y-3">
-            <CheckCircleIcon className="mx-auto h-12 w-12 text-green-500" />
+            <CheckCircleIcon className="mx-auto h-12 w-12 text-[var(--success-color)]" />
             <div>
-              <p className="font-medium text-gray-900">{selectedFile.name}</p>
-              <p className="text-sm text-gray-500">
+              <p className="font-medium text-[var(--foreground)]">{selectedFile.name}</p>
+              <p className="text-sm text-[var(--dark-400)]">
                 {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
               </p>
             </div>
@@ -148,12 +148,12 @@ export function CVUploadSection({
               htmlFor="cv-upload"
               className={`cursor-pointer ${disabled ? 'pointer-events-none' : ''}`}
             >
-              <UploadIcon className="mx-auto h-12 w-12 text-gray-400" />
-              <p className="mt-4 text-base font-medium text-gray-700">
+              <UploadIcon className="mx-auto h-12 w-12 text-[var(--dark-400)]" />
+              <p className="mt-4 text-base font-medium text-[var(--dark-600)]">
                 {isDragging ? 'Drop your CV here' : 'Drag and drop your CV here'}
               </p>
-              <p className="mt-1 text-sm text-gray-500">or click to browse</p>
-              <p className="mt-3 text-xs text-gray-400">
+              <p className="mt-1 text-sm text-[var(--dark-400)]">or click to browse</p>
+              <p className="mt-3 text-xs text-[var(--dark-400)]">
                 PDF or DOCX • Maximum 5MB
               </p>
             </label>
