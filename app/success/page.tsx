@@ -93,9 +93,9 @@ export default function SuccessPage() {
         </div>
 
         {/* Footer Note */}
-        <p className="text-center text-sm text-[var(--foreground)] opacity-75 mt-8">
+        <p className="text-center text-sm text-white opacity-75 mt-8">
           Your privacy is important to us. All data is handled according to our{' '}
-          <Link href="/terms" className="text-[var(--foreground)] hover:text-white underline">
+          <Link href="/terms" className="text-white hover:text-white underline hover:opacity-100">
             Terms & Conditions
           </Link>
           .
