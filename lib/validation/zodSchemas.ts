@@ -292,8 +292,8 @@ export const UserProfileSchema = z.object({
   desired_industries: z.array(z.string())
     .max(5, { message: "You can select a maximum of 5 industries" })
     .nullable(),
-  salary_min: z.number().min(0).max(50).nullable().optional(),
-  salary_max: z.number().min(0).max(50).nullable().optional(),
+  salary_min: z.number().min(0).max(1000).nullable().optional(),
+  salary_max: z.number().min(0).max(1000).nullable().optional(),
   linkedinUrl: z.string().url({ message: "Invalid LinkedIn URL" }).optional().nullable().or(z.literal('')),
   githubUrl: z.string().url({ message: "Invalid GitHub URL" }).optional().nullable().or(z.literal('')),
   portfolioUrl: z.string().url({ message: "Invalid Portfolio URL" }).optional().nullable().or(z.literal('')),
@@ -372,8 +372,8 @@ export const OrganizationalFormSchema = z.object({
   desired_industries: z.array(z.string())
     .min(1, { message: "At least one industry must be selected" })
     .max(5, { message: "You can select a maximum of 5 industries" }),
-  salary_min: z.number().min(0).max(50).optional(),
-  salary_max: z.number().min(0).max(50).optional(),
+  salary_min: z.number().min(0).max(1000).optional(),
+  salary_max: z.number().min(0).max(1000).optional(),
 }).superRefine((data, ctx) => {
   // If "Other" is selected in locations, desired_other_location is required
   if (data.desired_locations?.includes('Other') && (!data.desired_other_location || data.desired_other_location.trim() === '')) {
@@ -381,6 +381,17 @@ export const OrganizationalFormSchema = z.object({
       code: z.ZodIssueCode.custom,
       message: "Please specify the other location",
       path: ["desired_other_location"],
+    });
+  }
+
+  // Validate salary: max must be greater than or equal to min
+  if (data.salary_min !== undefined && data.salary_max !== undefined &&
+      data.salary_min > 0 && data.salary_max > 0 &&
+      data.salary_max < data.salary_min) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Maximum salary must be greater than or equal to minimum salary",
+      path: ["salary_max"],
     });
   }
 });

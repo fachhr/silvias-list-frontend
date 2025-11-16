@@ -136,7 +136,7 @@ export function PreferencesSection({
               min="0"
               step="1000"
               {...register('salary_min', { valueAsNumber: true })}
-              placeholder="e.g., 60000"
+              placeholder="e.g., 150000"
               className={`input-base ${errors.salary_min ? 'input-error' : ''}`}
             />
             {errors.salary_min && (
