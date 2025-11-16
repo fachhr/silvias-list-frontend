@@ -200,8 +200,6 @@ export function PreferencesSection({
                   setValue('salary_min', min * 1000, { shouldValidate: true });
                   setValue('salary_max', max * 1000, { shouldValidate: true });
                 }}
-                prefix="CHF "
-                suffix="k"
               />
             </div>
           )}
