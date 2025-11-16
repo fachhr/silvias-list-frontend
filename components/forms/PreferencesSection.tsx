@@ -5,9 +5,7 @@ import { UseFormRegister, FieldErrors, UseFormWatch, UseFormSetValue } from 'rea
 import { TalentPoolFormData } from '@/lib/validation/talentPoolSchema';
 import {
   DURATION_OPTIONS,
-  JOB_TYPE_OPTIONS,
-  LOCATION_OPTIONS,
-  INDUSTRY_PREFERENCE_OPTIONS
+  LOCATION_OPTIONS
 } from '@/lib/formOptions';
 
 interface PreferencesSectionProps {
@@ -30,16 +28,6 @@ export function PreferencesSection({
   const salaryMax = watch('salary_max') || 15000;
   const salaryConfidential = watch('salary_confidential') || false;
   const selectedLocations = watch('desired_locations') || [];
-  const selectedJobTypes = watch('desired_job_types') || [];
-  const selectedIndustries = watch('desired_industries') || [];
-
-  const toggleJobType = (type: string) => {
-    const current = selectedJobTypes;
-    const updated = current.includes(type)
-      ? current.filter(t => t !== type)
-      : [...current, type];
-    setValue('desired_job_types', updated, { shouldValidate: true });
-  };
 
   const toggleLocation = (location: string) => {
     if (location === 'Other') {
@@ -52,15 +40,6 @@ export function PreferencesSection({
       setValue('desired_locations', current.filter(l => l !== location), { shouldValidate: true });
     } else if (current.length < 5) {
       setValue('desired_locations', [...current, location], { shouldValidate: true });
-    }
-  };
-
-  const toggleIndustry = (industry: string) => {
-    const current = selectedIndustries;
-    if (current.includes(industry)) {
-      setValue('desired_industries', current.filter(i => i !== industry), { shouldValidate: true });
-    } else if (current.length < 5) {
-      setValue('desired_industries', [...current, industry], { shouldValidate: true });
     }
   };
 
@@ -138,39 +117,6 @@ export function PreferencesSection({
         )}
       </div>
 
-      {/* Desired Job Types */}
-      <div>
-        <label className="label-base">
-          Desired Job Types <span className="text-red-500">*</span>
-        </label>
-        <p className="text-xs text-gray-500 mb-3">Select all that apply (maximum 5)</p>
-        <div className="space-y-2">
-          {JOB_TYPE_OPTIONS.map((type) => (
-            <label
-              key={type}
-              className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
-            >
-              <input
-                type="checkbox"
-                checked={selectedJobTypes.includes(type)}
-                onChange={() => toggleJobType(type)}
-                disabled={!selectedJobTypes.includes(type) && selectedJobTypes.length >= 5}
-                className="h-4 w-4 text-primary border-gray-300 rounded focus:ring-primary accent-primary"
-              />
-              <span className="ml-3 text-sm font-medium text-gray-700">{type}</span>
-            </label>
-          ))}
-        </div>
-        {errors.desired_job_types && (
-          <p className="error-message">{errors.desired_job_types.message}</p>
-        )}
-        {selectedJobTypes.length > 0 && (
-          <p className="text-xs text-gray-500 mt-2">
-            {selectedJobTypes.length} of 5 selected
-          </p>
-        )}
-      </div>
-
       {/* Desired Locations */}
       <div>
         <label className="label-base">
@@ -214,43 +160,6 @@ export function PreferencesSection({
         {selectedLocations.length > 0 && (
           <p className="text-xs text-gray-500 mt-2">
             {selectedLocations.length} of 5 selected: {selectedLocations.join(', ')}
-          </p>
-        )}
-      </div>
-
-      {/* Desired Industries */}
-      <div>
-        <label className="label-base">
-          Desired Industries/Fields <span className="text-red-500">*</span>
-        </label>
-        <p className="text-xs text-gray-500 mb-3">Select up to 5 industries</p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-80 overflow-y-auto border rounded-lg p-3">
-          {INDUSTRY_PREFERENCE_OPTIONS.map((industry) => (
-            <label
-              key={industry.value}
-              className={`
-                flex items-center p-2 rounded cursor-pointer transition-colors
-                ${selectedIndustries.includes(industry.value) ? 'bg-primary/10 border border-primary' : 'hover:bg-gray-50'}
-                ${!selectedIndustries.includes(industry.value) && selectedIndustries.length >= 5 ? 'opacity-50 cursor-not-allowed' : ''}
-              `}
-            >
-              <input
-                type="checkbox"
-                checked={selectedIndustries.includes(industry.value)}
-                onChange={() => toggleIndustry(industry.value)}
-                disabled={!selectedIndustries.includes(industry.value) && selectedIndustries.length >= 5}
-                className="h-4 w-4 text-primary border-gray-300 rounded focus:ring-primary accent-primary"
-              />
-              <span className="ml-2 text-sm text-gray-700">{industry.label}</span>
-            </label>
-          ))}
-        </div>
-        {errors.desired_industries && (
-          <p className="error-message">{errors.desired_industries.message}</p>
-        )}
-        {selectedIndustries.length > 0 && (
-          <p className="text-xs text-gray-500 mt-2">
-            {selectedIndustries.length} of 5 selected
           </p>
         )}
       </div>

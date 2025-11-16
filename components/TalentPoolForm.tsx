@@ -33,9 +33,7 @@ export function TalentPoolForm() {
       salary_min: 0,
       salary_max: 15000,
       salary_confidential: false,
-      desired_job_types: [],
       desired_locations: [],
-      desired_industries: [],
     }
   });
 

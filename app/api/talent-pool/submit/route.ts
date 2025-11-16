@@ -59,10 +59,8 @@ export async function POST(req: NextRequest) {
         working_capacity_percent: validatedData.working_capacity_percent,
         available_from_date: validatedData.available_from_date,
         desired_duration_months: validatedData.desired_duration_months,
-        desired_job_types: validatedData.desired_job_types,
         desired_locations: validatedData.desired_locations,
         desired_other_location: validatedData.desired_other_location || null,
-        desired_industries: validatedData.desired_industries,
         salary_min: validatedData.salary_confidential ? null : validatedData.salary_min,
         salary_max: validatedData.salary_confidential ? null : validatedData.salary_max,
 

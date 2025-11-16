@@ -73,11 +73,6 @@ export const talentPoolSchema = z.object({
   desired_duration_months: z.string()
     .min(1, 'Please select your desired contract duration'),
 
-  // Job types (at least 1 required)
-  desired_job_types: z.array(z.string())
-    .min(1, 'Please select at least one job type')
-    .max(5, 'You can select up to 5 job types'),
-
   // Locations (at least 1 required, max 5)
   desired_locations: z.array(z.string())
     .min(1, 'Please select at least one preferred location')
@@ -87,11 +82,6 @@ export const talentPoolSchema = z.object({
     .max(100, 'Location must be less than 100 characters')
     .optional()
     .or(z.literal('')),
-
-  // Industries (at least 1 required, max 5)
-  desired_industries: z.array(z.string())
-    .min(1, 'Please select at least one industry')
-    .max(5, 'You can select up to 5 industries'),
 
   // Salary expectation (optional)
   salary_min: z.number()
@@ -186,10 +176,8 @@ export const talentPoolPreferencesSchema = talentPoolSchema.pick({
   working_capacity_percent: true,
   available_from_date: true,
   desired_duration_months: true,
-  desired_job_types: true,
   desired_locations: true,
   desired_other_location: true,
-  desired_industries: true,
   salary_min: true,
   salary_max: true,
   salary_confidential: true,

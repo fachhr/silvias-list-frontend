@@ -165,10 +165,6 @@ export function CVUploadSection({
           <p>{displayError}</p>
         </div>
       )}
-
-      <p className="text-xs text-gray-500">
-        Your CV will be automatically parsed to extract your professional information.
-      </p>
     </div>
   );
 }
