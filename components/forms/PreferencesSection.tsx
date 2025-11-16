@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { UseFormRegister, FieldErrors, UseFormWatch, UseFormSetValue } from 'react-hook-form';
 import { TalentPoolFormData } from '@/lib/validation/talentPoolSchema';
+import { DualRangeSlider } from '../ui/DualRangeSlider';
 import {
   DURATION_OPTIONS,
   LOCATION_OPTIONS
@@ -181,41 +182,27 @@ export function PreferencesSection({
           </label>
 
           {!salaryConfidential && (
-            <div className="space-y-3">
-              <div className="flex items-center justify-between text-sm text-gray-600">
-                <span>CHF 0</span>
-                <div className="text-center">
-                  <span className="font-semibold text-lg text-primary">
-                    CHF {salaryMin?.toLocaleString()} - CHF {salaryMax?.toLocaleString()}
-                  </span>
-                  <p className="text-xs text-gray-500">per month</p>
-                </div>
-                <span>CHF 15,000+</span>
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-sm text-gray-600">Desired monthly salary range (in thousands CHF)</span>
+                <span className="font-bold text-lg text-[var(--primary-dark)] bg-[var(--light-800)] px-3 py-1 rounded-md">
+                  {(salaryMin / 1000).toFixed(1)}k - {(salaryMax / 1000).toFixed(1)}k CHF
+                </span>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-xs text-gray-600">Minimum</label>
-                <input
-                  type="range"
-                  min="0"
-                  max="15000"
-                  step="500"
-                  {...register('salary_min', { valueAsNumber: true })}
-                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-xs text-gray-600">Maximum</label>
-                <input
-                  type="range"
-                  min="0"
-                  max="15000"
-                  step="500"
-                  {...register('salary_max', { valueAsNumber: true })}
-                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary"
-                />
-              </div>
+              <DualRangeSlider
+                min={0}
+                max={15}
+                step={0.5}
+                valueMin={salaryMin / 1000}
+                valueMax={salaryMax / 1000}
+                onChange={(min, max) => {
+                  setValue('salary_min', min * 1000, { shouldValidate: true });
+                  setValue('salary_max', max * 1000, { shouldValidate: true });
+                }}
+                prefix="CHF "
+                suffix="k"
+              />
             </div>
           )}
         </div>
