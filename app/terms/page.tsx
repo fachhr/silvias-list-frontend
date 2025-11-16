@@ -11,7 +11,7 @@ export default function TermsPage() {
         <div className="bg-[var(--light)] rounded-xl shadow-lg p-8 sm:p-12">
           {/* Title Section */}
           <div className="mb-12 pb-8 border-b border-[var(--light-400)]">
-            <h1 className="text-4xl sm:text-5xl font-bold text-[var(--text-[var(--primary)])] mb-4 tracking-tight">
+            <h1 className="text-4xl sm:text-5xl font-bold text-[var(--title-primary)] mb-4 tracking-tight">
               Terms and Conditions
             </h1>
             <p className="text-[var(--text-secondary)] text-lg">
@@ -28,7 +28,7 @@ export default function TermsPage() {
                   <span className="text-[var(--primary)] font-bold text-lg">1</span>
                 </div>
                 <div className="flex-1">
-                  <h2 className="text-2xl font-bold text-[var(--text-[var(--primary)])] mb-4">
+                  <h2 className="text-2xl font-bold text-[var(--title-primary)] mb-4">
                     Talent Pool Participation
                   </h2>
                   <p className="text-[var(--text-secondary)] leading-relaxed mb-4">
@@ -63,7 +63,7 @@ export default function TermsPage() {
                   <span className="text-[var(--primary)] font-bold text-lg">2</span>
                 </div>
                 <div className="flex-1">
-                  <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-4">
+                  <h2 className="text-2xl font-bold text-[var(--title-secondary)] mb-4">
                     Data Collection and Use
                   </h2>
                   <p className="text-[var(--text-secondary)] leading-relaxed mb-6">
@@ -137,7 +137,7 @@ export default function TermsPage() {
                   <span className="text-[var(--primary)] font-bold text-lg">3</span>
                 </div>
                 <div className="flex-1">
-                  <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-4">
+                  <h2 className="text-2xl font-bold text-[var(--title-secondary)] mb-4">
                     How We Use Your Data
                   </h2>
                   <p className="text-[var(--text-secondary)] leading-relaxed mb-4">
@@ -154,7 +154,7 @@ export default function TermsPage() {
                   <span className="text-[var(--primary)] font-bold text-lg">4</span>
                 </div>
                 <div className="flex-1">
-                  <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-4">
+                  <h2 className="text-2xl font-bold text-[var(--title-secondary)] mb-4">
                     Data Storage and Security
                   </h2>
                   <p className="text-[var(--text-secondary)] leading-relaxed mb-4">
@@ -171,7 +171,7 @@ export default function TermsPage() {
                   <span className="text-[var(--primary)] font-bold text-lg">5</span>
                 </div>
                 <div className="flex-1">
-                  <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-4">
+                  <h2 className="text-2xl font-bold text-[var(--title-secondary)] mb-4">
                     Your Rights (GDPR & Swiss Data Protection)
                   </h2>
                   <p className="text-[var(--text-secondary)] leading-relaxed mb-4">
@@ -192,7 +192,7 @@ export default function TermsPage() {
                   <span className="text-[var(--primary)] font-bold text-lg">6</span>
                 </div>
                 <div className="flex-1">
-                  <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-4">
+                  <h2 className="text-2xl font-bold text-[var(--title-secondary)] mb-4">
                     Data Sharing
                   </h2>
                   <p className="text-[var(--text-secondary)] leading-relaxed mb-4">
@@ -209,7 +209,7 @@ export default function TermsPage() {
                   <span className="text-[var(--primary)] font-bold text-lg">7</span>
                 </div>
                 <div className="flex-1">
-                  <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-4">
+                  <h2 className="text-2xl font-bold text-[var(--title-secondary)] mb-4">
                     AI and Automated Processing
                   </h2>
                   <p className="text-[var(--text-secondary)] leading-relaxed mb-4">
@@ -226,7 +226,7 @@ export default function TermsPage() {
                   <span className="text-[var(--primary)] font-bold text-lg">8</span>
                 </div>
                 <div className="flex-1">
-                  <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-4">
+                  <h2 className="text-2xl font-bold text-[var(--title-secondary)] mb-4">
                     Contact Information
                   </h2>
                   <p className="text-[var(--text-secondary)] leading-relaxed mb-4">

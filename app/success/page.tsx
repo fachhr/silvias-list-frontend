@@ -22,7 +22,7 @@ export default function SuccessPage() {
           </div>
 
           {/* Main Heading */}
-          <h1 className="text-3xl sm:text-4xl font-bold text-[var(--text-primary)] mb-4">
+          <h1 className="text-3xl sm:text-4xl font-bold text-[var(--title-primary)] mb-4">
             Thank You for Joining Silvia's List!
           </h1>
 
@@ -33,7 +33,7 @@ export default function SuccessPage() {
 
           {/* What Happens Next */}
           <div className="bg-[var(--info-bg)] border border-[var(--info-color)] rounded-lg p-6 text-left mb-8">
-            <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4">
+            <h2 className="text-lg font-semibold text-[var(--title-secondary)] mb-4">
               What Happens Next?
             </h2>
             <ul className="space-y-3 text-[var(--text-secondary)]">

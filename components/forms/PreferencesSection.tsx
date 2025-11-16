@@ -44,8 +44,8 @@ export function PreferencesSection({
   return (
     <div className="space-y-8">
       <div className="mb-6">
-        <h2 className="text-xl font-bold text-[var(--foreground)] mb-2">Job Preferences</h2>
-        <p className="text-[var(--dark-600)]">
+        <h2 className="text-xl font-bold text-[var(--title-primary)] mb-2">Job Preferences</h2>
+        <p className="text-[var(--text-secondary)]">
           Help us find the perfect match by sharing your preferences and expectations.
         </p>
       </div>

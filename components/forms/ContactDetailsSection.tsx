@@ -17,8 +17,8 @@ export function ContactDetailsSection({
   return (
     <div className="space-y-6">
       <div className="mb-6">
-        <h2 className="text-xl font-bold text-[var(--foreground)] mb-2">Personal Details</h2>
-        <p className="text-[var(--dark-600)]">
+        <h2 className="text-xl font-bold text-[var(--title-primary)] mb-2">Personal Details</h2>
+        <p className="text-[var(--text-secondary)]">
           Tell us about yourself. We'll use this information to match you with the best opportunities.
         </p>
       </div>

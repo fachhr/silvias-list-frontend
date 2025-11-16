@@ -25,8 +25,8 @@ export function TermsSection({
     <div className="space-y-6">
       {/* Section Header */}
       <div className="mb-6">
-        <h2 className="text-xl font-bold text-[var(--foreground)] mb-2">Terms & Submit</h2>
-        <p className="text-[var(--dark-600)]">
+        <h2 className="text-xl font-bold text-[var(--title-primary)] mb-2">Terms & Submit</h2>
+        <p className="text-[var(--text-secondary)]">
           Review and accept our terms to complete your application.
         </p>
       </div>

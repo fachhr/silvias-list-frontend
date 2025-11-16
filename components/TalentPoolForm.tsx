@@ -139,8 +139,8 @@ export function TalentPoolForm() {
         {/* Section 1: CV Upload */}
         <div className="bg-[var(--light)] rounded-xl shadow-lg p-6 sm:p-8">
           <div className="mb-6">
-            <h2 className="text-xl font-bold text-[var(--foreground)] mb-2">Upload Your CV</h2>
-            <p className="text-[var(--dark-600)]">
+            <h2 className="text-xl font-bold text-[var(--title-primary)] mb-2">Upload Your CV</h2>
+            <p className="text-[var(--text-secondary)]">
               Start by uploading your CV. We'll use it to understand your professional background.
             </p>
           </div>
