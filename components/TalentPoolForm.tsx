@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
@@ -36,6 +36,26 @@ export function TalentPoolForm() {
       desired_locations: [],
     }
   });
+
+  // Scroll to first error field when validation fails
+  useEffect(() => {
+    if (Object.keys(errors).length > 0) {
+      const firstErrorField = Object.keys(errors)[0];
+      const errorElement = document.getElementById(firstErrorField) ||
+                          document.querySelector(`[name="${firstErrorField}"]`);
+
+      if (errorElement) {
+        errorElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        });
+        // Optional: focus the field for better UX
+        if (errorElement instanceof HTMLElement) {
+          errorElement.focus({ preventScroll: true });
+        }
+      }
+    }
+  }, [errors]);
 
   const onSubmit = async (data: TalentPoolFormData) => {
     setIsSubmitting(true);

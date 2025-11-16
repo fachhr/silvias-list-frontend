@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { FieldErrors } from 'react-hook-form';
 
 // Error icon component - circle X (matches original design)
@@ -13,27 +13,15 @@ interface ErrorSummaryProps {
 }
 
 export function ErrorSummary({ errors }: ErrorSummaryProps) {
-  const summaryRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    // Auto-scroll to error summary when it appears
-    if (Object.keys(errors).length > 0 && summaryRef.current) {
-      summaryRef.current.scrollIntoView({
-        behavior: 'smooth',
-        block: 'nearest'
-      });
-    }
-  }, [errors]);
-
   if (!errors || Object.keys(errors).length === 0) {
     return null;
   }
 
   return (
-    <div ref={summaryRef} className="error-summary" role="alert" aria-live="polite">
+    <div className="error-summary" role="alert" aria-live="polite">
       <h3>
-        <ErrorIcon className="w-5 h-5" />
-        Please correct the highlighted errors above.
+        <ErrorIcon className="w-4 h-4 flex-shrink-0" />
+        <span>Please correct the highlighted errors above.</span>
       </h3>
     </div>
   );
