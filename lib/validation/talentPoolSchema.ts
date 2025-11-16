@@ -29,13 +29,14 @@ export const talentPoolSchema = z.object({
     .toLowerCase()
     .trim(),
 
-  linkedinUrl: z.string()
-    .url('Please enter a valid LinkedIn URL')
-    .refine((url) => url.includes('linkedin.com'), {
-      message: 'Please enter a valid LinkedIn profile URL'
-    })
-    .optional()
-    .or(z.literal('')),
+  linkedinUrl: z.union([
+    z.string()
+      .url('Please enter a valid LinkedIn URL')
+      .refine((url) => url.includes('linkedin.com'), {
+        message: 'Please enter a valid LinkedIn profile URL'
+      }),
+    z.literal('')
+  ]).optional(),
 
   country_code: z.string()
     .min(1, 'Please select a country code'),
@@ -46,8 +47,10 @@ export const talentPoolSchema = z.object({
     .regex(/^[0-9\s\-\(\)]+$/, 'Phone number can only contain numbers, spaces, and hyphens')
     .trim(),
 
-  years_of_experience: z.string()
-    .min(1, 'Please select your years of experience'),
+  years_of_experience: z.number()
+    .min(0, 'Years of experience cannot be negative')
+    .max(50, 'Please enter a value between 0 and 50')
+    .int('Please enter a whole number'),
 
   // ============================================
   // JOB PREFERENCES (user-provided, required)
@@ -83,16 +86,12 @@ export const talentPoolSchema = z.object({
     .optional()
     .or(z.literal('')),
 
-  // Salary expectation (optional)
+  // Salary expectation (always has default values from sliders)
   salary_min: z.number()
-    .min(0, 'Salary cannot be negative')
-    .optional()
-    .nullable(),
+    .min(0, 'Minimum salary cannot be negative'),
 
   salary_max: z.number()
-    .min(0, 'Salary cannot be negative')
-    .optional()
-    .nullable(),
+    .min(0, 'Maximum salary cannot be negative'),
 
   salary_confidential: z.boolean()
     .default(false),
