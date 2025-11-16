@@ -60,17 +60,6 @@ export function TermsSection({
         )}
       </div>
 
-      {/* Privacy Notice */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <h4 className="text-sm font-semibold text-blue-900 mb-2">Privacy & Data Usage</h4>
-        <ul className="text-xs text-blue-800 space-y-1">
-          <li>• Your data will be securely stored and used only for matching you with opportunities</li>
-          <li>• We'll automatically extract information from your CV to complete your profile</li>
-          <li>• You can request deletion of your data at any time</li>
-          <li>• We comply with GDPR and Swiss data protection regulations</li>
-        </ul>
-      </div>
-
       {/* Error Summary - appears right before submit when there are errors */}
       {hasErrors && <ErrorSummary errors={allErrors} />}
 
