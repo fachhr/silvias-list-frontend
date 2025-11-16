@@ -98,6 +98,15 @@ export function DualRangeSlider({
           -moz-appearance: none;
           appearance: none;
           background: none; /* Make slider track transparent */
+          z-index: 3;
+        }
+
+        .thumb--left {
+          z-index: 3;
+        }
+
+        .thumb--right {
+          z-index: 4;
         }
 
         .thumb::-webkit-slider-thumb {
