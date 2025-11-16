@@ -34,20 +34,12 @@ export default function SuccessPage() {
                   1
                 </span>
                 <span>
-                  <strong>CV Processing:</strong> We're automatically extracting your professional information from your CV. This usually takes 30-60 seconds.
-                </span>
-              </li>
-              <li className="flex items-start">
-                <span className="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-blue-200 text-blue-900 font-semibold text-sm mr-3">
-                  2
-                </span>
-                <span>
                   <strong>Profile Review:</strong> Our team will review your complete profile and match you with relevant opportunities.
                 </span>
               </li>
               <li className="flex items-start">
                 <span className="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-blue-200 text-blue-900 font-semibold text-sm mr-3">
-                  3
+                  2
                 </span>
                 <span>
                   <strong>We'll Contact You:</strong> When we find a match that fits your preferences, we'll reach out via email with more details.
