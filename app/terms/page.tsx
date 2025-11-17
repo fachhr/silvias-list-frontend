@@ -5,7 +5,6 @@ export default function TermsPage() {
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12" style={{
       background: 'var(--background-gradient)',
-      backgroundAttachment: 'fixed'
     }}>
       <div className="max-w-4xl w-full">
         <div className="bg-[var(--light)] rounded-xl shadow-lg p-8 sm:p-12">

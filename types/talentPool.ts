@@ -4,6 +4,7 @@
 
 export interface TalentPoolProfile {
   id: string;
+  talent_id?: string | null; // Format: SVL-001, SVL-002, etc.
   contact_first_name: string;
   contact_last_name: string;
   email: string;
@@ -46,3 +47,51 @@ export interface ApiError {
 }
 
 export type ApiResponse<T> = T | ApiError;
+
+// Seniority levels for talent pool categorization
+export type SeniorityLevel = 'junior' | 'mid' | 'senior' | 'not_specified';
+
+// Anonymized talent profile for public display
+export interface AnonymizedTalentProfile {
+  talent_id: string;
+  entry_date: string; // ISO date string
+  years_of_experience: number | null;
+  preferred_cantons: string[];
+  salary_range: {
+    min: number | null;
+    max: number | null;
+  };
+  seniority_level: SeniorityLevel;
+}
+
+// Talent pool list response
+export interface TalentPoolListResponse {
+  success: boolean;
+  data: {
+    candidates: AnonymizedTalentProfile[];
+    pagination: {
+      total: number;
+      page: number;
+      limit: number;
+      total_pages: number;
+    };
+    filters_applied: {
+      seniority?: SeniorityLevel;
+      cantons?: string[];
+      salary_min?: number;
+      salary_max?: number;
+    };
+  };
+}
+
+// Talent pool list query parameters
+export interface TalentPoolQueryParams {
+  seniority?: SeniorityLevel | 'all';
+  cantons?: string;
+  salary_min?: number;
+  salary_max?: number;
+  sort_by?: 'talent_id' | 'created_at' | 'years_of_experience' | 'salary_max';
+  sort_order?: 'asc' | 'desc';
+  page?: number;
+  limit?: number;
+}
