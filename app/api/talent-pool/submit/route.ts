@@ -120,7 +120,14 @@ export async function POST(req: NextRequest) {
     const parserUrl = process.env.RAILWAY_API_URL;
     const parserApiKey = process.env.PARSER_API_KEY;
 
+    console.log('[Submit] Parser config check:', {
+      parserUrl: parserUrl ? 'SET' : 'NOT SET',
+      parserApiKey: parserApiKey ? 'SET' : 'NOT SET',
+      jobData: jobData ? 'EXISTS' : 'MISSING'
+    });
+
     if (parserUrl && parserApiKey && jobData) {
+      console.log('[Submit] Triggering parser for job:', jobData.id);
       // Fire and forget - don't await
       fetch(`${parserUrl}/api/v1/parse`, {
         method: 'POST',
