@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useIsMobile } from "@/hooks/useIsMobile";
 
 // --- STYLES ---
-const navLinkBaseStyles = "uppercase font-heading font-normal tracking-[1px] relative transition-colors duration-300";
+const navLinkBaseStyles = "uppercase font-[family-name:var(--font-heading)] font-normal tracking-[1px] relative transition-colors duration-300";
 const navLinkDesktopBase = `${navLinkBaseStyles} px-3 py-1.5 rounded-md`;
 const navLinkMobileBase = `py-3 px-8 text-xl w-full text-center rounded-md ${navLinkBaseStyles}`;
 
@@ -93,7 +93,7 @@ const HamburgerButton = ({ isOpen, onClick }: {
     <button
         onClick={onClick}
         aria-label={isOpen ? "Close menu" : "Open menu"}
-        className="relative z-nav p-2 -mr-2 lg:hidden"
+        className="relative z-50 p-2 -mr-2 lg:hidden"
     >
         <div className="space-y-1.5">
             <span className={`block w-6 h-0.5 bg-[var(--text-primary)] rounded-full transition-all duration-300 ${isOpen ? "transform translate-y-2 rotate-45" : ""
@@ -141,15 +141,14 @@ export default function Header() {
     return (
         <>
             <header
-                className={`fixed top-0 left-0 w-full transition-all duration-300 ${hasScrolled ? 'shadow-md' : ''
+                className={`fixed top-0 left-0 w-full z-[1000] transition-all duration-300 ${hasScrolled ? 'shadow-md' : ''
                     }`}
                 style={{
                     backgroundColor: isHomepage && !hasScrolled ? 'transparent' : 'var(--surface-1)',
                     borderBottom: hasScrolled ? '1px solid var(--light-400)' : '1px solid transparent',
-                    zIndex: 'var(--z-nav)',
                 }}
             >
-                <div className="h-20 sm:h-24 flex items-center">
+                <div className="h-14 sm:h-20 flex items-center">
                     <div className="container mx-auto flex items-center justify-between px-6 sm:px-8 lg:px-12">
 
                         <Link
@@ -166,52 +165,31 @@ export default function Header() {
                         </Link>
 
                         <div className="hidden lg:flex items-center gap-4">
-                            <nav className="flex items-center gap-4">
-                                <Link
-                                    href="/"
-                                    className="px-6 py-3 text-sm font-semibold uppercase tracking-wide rounded-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
-                                    style={{
-                                        backgroundColor: 'var(--surface-2)',
-                                        color: 'var(--accent-gold)',
-                                        border: '1px solid var(--accent-gold-border)',
-                                        boxShadow: '0 0 10px rgba(212, 175, 55, 0.1)',
-                                    }}
-                                    onMouseEnter={(e) => {
-                                        e.currentTarget.style.backgroundColor = 'var(--surface-3)';
-                                        e.currentTarget.style.borderColor = 'var(--accent-gold)';
-                                        e.currentTarget.style.boxShadow = 'var(--glow-gold-subtle)';
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        e.currentTarget.style.backgroundColor = 'var(--surface-2)';
-                                        e.currentTarget.style.borderColor = 'var(--accent-gold-border)';
-                                        e.currentTarget.style.boxShadow = '0 0 10px rgba(212, 175, 55, 0.1)';
-                                    }}
-                                >
-                                    Browse Talent
-                                </Link>
-                                <Link
-                                    href="/join"
-                                    className="px-8 py-3 text-sm font-semibold uppercase tracking-wide rounded-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
-                                    style={{
-                                        backgroundColor: 'var(--accent-gold)',
-                                        color: 'var(--button-text-on-gold)',
-                                        border: '1px solid var(--accent-gold)',
-                                        boxShadow: 'var(--glow-gold-subtle)',
-                                    }}
-                                    onMouseEnter={(e) => {
-                                        e.currentTarget.style.backgroundColor = 'var(--accent-gold-hover)';
-                                        e.currentTarget.style.borderColor = 'var(--accent-gold-hover)';
-                                        e.currentTarget.style.boxShadow = 'var(--glow-gold)';
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        e.currentTarget.style.backgroundColor = 'var(--accent-gold)';
-                                        e.currentTarget.style.borderColor = 'var(--accent-gold)';
-                                        e.currentTarget.style.boxShadow = 'var(--glow-gold-subtle)';
-                                    }}
-                                >
-                                    Join Silvia&apos;s List
-                                </Link>
+                            <nav className="flex items-center gap-2">
+                                <NavLink href="/">Browse Talent</NavLink>
                             </nav>
+                            <Link
+                                href="/join"
+                                className="px-8 py-3 text-sm font-semibold uppercase tracking-wide rounded-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
+                                style={{
+                                    backgroundColor: 'var(--accent-gold)',
+                                    color: 'var(--button-text-on-gold)',
+                                    border: '1px solid var(--accent-gold)',
+                                    boxShadow: 'var(--glow-gold-subtle)',
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.backgroundColor = 'var(--accent-gold-hover)';
+                                    e.currentTarget.style.borderColor = 'var(--accent-gold-hover)';
+                                    e.currentTarget.style.boxShadow = 'var(--glow-gold)';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.backgroundColor = 'var(--accent-gold)';
+                                    e.currentTarget.style.borderColor = 'var(--accent-gold)';
+                                    e.currentTarget.style.boxShadow = 'var(--glow-gold-subtle)';
+                                }}
+                            >
+                                Join Silvia&apos;s List
+                            </Link>
                         </div>
 
                         <HamburgerButton isOpen={isMobileMenuOpen} onClick={toggleMobileMenu} />
@@ -227,8 +205,7 @@ export default function Header() {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             transition={{ duration: 0.2 }}
-                            className="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm"
-                            style={{ zIndex: 10000 }}
+                            className="lg:hidden fixed inset-0 bg-black/30 z-[999]"
                             onClick={closeMobileMenu}
                         />
 
@@ -237,15 +214,13 @@ export default function Header() {
                             initial="hidden"
                             animate="visible"
                             exit="exit"
-                            className="lg:hidden fixed top-0 right-0 h-full w-full sm:w-80"
+                            className="lg:hidden fixed top-0 right-0 h-full w-full bg-[var(--surface-1)] z-[1000]"
                             style={{
-                                backgroundColor: 'var(--surface-1)',
                                 borderLeft: '1px solid var(--light-400)',
-                                zIndex: 10001,
                             }}
                         >
                             <div className="h-full flex flex-col">
-                                <div className="h-16 sm:h-20 flex items-center justify-end px-4">
+                                <div className="h-14 sm:h-20 flex items-center justify-end px-4">
                                     <HamburgerButton isOpen={isMobileMenuOpen} onClick={toggleMobileMenu} />
                                 </div>
 
@@ -255,21 +230,9 @@ export default function Header() {
                                     animate="visible"
                                     className="flex-1 flex flex-col items-center justify-center gap-6 px-4 w-full max-w-xs mx-auto"
                                 >
-                                    <motion.div variants={mobileLinkVariants} className="w-full">
-                                        <Link
-                                            href="/"
-                                            className="block w-full px-8 py-3 text-lg font-semibold uppercase tracking-wide rounded-lg transition-all duration-200 text-center"
-                                            style={{
-                                                backgroundColor: 'var(--surface-2)',
-                                                color: 'var(--accent-gold)',
-                                                border: '1px solid var(--accent-gold-border)',
-                                                boxShadow: '0 0 10px rgba(212, 175, 55, 0.1)',
-                                            }}
-                                            onClick={closeMobileMenu}
-                                        >
-                                            Browse Talent
-                                        </Link>
-                                    </motion.div>
+                                    <NavLink href="/" isMobile onClick={closeMobileMenu}>
+                                        Browse Talent
+                                    </NavLink>
                                     <motion.hr
                                         variants={mobileLinkVariants}
                                         className="border-[var(--light-400)] my-2 w-16"
