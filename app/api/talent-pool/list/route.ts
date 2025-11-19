@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase/admin';
-import { SeniorityLevel } from '@/types/talentPool';
+import {
+  AnonymizedTalentProfile,
+  SeniorityLevel
+} from '@/types/talentPool';
 import {
   getSeniorityLevel,
   getSeniorityYearsRange,
@@ -11,19 +14,16 @@ export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
 
-    // Parse query parameters
+    // Parse params
     const seniority = searchParams.get('seniority') as SeniorityLevel | 'all' | null;
     const cantonsParam = searchParams.get('cantons');
     const salaryMax = searchParams.get('salary_max');
     const sortBy = searchParams.get('sort_by') || 'created_at';
     const limit = Math.min(parseInt(searchParams.get('limit') || '100', 10), 100);
 
-    // Build Supabase query
-    let query = supabaseAdmin
-      .from('user_profiles')
-      .select('*');
+    let query = supabaseAdmin.from('user_profiles').select('*');
 
-    // Apply cantons filter
+    // 1. Filter by Cantons
     if (cantonsParam) {
       const cantons = cantonsParam.split(',').map(c => c.trim()).filter(Boolean);
       if (cantons.length > 0) {
@@ -31,15 +31,17 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    // Apply salary filter
+    // 2. Filter by Salary (FIXED LOGIC)
+    // "Show candidates whose MAXIMUM expectation is within my budget"
     if (salaryMax) {
       const max = parseInt(salaryMax, 10);
       if (!isNaN(max)) {
-        query = query.lte('salary_min', max);
+        // Changed from 'salary_min' to 'salary_max'
+        query = query.lte('salary_max', max);
       }
     }
 
-    // Apply Sorting
+    // 3. Sort
     if (sortBy === 'experience') {
       query = query.order('years_of_experience', { ascending: false });
     } else {
@@ -52,7 +54,7 @@ export async function GET(req: NextRequest) {
 
     if (error) throw error;
 
-    // Apply Seniority Filter
+    // 4. Filter by Seniority (In Memory)
     let filteredData = data || [];
     if (seniority && seniority !== 'all') {
       const yearsRange = getSeniorityYearsRange(seniority);
@@ -66,18 +68,26 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    // Transform Data
-    // We implicitly return an object that has 'skills', even though AnonymizedTalentProfile doesn't specify it.
+    // 5. Transform Response
     const candidates = filteredData.map((profile) => {
       const years = parseFloat(profile.years_of_experience || '0');
 
-      // Extract Top Skills from JSONB 'technical_skills'
+      // Extract Skills
       let topSkills: string[] = [];
       if (Array.isArray(profile.technical_skills)) {
         topSkills = profile.technical_skills
           .slice(0, 5)
-          .map((s: { name?: string } | string) => (typeof s === 'string' ? s : s.name || ''))
+          .map((s: any) => s.name || s)
           .filter(Boolean);
+      }
+
+      // Format Availability
+      let availabilityStr = 'Negotiable';
+      if (profile.notice_period_months !== undefined && profile.notice_period_months !== null) {
+        const months = parseInt(String(profile.notice_period_months));
+        if (!isNaN(months)) {
+          availabilityStr = months === 0 ? 'Immediate' : `${months} Month${months > 1 ? 's' : ''} Notice`;
+        }
       }
 
       return {
@@ -90,8 +100,8 @@ export async function GET(req: NextRequest) {
           max: profile.salary_max || null,
         },
         seniority_level: getSeniorityLevel(years),
-        // We inject this property for the frontend to use
-        skills: topSkills
+        skills: topSkills,
+        availability: availabilityStr
       };
     });
 
@@ -101,10 +111,7 @@ export async function GET(req: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Talent pool list error:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to fetch talent pool' },
-      { status: 500 }
-    );
+    console.error('API Error:', error);
+    return NextResponse.json({ success: false, error: 'Failed to fetch' }, { status: 500 });
   }
 }

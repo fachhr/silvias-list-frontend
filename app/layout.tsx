@@ -6,6 +6,10 @@ import "./globals.css";
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
+  display: 'swap', // Ensure font displays immediately with fallback
+  preload: true,   // Preload for faster initial render
+  fallback: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Arial', 'sans-serif'],
+  adjustFontFallback: true, // Match fallback font metrics to Inter
 });
 
 export const metadata: Metadata = {

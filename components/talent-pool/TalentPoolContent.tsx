@@ -3,8 +3,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import {
-  Search, MapPin, Briefcase, ChevronDown, Mail, ArrowRight,
-  DollarSign, Clock, Menu, X, Loader2
+  Search, MapPin, Briefcase, ChevronDown, Mail,
+  ArrowRight, DollarSign, Clock, Menu, X, Loader2
 } from 'lucide-react';
 import { Badge, Button } from '@/components/ui/DesignSystem';
 import { AnonymizedTalentProfile, TalentPoolListResponse } from '@/types/talentPool';
@@ -13,13 +13,11 @@ import {
   formatYearsExperience,
 } from '@/lib/utils/talentPoolHelpers';
 
-// --- TYPES ---
 interface ExtendedProfile extends AnonymizedTalentProfile {
   skills?: string[];
   availability?: string;
 }
 
-// --- MAPPINGS (For Display) ---
 const SENIORITY_MAP: Record<string, string> = {
   junior: 'Junior',
   mid: 'Mid-level',
@@ -28,21 +26,11 @@ const SENIORITY_MAP: Record<string, string> = {
 };
 
 const CANTON_NAMES: Record<string, string> = {
-  'ZH': 'Zürich',
-  'GE': 'Geneva',
-  'BS': 'Basel',
-  'BL': 'Basel', // Grouping BS/BL as Basel for cleaner UI usually, or keep distinct
-  'VD': 'Vaud',
-  'BE': 'Bern',
-  'ZG': 'Zug',
-  'LU': 'Lucerne',
-  'AG': 'Aargau',
-  'SG': 'St. Gallen',
-  'TI': 'Ticino',
-  'VS': 'Valais'
+  'ZH': 'Zürich', 'GE': 'Geneva', 'BS': 'Basel', 'BL': 'Basel',
+  'VD': 'Vaud', 'BE': 'Bern', 'ZG': 'Zug', 'LU': 'Lucerne',
+  'AG': 'Aargau', 'SG': 'St. Gallen', 'TI': 'Ticino', 'VS': 'Valais'
 };
 
-// Filter Options for Sidebar (Codes + Display Names)
 const CANTON_FILTERS = [
   { code: 'ZH', name: 'Zürich' },
   { code: 'GE', name: 'Geneva' },
@@ -60,7 +48,7 @@ const SENIORITY_FILTERS = [
 ];
 
 export default function TalentPoolContent() {
-  // --- STATE ---
+  // State
   const [candidates, setCandidates] = useState<ExtendedProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -70,17 +58,16 @@ export default function TalentPoolContent() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCantons, setSelectedCantons] = useState<string[]>([]);
   const [selectedSeniority, setSelectedSeniority] = useState<string[]>([]);
-  const [salaryMax, setSalaryMax] = useState<number>(250000);
+  const [salaryMax, setSalaryMax] = useState<number>(300000);
   const [sortBy, setSortBy] = useState<string>('created_at');
 
-  // --- DATA FETCHING ---
+  // Fetch
   useEffect(() => {
     const fetchCandidates = async () => {
       setLoading(true);
       try {
         const params = new URLSearchParams();
 
-        // Map filters
         if (selectedSeniority.length > 0) {
           params.set('seniority', selectedSeniority[selectedSeniority.length - 1]);
         }
@@ -109,11 +96,10 @@ export default function TalentPoolContent() {
     return () => clearTimeout(timer);
   }, [selectedCantons, selectedSeniority, salaryMax, sortBy]);
 
-  // --- SEARCH FILTERING ---
+  // Client Filter
   const filteredCandidates = useMemo(() => {
     if (!searchTerm) return candidates;
     const lowerTerm = searchTerm.toLowerCase();
-
     return candidates.filter(c => {
       const idMatch = c.talent_id.toLowerCase().includes(lowerTerm);
       const skillMatch = c.skills?.some(s => s.toLowerCase().includes(lowerTerm));
@@ -121,35 +107,17 @@ export default function TalentPoolContent() {
     });
   }, [candidates, searchTerm]);
 
-  // --- HELPERS ---
-  const toggleCanton = (code: string) => {
-    setSelectedCantons(prev =>
-      prev.includes(code) ? prev.filter(c => c !== code) : [...prev, code]
-    );
-  };
+  // Handlers
+  const toggleCanton = (code: string) => setSelectedCantons(prev => prev.includes(code) ? prev.filter(c => c !== code) : [...prev, code]);
+  const toggleSeniority = (value: string) => setSelectedSeniority(prev => prev.includes(value) ? prev.filter(s => s !== value) : [...prev, value]);
+  const formatCurrency = (val: number | null) => !val ? 'Neg.' : new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF', maximumSignificantDigits: 3 }).format(val);
 
-  const toggleSeniority = (value: string) => {
-    setSelectedSeniority(prev =>
-      prev.includes(value) ? prev.filter(s => s !== value) : [...prev, value]
-    );
-  };
-
-  const formatCurrency = (val: number | null) => {
-    if (!val) return 'Neg.';
-    return new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF', maximumSignificantDigits: 3 }).format(val);
-  };
-
-  // Format Canton List for Card (Code -> Full Name)
   const formatCantonList = (codes: string[]) => {
     if (!codes || codes.length === 0) return 'Switzerland';
-    return codes
-      .slice(0, 3) // Limit to 3
-      .map(code => CANTON_NAMES[code] || code) // Map to name or keep code if missing
-      .join(', ');
+    return codes.slice(0, 3).map(code => CANTON_NAMES[code] || code).join(', ');
   };
 
   const getCandidateTitle = (c: ExtendedProfile) => {
-    // Use mapped seniority (e.g. "Senior")
     const level = SENIORITY_MAP[c.seniority_level] || 'Mid-level';
     const skill = c.skills && c.skills[0] ? c.skills[0] : 'Software';
     return `${level} ${skill} Engineer`;
@@ -158,7 +126,7 @@ export default function TalentPoolContent() {
   return (
     <div className="min-h-screen bg-white font-sans text-slate-900">
 
-      {/* NAVIGATION */}
+      {/* NAV */}
       <nav className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
@@ -170,7 +138,9 @@ export default function TalentPoolContent() {
             </div>
 
             <div className="hidden md:flex items-center gap-8">
-              <a href="#" className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">For Companies</a>
+              <button type="button" className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors opacity-70 cursor-not-allowed">
+                For Companies
+              </button>
               <Link href="/join" className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">For Talent</Link>
               <div className="h-4 w-px bg-slate-200"></div>
               <Link href="/join">
@@ -186,7 +156,7 @@ export default function TalentPoolContent() {
 
         {isMobileMenuOpen && (
           <div className="md:hidden bg-white border-b border-slate-200 p-4 space-y-4 shadow-lg">
-            <a href="#" className="block text-sm font-medium text-slate-600 hover:text-slate-900">For Companies</a>
+            <button className="block text-sm font-medium text-slate-600 hover:text-slate-900 w-full text-left">For Companies</button>
             <Link href="/join" className="block text-sm font-medium text-slate-600 hover:text-slate-900">For Talent</Link>
             <Link href="/join" className="block w-full"><Button className="w-full">Join the List</Button></Link>
           </div>
@@ -225,6 +195,7 @@ export default function TalentPoolContent() {
               <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
             </div>
 
+            {/* Seniority */}
             <div>
               <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-2">
                 <Briefcase className="w-3.5 h-3.5 text-slate-400" /> Seniority
@@ -246,19 +217,19 @@ export default function TalentPoolContent() {
               </div>
             </div>
 
+            {/* Canton */}
             <div>
               <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-2">
                 <MapPin className="w-3.5 h-3.5 text-slate-400" /> Preferred Location
               </h3>
               <div className="flex flex-wrap gap-2">
-                {/* Using CANTON_FILTERS to show names like "Zürich" instead of "ZH" */}
                 {CANTON_FILTERS.map((canton) => (
                   <button
                     key={canton.code}
                     onClick={() => toggleCanton(canton.code)}
                     className={`px-3 py-1.5 text-xs font-medium rounded border transition-all duration-200 ${selectedCantons.includes(canton.code)
-                      ? 'bg-slate-900 border-slate-900 text-white shadow-md'
-                      : 'bg-white border-slate-200 text-slate-600 hover:border-slate-400 hover:text-slate-900'
+                        ? 'bg-slate-900 border-slate-900 text-white shadow-md'
+                        : 'bg-white border-slate-200 text-slate-600 hover:border-slate-400 hover:text-slate-900'
                       }`}
                   >
                     {canton.name}
@@ -267,6 +238,7 @@ export default function TalentPoolContent() {
               </div>
             </div>
 
+            {/* Salary Slider */}
             <div>
               <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-2">
                 <DollarSign className="w-3.5 h-3.5 text-slate-400" /> Salary (CHF)
@@ -274,7 +246,7 @@ export default function TalentPoolContent() {
               <div className="px-1">
                 <input
                   type="range"
-                  min="80000"
+                  min="50000"
                   max="300000"
                   step="10000"
                   value={salaryMax}
@@ -282,15 +254,15 @@ export default function TalentPoolContent() {
                   onChange={(e) => setSalaryMax(parseInt(e.target.value))}
                 />
                 <div className="flex justify-between mt-3 text-xs text-slate-500 font-medium font-mono">
-                  <span>80K</span>
-                  <span>{salaryMax / 1000}K</span>
+                  <span>50K</span>
+                  <span>{salaryMax >= 300000 ? '300K+' : `${salaryMax / 1000}K`}</span>
                 </div>
               </div>
             </div>
 
-            {(selectedCantons.length > 0 || selectedSeniority.length > 0 || searchTerm) && (
+            {(selectedCantons.length > 0 || selectedSeniority.length > 0 || searchTerm || salaryMax < 300000) && (
               <button
-                onClick={() => { setSelectedCantons([]); setSelectedSeniority([]); setSearchTerm(''); setSalaryMax(250000); }}
+                onClick={() => { setSelectedCantons([]); setSelectedSeniority([]); setSearchTerm(''); setSalaryMax(300000); }}
                 className="text-xs text-slate-500 hover:text-slate-900 font-medium flex items-center gap-1.5 transition-colors border-b border-transparent hover:border-slate-900 pb-0.5 w-max"
               >
                 <X className="w-3 h-3" /> Clear all filters
@@ -305,19 +277,21 @@ export default function TalentPoolContent() {
                 Candidates <span className="text-slate-400 font-light ml-2 text-lg">{filteredCandidates.length} results</span>
               </h2>
 
-              <div className="flex items-center gap-2 text-sm text-slate-500">
+              <div className="flex items-center gap-2 text-sm text-slate-500 group cursor-pointer hover:text-slate-900 transition-colors relative">
                 <span>Sort by:</span>
-                <div className="relative group">
-                  <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value)}
-                    className="appearance-none bg-transparent pr-6 pl-0 font-medium text-slate-900 focus:outline-none cursor-pointer hover:text-slate-700"
-                  >
-                    <option value="created_at">Newest</option>
-                    <option value="experience">Most Experienced</option>
-                  </select>
-                  <ChevronDown className="w-4 h-4 text-slate-500 absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none" />
-                </div>
+                <span className="font-medium text-slate-900">
+                  {sortBy === 'created_at' ? 'Newest' : 'Most Experienced'}
+                </span>
+                <ChevronDown className="w-4 h-4 group-hover:translate-y-0.5 transition-transform" />
+
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                >
+                  <option value="created_at">Newest</option>
+                  <option value="experience">Most Experienced</option>
+                </select>
               </div>
             </div>
 
@@ -342,12 +316,10 @@ export default function TalentPoolContent() {
                   >
                     <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6">
                       <div className="flex-1 min-w-0">
-                        {/* Header Badges */}
                         <div className="flex flex-wrap items-center gap-3 mb-3">
                           <span className="font-mono text-[10px] uppercase tracking-wider text-slate-400 bg-slate-50 border border-slate-100 px-1.5 py-0.5 rounded">
                             {candidate.talent_id}
                           </span>
-                          {/* Mapped Seniority (e.g. "Senior" instead of "senior") */}
                           <Badge style={candidate.seniority_level === 'senior' ? 'dark' : 'default'}>
                             {SENIORITY_MAP[candidate.seniority_level] || candidate.seniority_level}
                           </Badge>
@@ -360,7 +332,6 @@ export default function TalentPoolContent() {
                           {getCandidateTitle(candidate)}
                         </h3>
 
-                        {/* Meta Info */}
                         <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-slate-600 mt-4 mb-5">
                           <div className="flex items-center gap-2">
                             <Briefcase className="w-4 h-4 text-slate-400" />
@@ -368,7 +339,6 @@ export default function TalentPoolContent() {
                           </div>
                           <div className="flex items-center gap-2">
                             <MapPin className="w-4 h-4 text-slate-400" />
-                            {/* Mapped Canton Names */}
                             {formatCantonList(candidate.preferred_cantons)}
                           </div>
                           <div className="flex items-center gap-2">
@@ -379,7 +349,6 @@ export default function TalentPoolContent() {
                           </div>
                         </div>
 
-                        {/* Skills Tags */}
                         <div className="flex flex-wrap gap-2">
                           {candidate.skills && candidate.skills.length > 0 ? (
                             candidate.skills.map(skill => (
@@ -393,7 +362,6 @@ export default function TalentPoolContent() {
                         </div>
                       </div>
 
-                      {/* Availability & Action */}
                       <div className="flex flex-col sm:items-end gap-4 pt-4 sm:pt-0 border-t sm:border-t-0 border-slate-100 min-w-[140px]">
                         <div className="text-right hidden sm:block">
                           <p className="text-[10px] uppercase tracking-wider text-slate-400 mb-1 font-semibold">Availability</p>
@@ -417,30 +385,7 @@ export default function TalentPoolContent() {
         </div>
       </div>
 
-      {/* FOOTER & MODAL (Unchanged) */}
-      <footer className="bg-white border-t border-slate-200 mt-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-slate-900 rounded flex items-center justify-center">
-                <span className="text-white font-bold text-sm font-serif">S</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="font-bold text-slate-900 text-sm leading-none">Silvia&apos;s List</span>
-                <span className="text-[10px] text-slate-400 mt-0.5">Tech Recruitment Switzerland</span>
-              </div>
-            </div>
-            <div className="text-sm text-slate-500 flex gap-8">
-              <Link href="/terms" className="hover:text-slate-900 transition-colors">Terms</Link>
-              <a href="mailto:contact@silviaslist.com" className="hover:text-slate-900 transition-colors">Contact</a>
-            </div>
-            <div className="text-xs text-slate-400 font-mono">
-              © {new Date().getFullYear()} Silvia&apos;s List.
-            </div>
-          </div>
-        </div>
-      </footer>
-
+      {/* MODAL */}
       {showContactModal && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
           <div className="bg-white rounded-xl shadow-2xl shadow-slate-200 max-w-md w-full p-8 relative">
