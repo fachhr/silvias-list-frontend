@@ -141,14 +141,20 @@ export default function Header() {
     return (
         <>
             <header
-                className={`fixed top-0 left-0 w-full z-[1000] transition-all duration-300 ${hasScrolled ? 'shadow-md' : ''
+                className={`fixed top-0 left-0 w-full z-[1000] transition-all duration-300 ${hasScrolled ? 'shadow-lg backdrop-blur-md' : 'backdrop-blur-sm'
                     }`}
                 style={{
-                    backgroundColor: isHomepage && !hasScrolled ? 'transparent' : 'var(--surface-1)',
-                    borderBottom: hasScrolled ? '1px solid var(--light-400)' : '1px solid transparent',
+                    backgroundColor: isHomepage && !hasScrolled
+                        ? 'rgba(13, 27, 46, 0.6)'
+                        : hasScrolled
+                            ? 'rgba(13, 27, 46, 0.95)'
+                            : 'var(--surface-1)',
+                    borderBottom: hasScrolled
+                        ? '1px solid rgba(212, 175, 55, 0.2)'
+                        : '1px solid transparent',
                 }}
             >
-                <div className="h-14 sm:h-20 flex items-center">
+                <div className="h-16 sm:h-24 flex items-center">
                     <div className="container mx-auto flex items-center justify-between px-6 sm:px-8 lg:px-12">
 
                         <Link
@@ -157,7 +163,7 @@ export default function Header() {
                             onClick={closeMobileMenu}
                         >
                             <span
-                                className="text-3xl sm:text-4xl font-heading font-bold tracking-tight"
+                                className="text-2xl sm:text-3xl font-heading font-bold tracking-tight"
                                 style={{ color: 'var(--accent-gold)' }}
                             >
                                 Silvia&apos;s List
@@ -170,11 +176,11 @@ export default function Header() {
                             </nav>
                             <Link
                                 href="/join"
-                                className="px-8 py-3 text-sm font-semibold uppercase tracking-wide rounded-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
+                                className="px-6 py-2.5 text-sm font-semibold uppercase tracking-wide rounded-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] border"
                                 style={{
                                     backgroundColor: 'var(--accent-gold)',
                                     color: 'var(--button-text-on-gold)',
-                                    border: '1px solid var(--accent-gold)',
+                                    borderColor: 'var(--accent-gold)',
                                     boxShadow: 'var(--glow-gold-subtle)',
                                 }}
                                 onMouseEnter={(e) => {
@@ -220,7 +226,7 @@ export default function Header() {
                             }}
                         >
                             <div className="h-full flex flex-col">
-                                <div className="h-14 sm:h-20 flex items-center justify-end px-4">
+                                <div className="h-16 sm:h-24 flex items-center justify-end px-4">
                                     <HamburgerButton isOpen={isMobileMenuOpen} onClick={toggleMobileMenu} />
                                 </div>
 
