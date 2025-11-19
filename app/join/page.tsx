@@ -1,19 +1,26 @@
 import Link from 'next/link';
 import { TalentPoolForm } from '@/components/TalentPoolForm';
+import { ArrowLeft } from 'lucide-react'; // Make sure to install lucide-react
 
 export default function JoinPage() {
   return (
-    <div className="min-h-screen pt-28 sm:pt-32 py-8 px-4 sm:px-6 lg:px-8" style={{
-      background: 'var(--background-gradient)',
-    }}>
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-white py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-3xl mx-auto">
+        {/* Simple Navigation */}
+        <div className="mb-8">
+          <Link href="/" className="inline-flex items-center text-sm text-slate-500 hover:text-slate-900 transition-colors">
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Candidates
+          </Link>
+        </div>
+
         {/* Header */}
-        <header className="text-center mb-12">
-          <h1 className="text-4xl sm:text-5xl font-bold text-[var(--text-primary)] mb-4">
-            Join Silvia's List
+        <header className="mb-10">
+          <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4 tracking-tight">
+            Join the List
           </h1>
-          <p className="text-lg sm:text-xl text-[var(--text-secondary)] max-w-2xl mx-auto">
-            Connect with top opportunities in Switzerland. Upload your CV and join our exclusive talent pool.
+          <p className="text-lg text-slate-600">
+            Create your profile. We'll anonymize your data and showcase your skills to top Swiss companies.
           </p>
         </header>
 
@@ -23,12 +30,11 @@ export default function JoinPage() {
         </main>
 
         {/* Footer */}
-        <footer className="mt-16 text-center text-sm text-[var(--text-tertiary)]">
+        <footer className="mt-16 text-center text-sm text-slate-400 border-t border-slate-100 pt-8">
           <p>&copy; {new Date().getFullYear()} Silvia's List. All rights reserved.</p>
-          <p className="mt-2">
-            <Link href="/terms" className="text-[var(--accent-gold)] hover:text-[var(--accent-gold-hover)] underline">Terms & Conditions</Link>
-            {' • '}
-            <a href="mailto:contact@silviaslist.com" className="text-[var(--accent-gold)] hover:text-[var(--accent-gold-hover)] underline">Contact</a>
+          <p className="mt-2 space-x-4">
+            <Link href="/terms" className="hover:text-slate-900 underline decoration-slate-200">Terms & Conditions</Link>
+            <a href="mailto:contact@silviaslist.com" className="hover:text-slate-900 underline decoration-slate-200">Contact</a>
           </p>
         </footer>
       </div>

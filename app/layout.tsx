@@ -1,27 +1,13 @@
 import type { Metadata } from "next";
-import localFont from 'next/font/local';
+import { Inter } from 'next/font/google'; // Use Google Fonts instead of local files
 import "./globals.css";
-import Header from "@/components/layout/Header";
 
-const gilroy = localFont({
-  src: [
-    {
-      path: './fonts/Gilroy-Light.otf',
-      weight: '300',
-      style: 'normal',
-    },
-    {
-      path: './fonts/Gilroy-ExtraBold.otf',
-      weight: '800',
-      style: 'normal',
-    },
-  ],
-  variable: '--font-gilroy',
-});
+// Initialize Inter font
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: "Silvia's List - Discover Top Swiss Tech Talent",
-  description: "Browse exceptional tech talent in Switzerland. Discover pre-screened professionals ready for their next opportunity.",
+  title: "Silvia's List - Top Swiss Tech Talent",
+  description: "Discover pre-screened tech talent in Switzerland.",
 };
 
 export default function RootLayout({
@@ -31,8 +17,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={gilroy.variable} style={{ fontFamily: 'var(--font-gilroy), Arial, sans-serif' }}>
-        <Header />
+      {/* Apply Inter font globally and slate-50 background for a clean base */}
+      <body className={`${inter.className} bg-slate-50 text-slate-900`}>
+        {/* We removed <Header /> because the new page has its own nav */}
         {children}
       </body>
     </html>
