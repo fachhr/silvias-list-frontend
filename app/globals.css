@@ -148,15 +148,55 @@
   /* Layout */
   --container-width: 1200px;
 
-  /* Z-Index Scale */
-  --z-overlay: 10000;
-  --z-modal: 10001;
-  --z-nav: 1000;
-  --z-fixed: 900;
-  --z-dropdown: 800;
-  --z-above: 10;
-  --z-normal: 1;
-  --z-below: -1;
+  /* ========================================================================
+     Z-Index Scale - Semantic Layering System
+     ========================================================================
+
+     USAGE GUIDELINES:
+     - Always use semantic layer names (--z-nav, --z-modal) instead of numbers
+     - Higher values = closer to user (on top)
+     - Maintain strict hierarchy to prevent stacking conflicts
+
+     LAYER HIERARCHY (from bottom to top):
+
+     1. BACKGROUND LAYERS (-1 to 0)
+        Elements that should appear behind normal content flow
+
+     2. CONTENT LAYERS (1 to 10)
+        Regular page content with slight elevation
+
+     3. STRUCTURAL LAYERS (100 to 500)
+        Persistent UI elements (sticky headers, fixed sidebars)
+
+     4. INTERACTIVE OVERLAYS (800 to 1000)
+        Contextual UI that appears on user interaction
+
+     5. BLOCKING OVERLAYS (10000+)
+        Full-page overlays that block interaction with page content
+
+     ======================================================================== */
+
+  /* Background & Below Content */
+  --z-below: -1;              /* Elements behind normal flow (decorative backgrounds) */
+
+  /* Normal Content Flow */
+  --z-normal: 1;              /* Default elevated elements (cards, panels) */
+  --z-above: 10;              /* Slightly elevated content (featured items, badges) */
+
+  /* Page Structure - Persistent Elements */
+  --z-sticky: 100;            /* Sticky table headers, filter bars */
+  --z-fixed: 500;             /* Fixed page elements (side panels, FABs) */
+
+  /* Interactive Overlays - Contextual UI */
+  --z-dropdown: 800;          /* Dropdown menus, select menus, popovers */
+  --z-tooltip: 900;           /* Tooltips, hover cards, info bubbles */
+  --z-nav: 1000;              /* Site navigation header (always accessible) */
+
+  /* Blocking Overlays - Full Page Interactions */
+  --z-overlay: 10000;         /* Modal backdrops, drawer overlays (dims content) */
+  --z-modal: 10001;           /* Modal dialogs, drawers, lightboxes (main content) */
+  --z-toast: 10002;           /* Toast notifications (non-blocking alerts) */
+  --z-loading: 10003;         /* Full-page loading overlays (highest priority) */
 
   /* Semantic Colors - Adapted for dark burgundy background */
   --error-color: #ff6b6b;

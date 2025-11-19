@@ -93,7 +93,7 @@ const HamburgerButton = ({ isOpen, onClick }: {
     <button
         onClick={onClick}
         aria-label={isOpen ? "Close menu" : "Open menu"}
-        className="relative z-50 p-2 -mr-2 lg:hidden"
+        className="relative z-nav p-2 -mr-2 lg:hidden"
     >
         <div className="space-y-1.5">
             <span className={`block w-6 h-0.5 bg-[var(--text-primary)] rounded-full transition-all duration-300 ${isOpen ? "transform translate-y-2 rotate-45" : ""
@@ -146,7 +146,7 @@ export default function Header() {
                 style={{
                     backgroundColor: isHomepage && !hasScrolled ? 'transparent' : 'var(--surface-1)',
                     borderBottom: hasScrolled ? '1px solid var(--light-400)' : '1px solid transparent',
-                    zIndex: 9999,
+                    zIndex: 'var(--z-nav)',
                 }}
             >
                 <div className="h-20 sm:h-24 flex items-center">
@@ -227,7 +227,8 @@ export default function Header() {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             transition={{ duration: 0.2 }}
-                            className="lg:hidden fixed inset-0 bg-black/50 z-overlay backdrop-blur-sm"
+                            className="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm"
+                            style={{ zIndex: 10000 }}
                             onClick={closeMobileMenu}
                         />
 
@@ -236,10 +237,11 @@ export default function Header() {
                             initial="hidden"
                             animate="visible"
                             exit="exit"
-                            className="lg:hidden fixed top-0 right-0 h-full w-full sm:w-80 z-modal"
+                            className="lg:hidden fixed top-0 right-0 h-full w-full sm:w-80"
                             style={{
                                 backgroundColor: 'var(--surface-1)',
                                 borderLeft: '1px solid var(--light-400)',
+                                zIndex: 10001,
                             }}
                         >
                             <div className="h-full flex flex-col">

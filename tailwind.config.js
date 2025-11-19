@@ -80,14 +80,25 @@ module.exports = {
         'form-max': '780px',
       },
       zIndex: {
+        // Background & Content Layers
+        'below': 'var(--z-below)',
+        'normal': 'var(--z-normal)',
+        'above': 'var(--z-above)',
+
+        // Page Structure - Persistent Elements
+        'sticky': 'var(--z-sticky)',
+        'fixed': 'var(--z-fixed)',
+
+        // Interactive Overlays - Contextual UI
+        'dropdown': 'var(--z-dropdown)',
+        'tooltip': 'var(--z-tooltip)',
+        'nav': 'var(--z-nav)',
+
+        // Blocking Overlays - Full Page Interactions
         'overlay': 'var(--z-overlay)',
         'modal': 'var(--z-modal)',
-        'nav': 'var(--z-nav)',
-        'fixed': 'var(--z-fixed)',
-        'dropdown': 'var(--z-dropdown)',
-        'above': 'var(--z-above)',
-        'normal': 'var(--z-normal)',
-        'below': 'var(--z-below)',
+        'toast': 'var(--z-toast)',
+        'loading': 'var(--z-loading)',
       },
       keyframes: {
         fadeInUp: {
