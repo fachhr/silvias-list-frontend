@@ -1,5 +1,22 @@
 import type { Metadata } from "next";
+import localFont from 'next/font/local';
 import "./globals.css";
+
+const gilroy = localFont({
+  src: [
+    {
+      path: './fonts/Gilroy-Light.otf',
+      weight: '300',
+      style: 'normal',
+    },
+    {
+      path: './fonts/Gilroy-ExtraBold.otf',
+      weight: '800',
+      style: 'normal',
+    },
+  ],
+  variable: '--font-gilroy',
+});
 
 export const metadata: Metadata = {
   title: "Silvia's List - Discover Top Swiss Tech Talent",
@@ -13,7 +30,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body className={`${gilroy.variable} font-sans`}>
         {children}
       </body>
     </html>

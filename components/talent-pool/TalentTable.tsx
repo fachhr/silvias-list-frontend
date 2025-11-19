@@ -139,25 +139,25 @@ export default function TalentTable({
                 <tr
                   key={`skeleton-${index}`}
                   style={{
-                    borderBottom: index < 4 ? '1px solid var(--light-400)' : 'none'
+                    borderBottom: '1px solid var(--light-400)'
                   }}
                 >
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-4 whitespace-nowrap">
                     <div className="h-5 w-16 rounded animate-pulse" style={{ backgroundColor: 'var(--surface-2)' }} />
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-4 whitespace-nowrap">
                     <div className="h-5 w-24 rounded animate-pulse" style={{ backgroundColor: 'var(--surface-2)' }} />
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex flex-col gap-1">
                       <div className="h-5 w-20 rounded animate-pulse" style={{ backgroundColor: 'var(--surface-2)' }} />
-                      <div className="h-5 w-16 rounded animate-pulse" style={{ backgroundColor: 'var(--surface-2)' }} />
+                      <div className="h-[22px] w-16 rounded animate-pulse" style={{ backgroundColor: 'var(--surface-2)' }} />
                     </div>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-4 whitespace-nowrap">
                     <div className="h-5 w-32 rounded animate-pulse" style={{ backgroundColor: 'var(--surface-2)' }} />
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-4 whitespace-nowrap">
                     <div className="h-5 w-28 rounded animate-pulse" style={{ backgroundColor: 'var(--surface-2)' }} />
                   </td>
                 </tr>
@@ -180,17 +180,17 @@ export default function TalentTable({
                     e.currentTarget.style.transform = 'scale(1)';
                   }}
                 >
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-4 whitespace-nowrap">
                     <span className="font-bold text-sm" style={{ color: 'var(--accent-gold)' }}>
                       {candidate.talent_id}
                     </span>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-4 whitespace-nowrap">
                     <span className="text-sm" style={{ color: 'var(--text-primary)' }}>
                       {formatEntryDate(candidate.entry_date)}
                     </span>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex flex-col gap-1">
                       <span className="text-sm" style={{ color: 'var(--text-primary)' }}>
                         {formatYearsExperience(candidate.years_of_experience)}
@@ -208,12 +208,12 @@ export default function TalentTable({
                       </span>
                     </div>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-4 whitespace-nowrap truncate max-w-[200px]">
                     <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                       {formatCantons(candidate.preferred_cantons, 3)}
                     </span>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-4 whitespace-nowrap">
                     <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
                       {formatSalary(candidate.salary_range.min, candidate.salary_range.max)}
                     </span>
