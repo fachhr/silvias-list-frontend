@@ -102,7 +102,9 @@ const JoinForm: React.FC = () => {
                 contact_first_name: formData.contact_first_name,
                 contact_last_name: formData.contact_last_name,
                 email: formData.email,
-                linkedinUrl: formData.linkedinUrl || undefined,
+                linkedinUrl: (formData.linkedinUrl && !formData.linkedinUrl.match(/^https?:\/\//))
+                    ? `https://${formData.linkedinUrl}`
+                    : (formData.linkedinUrl || undefined),
                 country_code: formData.country_code,
                 phoneNumber: formData.phoneNumber,
                 years_of_experience: parseInt(formData.years_of_experience),
@@ -265,10 +267,12 @@ const JoinForm: React.FC = () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <Input
                                 label="First Name" id="contact_first_name" required
+                                placeholder="Sarah"
                                 value={formData.contact_first_name} onChange={e => setFormData({ ...formData, contact_first_name: e.target.value })}
                             />
                             <Input
                                 label="Last Name" id="contact_last_name" required
+                                placeholder="Miller"
                                 value={formData.contact_last_name} onChange={e => setFormData({ ...formData, contact_last_name: e.target.value })}
                             />
                             <div className="md:col-span-2">
@@ -282,14 +286,19 @@ const JoinForm: React.FC = () => {
                                     LinkedIn URL <span className="text-red-500">*</span>
                                 </label>
                                 <div className="relative">
-                                    <Linkedin className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
                                     <input
                                         type="url"
                                         required
-                                        className={`block w-full rounded-lg border bg-slate-50 p-2.5 pl-10 text-sm text-slate-900 shadow-sm focus:ring-slate-900 transition-colors ${hasLinkedinError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-slate-300 focus:border-slate-900'
+                                        className={`block w-full rounded-lg border bg-slate-50 p-2.5 text-sm text-slate-900 shadow-sm focus:ring-slate-900 transition-colors ${hasLinkedinError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-slate-300 focus:border-slate-900'
                                             }`}
                                         placeholder="linkedin.com/in/..."
-                                        value={formData.linkedinUrl} onChange={e => setFormData({ ...formData, linkedinUrl: e.target.value })}
+                                        value={formData.linkedinUrl}
+                                        onChange={e => setFormData({ ...formData, linkedinUrl: e.target.value })}
+                                        onBlur={() => {
+                                            if (formData.linkedinUrl && !formData.linkedinUrl.match(/^https?:\/\//)) {
+                                                setFormData({ ...formData, linkedinUrl: `https://${formData.linkedinUrl}` });
+                                            }
+                                        }}
                                     />
                                 </div>
                                 {hasLinkedinError && (
@@ -325,11 +334,10 @@ const JoinForm: React.FC = () => {
                                         </select>
                                     </div>
                                     <div className="col-span-2 relative">
-                                        <Smartphone className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
                                         <input
                                             type="tel"
                                             required
-                                            className="block w-full rounded-lg border-slate-300 bg-slate-50 border p-2.5 pl-10 text-sm text-slate-900 shadow-sm focus:border-slate-900 focus:ring-slate-900"
+                                            className="block w-full rounded-lg border-slate-300 bg-slate-50 border p-2.5 text-sm text-slate-900 shadow-sm focus:border-slate-900 focus:ring-slate-900"
                                             placeholder="79 000 00 00"
                                             value={formData.phoneNumber} onChange={e => setFormData({ ...formData, phoneNumber: e.target.value })}
                                         />
