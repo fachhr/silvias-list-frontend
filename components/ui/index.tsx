@@ -91,7 +91,7 @@ export const Input: React.FC<InputProps> = ({ label, id, type = "text", placehol
                 required={required}
                 min={min}
                 step={step}
-                className="block w-full rounded-lg border-slate-300 bg-slate-50 border p-2.5 text-sm text-slate-900 shadow-sm focus:border-slate-900 focus:ring-slate-900 transition-colors"
+                className="block w-full rounded-lg border-slate-300 bg-slate-50 border p-2.5 text-sm text-slate-900 focus:border-slate-900 focus:ring-slate-900 transition-colors"
                 placeholder={placeholder}
             />
         </div>
@@ -113,7 +113,7 @@ export const TextArea: React.FC<TextAreaProps> = ({ label, id, placeholder, requ
             onChange={onChange}
             rows={rows}
             required={required}
-            className="block w-full rounded-lg border-slate-300 bg-slate-50 border p-2.5 text-sm text-slate-900 shadow-sm focus:border-slate-900 focus:ring-slate-900 transition-colors resize-none"
+            className="block w-full rounded-lg border-slate-300 bg-slate-50 border p-2.5 text-sm text-slate-900 focus:border-slate-900 focus:ring-slate-900 transition-colors resize-none"
             placeholder={placeholder}
         />
     </div>

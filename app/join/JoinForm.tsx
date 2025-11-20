@@ -478,7 +478,7 @@ const JoinForm: React.FC = () => {
                                         {formData.desired_locations.length}/5 selected
                                     </p>
                                 ) : locationsTouched ? (
-                                    <div className="flex items-center gap-2 mt-2 text-amber-600 text-xs animate-in slide-in-from-top-2">
+                                    <div className="flex items-center gap-2 mt-2 text-red-600 text-xs animate-in slide-in-from-top-2">
                                         <AlertCircle className="w-3.5 h-3.5" />
                                         <span className="font-medium">At least one location must be selected.</span>
                                     </div>
