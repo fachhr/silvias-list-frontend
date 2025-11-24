@@ -319,8 +319,7 @@ export default function HomeContent() {
                                         className="w-full h-1 bg-[var(--bg-surface-3)] rounded-lg appearance-none cursor-pointer accent-[var(--blue)]"
                                         onChange={(e) => setSalaryRange([50000, parseInt(e.target.value)])}
                                     />
-                                    <div className="flex justify-between mt-3 text-xs text-[var(--text-tertiary)] font-medium font-mono">
-                                        <span>50K</span>
+                                    <div className="flex justify-center mt-3 text-xs text-[var(--text-tertiary)] font-medium font-mono">
                                         <span>{salaryRange[1] / 1000}K{salaryRange[1] === 300000 ? '+' : ''}</span>
                                     </div>
                                 </div>
