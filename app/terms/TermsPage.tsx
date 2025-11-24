@@ -36,13 +36,13 @@ const TermsPage: React.FC = () => {
                 <div className="glass-panel rounded-2xl p-8 md:p-12">
                     <div className="space-y-8 text-[var(--text-secondary)] leading-relaxed">
                         <p className="text-lg font-medium text-[var(--text-primary)]">
-                            Welcome to Silvia&apos;s List. Please read these terms carefully before using our platform to find talent or opportunities.
+                            Welcome to Silvia&apos;s List. Please read these terms carefully before using our platform to find oil & gas talent or opportunities.
                         </p>
 
                         <section>
                             <h2 className="text-xl font-bold text-[var(--text-primary)] mb-3">1. The Platform</h2>
                             <p>
-                                Silvia&apos;s List connects top tech talent (&ldquo;Candidates&rdquo;) with companies (&ldquo;Employers&rdquo;) in Switzerland. We facilitate introductions but are not a party to any employment contracts formed between Users. By using our service, you acknowledge that we act solely as a matching platform.
+                                Silvia&apos;s List connects top oil & gas talent (&ldquo;Candidates&rdquo;) with companies (&ldquo;Employers&rdquo;) in Switzerland. We facilitate introductions but are not a party to any employment contracts formed between Users. By using our service, you acknowledge that we act solely as a matching platform.
                             </p>
                         </section>
 

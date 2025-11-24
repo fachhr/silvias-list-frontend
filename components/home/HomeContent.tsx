@@ -185,17 +185,17 @@ export default function HomeContent() {
                 </div>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-center relative z-10">
                     <div className="inline-block mb-6">
-                        <Badge style="gold">Switzerland&apos;s #1 Tech Talent Pool</Badge>
+                        <Badge style="gold">Switzerland&apos;s Leading Oil & Gas Talent Pool</Badge>
                     </div>
                     <h1 className="mt-6 text-4xl sm:text-6xl font-bold text-[var(--text-primary)] tracking-tight leading-tight">
                         Discover exceptional <br className="hidden sm:block" />
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--text-primary)] to-[var(--text-secondary)]">
-                            tech talent
+                            oil & gas talent
                         </span>
                         .
                     </h1>
                     <p className="mt-6 text-lg text-[var(--text-secondary)] max-w-2xl mx-auto font-light leading-relaxed">
-                        Browse pre-screened professionals in Zurich, Geneva, and beyond. <br className="hidden sm:block" />
+                        Browse pre-screened oil & gas professionals across Switzerland. <br className="hidden sm:block" />
                         Connect directly with candidates ready for their next opportunity.
                     </p>
                 </div>

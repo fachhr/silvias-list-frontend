@@ -3,7 +3,7 @@ import JoinForm from './JoinForm';
 
 export const metadata: Metadata = {
   title: 'Join the Talent Pool | Silvia\'s List',
-  description: 'Create your profile and connect with top opportunities in Switzerland.',
+  description: 'Create your profile and connect with top oil & gas opportunities in Switzerland.',
 };
 
 export default function JoinRoute() {

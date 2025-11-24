@@ -157,7 +157,7 @@ const JoinForm: React.FC = () => {
                     </div>
                     <h2 className="text-3xl font-bold text-[var(--text-primary)] mb-4">Application Received</h2>
                     <p className="text-[var(--text-secondary)] mb-8 max-w-md mx-auto text-lg">
-                        We&apos;ve received your profile. Our team will review your anonymized data and match you with top Swiss companies within 48 hours.
+                        We&apos;ve received your profile. Our team will review your anonymized data and match you with leading oil & gas companies within 48 hours.
                     </p>
                     <div className="bg-[var(--bg-surface-2)] rounded-xl p-6 border border-[var(--border-subtle)] max-w-md mx-auto mb-8">
                         <h3 className="font-medium text-[var(--text-primary)] mb-2">What happens next?</h3>
@@ -190,7 +190,7 @@ const JoinForm: React.FC = () => {
                     </div>
                     <div className="text-center">
                         <h1 className="text-4xl sm:text-5xl font-bold text-[var(--text-primary)] tracking-tight">Join Silvia&apos;s List</h1>
-                        <p className="mt-4 text-lg text-[var(--text-secondary)]">Create your profile and connect with top opportunities in Switzerland.</p>
+                        <p className="mt-4 text-lg text-[var(--text-secondary)]">Create your profile and connect with top oil & gas opportunities in Switzerland.</p>
                     </div>
                 </div>
             </div>
