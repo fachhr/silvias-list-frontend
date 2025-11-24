@@ -95,7 +95,9 @@ export default function HomeContent() {
                 selectedSeniority.length === 0 || selectedSeniority.includes(candidate.seniority);
 
             const matchesSalary =
-                candidate.salaryMin >= salaryRange[0] && candidate.salaryMax <= salaryRange[1];
+                salaryRange[1] === 300000
+                    ? candidate.salaryMin >= salaryRange[0]
+                    : candidate.salaryMin >= salaryRange[0] && candidate.salaryMax <= salaryRange[1];
 
             return matchesSearch && matchesCanton && matchesSeniority && matchesSalary;
         });
@@ -294,7 +296,7 @@ export default function HomeContent() {
                                     />
                                     <div className="flex justify-between mt-3 text-xs text-[var(--text-tertiary)] font-medium font-mono">
                                         <span>50K</span>
-                                        <span>{salaryRange[1] / 1000}K+</span>
+                                        <span>{salaryRange[1] / 1000}K{salaryRange[1] === 300000 ? '+' : ''}</span>
                                     </div>
                                 </div>
                             </div>
