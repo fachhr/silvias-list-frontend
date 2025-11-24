@@ -120,3 +120,5 @@ export const TextArea: React.FC<TextAreaProps> = ({ label, id, placeholder, requ
         />
     </div>
 );
+
+export * from './PageHeader';

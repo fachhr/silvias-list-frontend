@@ -10,7 +10,7 @@ const TermsPage: React.FC = () => {
     return (
         <div className="max-w-7xl mx-auto animate-in slide-in-from-bottom-4 duration-500">
             {/* Page Header */}
-            <div className="bg-[var(--bg-root)] border-b border-[var(--border-subtle)] px-4 sm:px-6 lg:px-8 pt-8 pb-12">
+            <div className="px-4 sm:px-6 lg:px-8 pt-8 pb-12">
                 <div className="max-w-3xl mx-auto">
                     {/* Back Button - Top Left */}
                     <div className="mb-8">

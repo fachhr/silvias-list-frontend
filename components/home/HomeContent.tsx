@@ -169,7 +169,7 @@ export default function HomeContent() {
                     </h1>
                     <p className="mt-6 text-lg text-[var(--text-secondary)] max-w-2xl mx-auto font-light leading-relaxed">
                         Browse pre-screened professionals in Zurich, Geneva, and beyond. <br className="hidden sm:block" />
-                        Skip the recruiters and connect directly with candidates ready for their next opportunity.
+                        Connect directly with candidates ready for their next opportunity.
                     </p>
                 </div>
             </div>
@@ -281,7 +281,7 @@ export default function HomeContent() {
                             {/* Salary Filter */}
                             <div>
                                 <h3 className="text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider mb-4 flex items-center gap-2">
-                                    <DollarSign className="w-3.5 h-3.5 text-[var(--text-tertiary)]" /> Salary (CHF)
+                                    <DollarSign className="w-3.5 h-3.5 text-[var(--text-tertiary)]" /> Max Salary (CHF)
                                 </h3>
                                 <div className="px-1">
                                     <input
@@ -356,7 +356,7 @@ export default function HomeContent() {
                                 {filteredCandidates.map((candidate) => (
                                     <div
                                         key={candidate.id}
-                                        className="group glass-panel rounded-xl p-6 hover:border-[var(--gold)] hover:shadow-[0_4px_30px_rgba(212,175,55,0.2)] transition-all duration-300 relative"
+                                        className="group glass-panel rounded-xl p-6 hover:border-[#D4AF37] hover:shadow-[0_4px_30px_rgba(212,175,55,0.2)] transition-all duration-300 relative"
                                     >
                                         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6">
                                             <div className="flex-1 min-w-0">
@@ -372,7 +372,7 @@ export default function HomeContent() {
                                                     </span>
                                                 </div>
 
-                                                <h3 className="text-xl font-bold text-[var(--text-primary)] mb-1 group-hover:text-[var(--gold)] transition-colors">
+                                                <h3 className="text-xl font-bold text-[var(--text-primary)] mb-1 group-hover:text-[#D4AF37] transition-colors">
                                                     {candidate.role}
                                                 </h3>
 
