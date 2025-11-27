@@ -119,36 +119,16 @@ export const CANDIDATES: Candidate[] = [
   }
 ];
 
+// Oil & Gas hub locations in Switzerland
 export const CANTONS: Canton[] = [
-  { code: 'AG', name: 'Aargau' },
-  { code: 'AI', name: 'Appenzell Innerrhoden' },
-  { code: 'AR', name: 'Appenzell Ausserrhoden' },
-  { code: 'BL', name: 'Basel-Landschaft' },
-  { code: 'BS', name: 'Basel-Stadt' },
-  { code: 'BE', name: 'Bern' },
-  { code: 'FR', name: 'Fribourg' },
-  { code: 'GE', name: 'Geneva' },
-  { code: 'GL', name: 'Glarus' },
-  { code: 'GR', name: 'Graubünden' },
-  { code: 'JU', name: 'Jura' },
-  { code: 'LU', name: 'Lucerne' },
-  { code: 'NE', name: 'Neuchâtel' },
-  { code: 'NW', name: 'Nidwalden' },
-  { code: 'OW', name: 'Obwalden' },
-  { code: 'SH', name: 'Schaffhausen' },
-  { code: 'SZ', name: 'Schwyz' },
-  { code: 'SO', name: 'Solothurn' },
-  { code: 'SG', name: 'St. Gallen' },
-  { code: 'TG', name: 'Thurgau' },
-  { code: 'TI', name: 'Ticino' },
-  { code: 'UR', name: 'Uri' },
-  { code: 'VS', name: 'Valais' },
-  { code: 'VD', name: 'Vaud' },
   { code: 'ZG', name: 'Zug' },
-  { code: 'ZH', name: 'Zürich' },
+  { code: 'ZH', name: 'Zurich' },
+  { code: 'GE', name: 'Geneva' },
+  { code: 'BE', name: 'Bern' },
+  { code: 'TI', name: 'Lugano' },
 ];
 
-export const MAIN_CANTON_CODES = ['ZH', 'GE', 'VD', 'BE', 'BS', 'ZG', 'LU', 'SG'];
+export const MAIN_CANTON_CODES = ['ZG', 'ZH', 'GE', 'BE', 'TI'];
 
 export const SENIORITY_LEVELS: SelectOption[] = [
   { label: 'Junior (0-2 years)', value: 'Junior' },

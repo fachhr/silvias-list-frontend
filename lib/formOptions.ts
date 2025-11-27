@@ -668,31 +668,13 @@ export const PHONE_COUNTRY_CODE_OPTIONS = [
 
 export const JOB_TYPE_OPTIONS = ['Internship', 'Part-time', 'Career Starter (full-time)'];
 
+// Oil & Gas hub locations in Switzerland
 export const LOCATION_OPTIONS = [
-    { value: "AG",   label: "Aargau (AG)" },
-    { value: "AR/AI", label: "Appenzell (AR/AI)" },
-    { value: "BS/BL", label: "Basel (BS/BL)" },
-    { value: "BE",   label: "Bern / Berne (BE)" },
-    { value: "FR",   label: "Freiburg / Fribourg (FR)" },
-    { value: "GE",   label: "Genève (GE)" },
-    { value: "GL",   label: "Glarus (GL)" },
-    { value: "GR",   label: "Graubünden (GR)" },
-    { value: "JU",   label: "Jura (JU)" },
-    { value: "LU",   label: "Luzern (LU)" },
-    { value: "NE",   label: "Neuchâtel (NE)" },
-    { value: "NW/OW",label: "Unterwalden (NW/OW)" },
-    { value: "SH",   label: "Schaffhausen (SH)" },
-    { value: "SZ",   label: "Schwyz (SZ)" },
-    { value: "SO",   label: "Solothurn (SO)" },
-    { value: "SG",   label: "St. Gallen (SG)" },
-    { value: "TG",   label: "Thurgau (TG)" },
-    { value: "TI",   label: "Ticino (TI)" },
-    { value: "UR",   label: "Uri (UR)" },
-    { value: "VS",   label: "Valais / Wallis (VS)" },
-    { value: "VD",   label: "Vaud (VD)" },
-    { value: "ZG",   label: "Zug (ZG)" },
-    { value: "ZH",   label: "Zürich (ZH)" },
-    { value: "Other", label: "Other (Specify Below)" }
+    { value: "ZG",   label: "Zug" },
+    { value: "ZH",   label: "Zurich" },
+    { value: "GE",   label: "Geneva" },
+    { value: "BE",   label: "Bern" },
+    { value: "TI",   label: "Lugano" },
 ];
 
 export const INDUSTRY_PREFERENCE_OPTIONS = [
