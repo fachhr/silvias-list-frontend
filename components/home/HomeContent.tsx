@@ -423,7 +423,7 @@ export default function HomeContent() {
                     </aside>
 
                     {/* RESULTS GRID */}
-                    <main className="flex-1">
+                    <main className="flex-1 overflow-hidden">
                         <div className="flex flex-col sm:flex-row justify-between sm:items-end mb-6 pb-4 border-b border-[var(--border-subtle)] gap-4">
                             <h2 className="text-xl font-bold text-[var(--text-primary)]">
                                 Candidates{' '}

@@ -674,7 +674,8 @@ export const LOCATION_OPTIONS = [
     { value: "ZH",   label: "Zurich" },
     { value: "GE",   label: "Geneva" },
     { value: "BE",   label: "Bern" },
-    { value: "TI",   label: "Lugano" },
+    { value: "TI",   label: "Ticino" },
+    { value: "GLOBAL", label: "Global" },
 ];
 
 export const INDUSTRY_PREFERENCE_OPTIONS = [

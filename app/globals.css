@@ -68,7 +68,7 @@
     font-family: var(--font-serif);
   }
 
-  /* Scrollbar Polish */
+  /* Scrollbar Polish - Vertical (main window) */
   ::-webkit-scrollbar {
     width: 6px;
   }
@@ -86,6 +86,31 @@
 
 @layer components {
   /* --- CUSTOM UI ELEMENTS --- */
+
+  /* Table horizontal scroll with visible scrollbar */
+  .table-scroll {
+    overflow-x: auto;
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: var(--border-strong) var(--bg-surface-2); /* Firefox */
+  }
+
+  .table-scroll::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  .table-scroll::-webkit-scrollbar-track {
+    background: var(--bg-surface-2);
+    border-radius: 4px;
+  }
+
+  .table-scroll::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: 4px;
+  }
+
+  .table-scroll::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
+  }
 
   /* Utility Classes */
   .glass-panel {
