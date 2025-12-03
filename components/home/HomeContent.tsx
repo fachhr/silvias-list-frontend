@@ -267,7 +267,7 @@ export default function HomeContent() {
                         <Badge style="gold">Pre-screened &amp; Personally Interviewed</Badge>
                     </div>
                     <h1 className="mt-6 text-4xl sm:text-6xl font-bold text-[var(--text-primary)] tracking-tight leading-tight">
-                        Switzerland&apos;s Leading<br className="hidden sm:block" />
+                        Switzerland&apos;s Leading{' '}<br className="hidden sm:block" />
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--gold)] to-[var(--text-secondary)]">
                             Commodities &amp; Energy Talent Pool
                         </span>
