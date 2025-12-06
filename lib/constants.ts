@@ -125,10 +125,11 @@ export const CANTONS: Canton[] = [
   { code: 'ZH', name: 'Zurich' },
   { code: 'GE', name: 'Geneva' },
   { code: 'BE', name: 'Bern' },
-  { code: 'TI', name: 'Lugano' },
+  { code: 'TI', name: 'Ticino' },
+  { code: 'GLOBAL', name: 'Global' },
 ];
 
-export const MAIN_CANTON_CODES = ['ZG', 'ZH', 'GE', 'BE', 'TI'];
+export const MAIN_CANTON_CODES = ['ZG', 'ZH', 'GE', 'BE', 'TI', 'GLOBAL'];
 
 export const SENIORITY_LEVELS: SelectOption[] = [
   { label: 'Junior (0-2 years)', value: 'Junior' },
