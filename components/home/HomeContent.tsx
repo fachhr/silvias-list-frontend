@@ -231,6 +231,14 @@ export default function HomeContent() {
         }).format(val);
     };
 
+    const formatSalaryRange = (min: number, max: number): string => {
+        if (!min && !max) return 'Non-disclosed';
+        if (min && max) return `${formatCurrency(min)} – ${formatCurrency(max)}`;
+        if (min) return `From ${formatCurrency(min)}`;
+        if (max) return `Up to ${formatCurrency(max)}`;
+        return 'Non-disclosed';
+    };
+
     // Table column sort handler
     const requestSort = (key: string) => {
         let direction: 'asc' | 'desc' = 'asc';
@@ -648,7 +656,7 @@ export default function HomeContent() {
                                 {displayCandidates.map((candidate) => (
                                     <div
                                         key={candidate.id}
-                                        className="group glass-panel rounded-xl p-6 hover:border-[#D4AF37] hover:shadow-[0_4px_30px_rgba(212,175,55,0.2)] transition-all duration-300 relative cursor-pointer"
+                                        className="group glass-panel rounded-xl hover:border-[#D4AF37] hover:shadow-[0_4px_30px_rgba(212,175,55,0.2)] transition-all duration-300 relative cursor-pointer flex flex-col"
                                         onClick={() => openDetailModal(candidate)}
                                     >
                                         {/* Favorite Button */}
@@ -666,113 +674,108 @@ export default function HomeContent() {
                                             <Heart className={`w-5 h-5 ${favorites.includes(candidate.id) ? 'fill-current' : ''}`} />
                                         </button>
 
-                                        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6">
-                                            <div className="flex-1 min-w-0 pr-10">
-                                                <div className="flex flex-wrap items-center gap-3 mb-3">
-                                                    <span className="font-mono text-[10px] uppercase tracking-wider text-[var(--text-tertiary)] border border-[var(--border-strong)] px-1.5 py-0.5 rounded">
-                                                        {candidate.id}
-                                                    </span>
-                                                    <Badge style={candidate.seniority === 'Executive' ? 'gold' : 'default'}>
-                                                        {candidate.seniority}
+                                        {/* Card Body */}
+                                        <div className="p-6 flex-1">
+                                            {/* Header: ID, Seniority, Work Permit, Entry Date */}
+                                            <div className="flex flex-wrap items-center gap-2 mb-3">
+                                                <span className="font-mono text-[10px] uppercase tracking-wider text-[var(--text-tertiary)] bg-[var(--bg-surface-2)] border border-[var(--border-subtle)] px-1.5 py-0.5 rounded">
+                                                    {candidate.id}
+                                                </span>
+                                                <Badge style={candidate.seniority === 'Executive' ? 'gold' : 'default'}>
+                                                    {candidate.seniority}
+                                                </Badge>
+                                                {candidate.workPermit && (
+                                                    <Badge style="blue" icon={FileCheck}>
+                                                        {WORK_ELIGIBILITY_OPTIONS.find(o => o.value === candidate.workPermit)?.label || candidate.workPermit}
                                                     </Badge>
-                                                    {candidate.workPermit && (
-                                                        <Badge style="blue">
-                                                            {WORK_ELIGIBILITY_OPTIONS.find(o => o.value === candidate.workPermit)?.label || candidate.workPermit}
-                                                        </Badge>
-                                                    )}
-                                                </div>
+                                                )}
+                                                <span className="text-xs text-[var(--text-tertiary)] flex items-center gap-1 ml-auto sm:ml-0">
+                                                    <Clock className="w-3 h-3" /> Added {candidate.entryDate}
+                                                </span>
+                                            </div>
 
-                                                <h3 className="text-xl font-bold text-[var(--text-primary)] mb-1 group-hover:text-[#D4AF37] transition-colors">
-                                                    {candidate.role}
-                                                </h3>
+                                            {/* Role Title */}
+                                            <h3 className="text-xl font-bold text-[var(--text-primary)] mb-3 group-hover:text-[#D4AF37] group-hover:underline decoration-[var(--gold-border)] underline-offset-4 decoration-2 transition-all leading-snug pr-8">
+                                                {candidate.role}
+                                            </h3>
 
-                                                {/* Highlight quote */}
-                                                {candidate.highlight && (
-                                                    <p className="text-sm italic text-[var(--text-secondary)] mt-2 mb-3 pl-3 border-l-2 border-[var(--gold-border)]">
+                                            {/* Highlight Box */}
+                                            {candidate.highlight && (
+                                                <div className="mb-5 p-3 bg-[var(--bg-surface-2)] rounded-lg border border-[var(--gold-border)]">
+                                                    <span className="text-sm text-[var(--text-secondary)] leading-relaxed">
                                                         &ldquo;{candidate.highlight}&rdquo;
-                                                    </p>
-                                                )}
-
-                                                <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-[var(--text-secondary)] mt-4 mb-5">
-                                                    <div className="flex items-center gap-2">
-                                                        <Briefcase className="w-4 h-4 text-[var(--text-tertiary)]" />
-                                                        {candidate.experience}
-                                                    </div>
-                                                    <div className="flex items-center gap-2">
-                                                        <MapPin className="w-4 h-4 text-[var(--text-tertiary)]" />
-                                                        {candidate.cantons.map(code => WORK_LOCATIONS.find(c => c.code === code)?.name ?? code).join(', ')}
-                                                    </div>
-                                                    {candidate.education && (
-                                                        <div className="flex items-center gap-2">
-                                                            <GraduationCap className="w-4 h-4 text-[var(--text-tertiary)]" />
-                                                            {candidate.education}
-                                                        </div>
-                                                    )}
-                                                    {candidate.languages && candidate.languages.length > 0 && (
-                                                        <div className="flex items-center gap-2">
-                                                            <Globe className="w-4 h-4 text-[var(--text-tertiary)]" />
-                                                            {candidate.languages.join(', ')}
-                                                        </div>
-                                                    )}
+                                                    </span>
                                                 </div>
+                                            )}
 
-                                                {/* Functional Expertise badges */}
-                                                {candidate.functionalExpertise && candidate.functionalExpertise.length > 0 && (
-                                                    <div className="flex flex-wrap gap-2 mb-3">
-                                                        {candidate.functionalExpertise.map((exp) => (
-                                                            <span
-                                                                key={exp}
-                                                                className="px-2 py-0.5 bg-purple-500/10 border border-purple-500/30 text-purple-400 text-xs font-medium rounded flex items-center gap-1"
-                                                            >
-                                                                <Layers className="w-3 h-3" />
-                                                                {exp}
-                                                            </span>
-                                                        ))}
+                                            {/* Metadata Grid (2 columns) */}
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2.5 text-sm text-[var(--text-secondary)] mb-5">
+                                                <div className="flex items-center gap-2" title="Experience">
+                                                    <Briefcase className="w-4 h-4 text-[var(--text-tertiary)] flex-shrink-0" />
+                                                    <span>{candidate.experience}</span>
+                                                </div>
+                                                <div className="flex items-center gap-2" title="Salary Range">
+                                                    <DollarSign className="w-4 h-4 text-[var(--text-tertiary)] flex-shrink-0" />
+                                                    <span className="font-mono text-[var(--text-primary)]">{formatSalaryRange(candidate.salaryMin, candidate.salaryMax)}</span>
+                                                </div>
+                                                <div className="flex items-center gap-2" title="Preferred Location">
+                                                    <MapPin className="w-4 h-4 text-[var(--text-tertiary)] flex-shrink-0" />
+                                                    <span>{candidate.cantons.map(code => WORK_LOCATIONS.find(c => c.code === code)?.name ?? code).join('; ')}</span>
+                                                </div>
+                                                <div className="flex items-center gap-2" title="Availability">
+                                                    <Clock className="w-4 h-4 text-[var(--text-tertiary)] flex-shrink-0" />
+                                                    <span>{candidate.availability}</span>
+                                                </div>
+                                                {candidate.education && (
+                                                    <div className="flex items-center gap-2" title="Education">
+                                                        <GraduationCap className="w-4 h-4 text-[var(--text-tertiary)] flex-shrink-0" />
+                                                        <span className="truncate">{candidate.education}</span>
                                                     </div>
                                                 )}
+                                                {candidate.languages && candidate.languages.length > 0 && (
+                                                    <div className="flex items-center gap-2" title="Languages">
+                                                        <Globe className="w-4 h-4 text-[var(--text-tertiary)] flex-shrink-0" />
+                                                        <span>{candidate.languages.join(', ')}</span>
+                                                    </div>
+                                                )}
+                                            </div>
 
-                                                <div className="flex flex-wrap gap-2">
-                                                    {candidate.skills.map((skill) => (
-                                                        <span
-                                                            key={skill}
-                                                            className="px-2.5 py-1 bg-[var(--bg-surface-2)] border border-[var(--border-strong)] text-[var(--text-secondary)] text-xs font-medium rounded transition-colors cursor-default"
-                                                        >
-                                                            {skill}
-                                                        </span>
+                                            {/* Functional Expertise Badges */}
+                                            {candidate.functionalExpertise && candidate.functionalExpertise.length > 0 && (
+                                                <div className="flex flex-wrap gap-2 mb-4">
+                                                    {candidate.functionalExpertise.map((exp) => (
+                                                        <Badge key={exp} style="purple" icon={Layers}>
+                                                            {exp}
+                                                        </Badge>
                                                     ))}
                                                 </div>
-                                            </div>
+                                            )}
 
-                                            <div className="flex flex-col sm:items-end gap-4 pt-4 sm:pt-0 border-t sm:border-t-0 border-[var(--border-subtle)] min-w-[140px]">
-                                                <div className="text-right hidden sm:block">
-                                                    <p className="text-[10px] uppercase tracking-wider text-[var(--text-tertiary)] mb-1 font-semibold">
-                                                        Availability
-                                                    </p>
-                                                    <p className="text-sm font-medium text-[var(--text-primary)]">{candidate.availability}</p>
-                                                    <p className="text-xs text-[var(--text-tertiary)] mt-2">
-                                                        <Clock className="w-3 h-3 inline mr-1" />
-                                                        Added {candidate.entryDate}
-                                                    </p>
-                                                </div>
-                                                <div className="text-right hidden sm:block">
-                                                    <p className="text-[10px] uppercase tracking-wider text-[var(--text-tertiary)] mb-1 font-semibold">
-                                                        Salary
-                                                    </p>
-                                                    <p className="text-sm font-mono font-medium text-[var(--text-primary)]">
-                                                        {formatCurrency(candidate.salaryMin)} – {formatCurrency(candidate.salaryMax)}
-                                                    </p>
-                                                </div>
-                                                <Button
-                                                    variant="primary"
-                                                    className="w-full sm:w-auto text-xs sm:text-sm"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        setShowContactModal(candidate.id);
-                                                    }}
-                                                >
-                                                    Request Intro
-                                                </Button>
+                                            {/* Skills */}
+                                            <div className="flex flex-wrap gap-2">
+                                                {candidate.skills.map((skill) => (
+                                                    <span
+                                                        key={skill}
+                                                        className="px-2.5 py-1 bg-[var(--bg-surface-2)] border border-[var(--border-strong)] text-[var(--text-secondary)] text-xs font-medium rounded hover:border-[var(--gold-border)] hover:text-[var(--text-primary)] transition-colors cursor-default"
+                                                    >
+                                                        {skill}
+                                                    </span>
+                                                ))}
                                             </div>
+                                        </div>
+
+                                        {/* Card Footer */}
+                                        <div className="mt-auto pt-4 px-6 pb-6 border-t border-[var(--border-subtle)] flex justify-end">
+                                            <Button
+                                                variant="primary"
+                                                className="w-full sm:w-auto text-xs sm:text-sm"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setShowContactModal(candidate.id);
+                                                }}
+                                            >
+                                                Request Intro
+                                            </Button>
                                         </div>
                                     </div>
                                 ))}
@@ -781,73 +784,132 @@ export default function HomeContent() {
                             /* TABLE VIEW */
                             <div className="glass-panel rounded-xl overflow-hidden">
                                 <div className="table-scroll">
-                                    <table className="min-w-[1000px] w-full divide-y divide-[var(--border-subtle)]">
+                                    <table className="min-w-[1400px] w-full divide-y divide-[var(--border-subtle)]">
                                         <thead className="bg-[var(--bg-surface-2)]">
                                             <tr>
+                                                {/* Favorite column (no sort) */}
+                                                <th className="px-4 py-3 w-10"></th>
+                                                {/* Sortable columns */}
                                                 {[
-                                                    { label: 'ID', key: 'id' },
-                                                    { label: 'Role', key: 'role' },
-                                                    { label: 'Experience', key: 'experience' },
-                                                    { label: 'Seniority', key: 'seniority' },
-                                                    { label: 'Salary (Min)', key: 'salary' },
-                                                    { label: 'Location', key: 'cantons' },
-                                                    { label: 'Availability', key: 'availability' }
+                                                    { label: 'ID', key: 'id', sortable: true },
+                                                    { label: 'Role', key: 'role', sortable: true },
+                                                    { label: 'Highlight', key: 'highlight', sortable: false },
+                                                    { label: 'Expertise', key: 'expertise', sortable: false },
+                                                    { label: 'Exp.', key: 'experience', sortable: true },
+                                                    { label: 'Seniority', key: 'seniority', sortable: true },
+                                                    { label: 'Salary', key: 'salary', sortable: true },
+                                                    { label: 'Education', key: 'education', sortable: false },
+                                                    { label: 'Pref. Location', key: 'cantons', sortable: true },
+                                                    { label: 'Work Eligibility', key: 'workPermit', sortable: false },
+                                                    { label: 'Availability', key: 'availability', sortable: true },
+                                                    { label: 'Languages', key: 'languages', sortable: false },
                                                 ].map((col) => (
                                                     <th
                                                         key={col.key}
-                                                        onClick={() => requestSort(col.key)}
-                                                        className="px-6 py-3 text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider cursor-pointer hover:bg-[var(--bg-surface-3)] transition-colors select-none group"
+                                                        onClick={() => col.sortable && requestSort(col.key)}
+                                                        className={`px-4 py-3 text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider select-none group whitespace-nowrap ${
+                                                            col.sortable ? 'cursor-pointer hover:bg-[var(--bg-surface-3)] transition-colors' : ''
+                                                        }`}
                                                     >
                                                         <div className="flex items-center gap-1">
                                                             {col.label}
-                                                            <span className={`text-[var(--text-tertiary)] ${
-                                                                sortConfig.key === col.key ? 'opacity-100' : 'opacity-0 group-hover:opacity-50'
-                                                            }`}>
-                                                                <SortIcon columnKey={col.key} />
-                                                            </span>
+                                                            {col.sortable && (
+                                                                <span className={`text-[var(--text-tertiary)] ${
+                                                                    sortConfig.key === col.key ? 'opacity-100' : 'opacity-0 group-hover:opacity-50'
+                                                                }`}>
+                                                                    <SortIcon columnKey={col.key} />
+                                                                </span>
+                                                            )}
                                                         </div>
                                                     </th>
                                                 ))}
-                                                <th className="relative px-6 py-3">
+                                                <th className="relative px-4 py-3">
                                                     <span className="sr-only">Actions</span>
                                                 </th>
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-[var(--border-subtle)]">
                                             {displayCandidates.map((candidate) => (
-                                                <tr key={candidate.id} className="hover:bg-[var(--bg-surface-2)] transition-colors">
-                                                    <td className="px-6 py-4 whitespace-nowrap">
+                                                <tr
+                                                    key={candidate.id}
+                                                    onClick={() => openDetailModal(candidate)}
+                                                    className="hover:bg-[var(--bg-surface-2)] transition-colors cursor-pointer"
+                                                >
+                                                    {/* Favorite */}
+                                                    <td className="px-4 py-4 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
+                                                        <button
+                                                            onClick={() => toggleFavorite(candidate.id)}
+                                                            className={`text-[var(--text-tertiary)] hover:text-red-400 transition-colors ${
+                                                                favorites.includes(candidate.id) ? 'text-red-400' : ''
+                                                            }`}
+                                                        >
+                                                            <Heart className={`w-4 h-4 ${favorites.includes(candidate.id) ? 'fill-current' : ''}`} />
+                                                        </button>
+                                                    </td>
+                                                    {/* ID */}
+                                                    <td className="px-4 py-4 whitespace-nowrap">
                                                         <span className="font-mono text-xs text-[var(--text-tertiary)] bg-[var(--bg-surface-2)] px-1.5 py-0.5 rounded border border-[var(--border-subtle)]">
                                                             {candidate.id}
                                                         </span>
                                                     </td>
-                                                    <td className="px-6 py-4">
-                                                        <div className="text-sm font-bold text-[var(--text-primary)]">{candidate.role}</div>
-                                                        <div className="text-xs text-[var(--text-tertiary)] mt-0.5">
-                                                            {candidate.skills.slice(0, 2).join(', ')}
-                                                            {candidate.skills.length > 2 && ` +${candidate.skills.length - 2}`}
-                                                        </div>
+                                                    {/* Role */}
+                                                    <td className="px-4 py-4">
+                                                        <div className="text-sm font-bold text-[var(--text-primary)] min-w-[180px]">{candidate.role}</div>
                                                     </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)]">
+                                                    {/* Highlight */}
+                                                    <td className="px-4 py-4 text-sm text-[var(--text-secondary)] min-w-[200px] max-w-[250px]">
+                                                        <span className="line-clamp-2" title={candidate.highlight || ''}>
+                                                            {candidate.highlight || '-'}
+                                                        </span>
+                                                    </td>
+                                                    {/* Expertise */}
+                                                    <td className="px-4 py-4 text-sm text-[var(--text-secondary)] whitespace-nowrap">
+                                                        {candidate.functionalExpertise?.join('; ') || '-'}
+                                                    </td>
+                                                    {/* Experience */}
+                                                    <td className="px-4 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)]">
                                                         {candidate.experience}
                                                     </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap">
+                                                    {/* Seniority */}
+                                                    <td className="px-4 py-4 whitespace-nowrap">
                                                         <Badge style={candidate.seniority === 'Executive' ? 'gold' : 'default'}>
                                                             {candidate.seniority}
                                                         </Badge>
                                                     </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-[var(--text-secondary)]">
-                                                        {formatCurrency(candidate.salaryMin)}
+                                                    {/* Salary */}
+                                                    <td className="px-4 py-4 whitespace-nowrap text-sm font-mono text-[var(--text-secondary)]">
+                                                        {formatSalaryRange(candidate.salaryMin, candidate.salaryMax)}
                                                     </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)]">
-                                                        {candidate.cantons.map(code => WORK_LOCATIONS.find(c => c.code === code)?.name ?? code).join(', ')}
+                                                    {/* Education */}
+                                                    <td className="px-4 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)]">
+                                                        {candidate.education || '-'}
                                                     </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)]">
+                                                    {/* Location */}
+                                                    <td className="px-4 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)]">
+                                                        {candidate.cantons.map(code => WORK_LOCATIONS.find(c => c.code === code)?.name ?? code).join('; ')}
+                                                    </td>
+                                                    {/* Work Eligibility */}
+                                                    <td className="px-4 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)]">
+                                                        {candidate.workPermit
+                                                            ? WORK_ELIGIBILITY_OPTIONS.find(o => o.value === candidate.workPermit)?.label || candidate.workPermit
+                                                            : '-'
+                                                        }
+                                                    </td>
+                                                    {/* Availability */}
+                                                    <td className="px-4 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)]">
                                                         {candidate.availability}
                                                     </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                                    {/* Languages */}
+                                                    <td className="px-4 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)]">
+                                                        {candidate.languages?.join('; ') || '-'}
+                                                    </td>
+                                                    {/* Actions */}
+                                                    <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
                                                         <button
-                                                            onClick={() => setShowContactModal(candidate.id)}
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                setShowContactModal(candidate.id);
+                                                            }}
                                                             className="text-[var(--gold)] hover:text-[var(--text-primary)] font-bold text-xs border border-[var(--gold-border)] hover:border-[var(--gold)] px-3 py-1.5 rounded transition-all"
                                                         >
                                                             Intro

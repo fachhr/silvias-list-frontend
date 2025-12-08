@@ -3,10 +3,11 @@ import Link from 'next/link';
 
 interface BadgeProps {
     children: React.ReactNode;
-    style?: 'default' | 'dark' | 'outline' | 'success' | 'gold' | 'blue';
+    style?: 'default' | 'dark' | 'outline' | 'success' | 'gold' | 'blue' | 'purple';
+    icon?: React.ElementType;
 }
 
-export const Badge: React.FC<BadgeProps> = ({ children, style = 'default' }) => {
+export const Badge: React.FC<BadgeProps> = ({ children, style = 'default', icon: Icon }) => {
     const styles = {
         default: 'bg-[var(--bg-surface-2)] text-[var(--text-secondary)] border-[var(--border-subtle)]',
         dark: 'bg-[var(--bg-surface-3)] text-[var(--text-primary)] border-[var(--border-strong)]',
@@ -14,9 +15,11 @@ export const Badge: React.FC<BadgeProps> = ({ children, style = 'default' }) => 
         success: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
         gold: 'bg-[var(--gold-dim)] text-[var(--gold)] border-[var(--gold-border)]',
         blue: 'bg-[var(--blue-dim)] text-[var(--blue)] border-[rgba(59,130,246,0.3)]',
+        purple: 'bg-purple-500/10 text-purple-400 border-purple-500/30',
     };
     return (
-        <span className={`px-2.5 py-0.5 rounded-md text-xs font-medium border ${styles[style] || styles.default}`}>
+        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium border ${styles[style] || styles.default}`}>
+            {Icon && <Icon className="w-3 h-3 mr-1" />}
             {children}
         </span>
     );

@@ -123,9 +123,10 @@ export async function GET(req: NextRequest) {
       if (Array.isArray(profile.education_history) && profile.education_history.length > 0) {
         const mostRecentEdu = profile.education_history[0];
         if (mostRecentEdu) {
-          const degree = mostRecentEdu.degree || mostRecentEdu.fieldOfStudy || '';
-          const institution = mostRecentEdu.institutionName || '';
-          educationStr = [degree, institution].filter(Boolean).join(', ');
+          const degree = mostRecentEdu.degreeType || '';
+          const field = mostRecentEdu.specificField || mostRecentEdu.generalField || '';
+          const institution = mostRecentEdu.universityName || '';
+          educationStr = [degree, field, institution].filter(Boolean).join(', ');
         }
       }
 

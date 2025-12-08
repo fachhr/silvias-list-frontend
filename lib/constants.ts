@@ -1,4 +1,4 @@
-import { Candidate, SelectOption } from '@/types/talentPool';
+import { SelectOption } from '@/types/talentPool';
 
 // ====================
 // WORK LOCATION TYPE
@@ -51,81 +51,6 @@ export const SENIORITY_RANGES = {
   mid: { min: 3, max: 6 },
   senior: { min: 7, max: null } // null = no upper limit
 } as const;
-
-export const CANDIDATES: Candidate[] = [
-  {
-    id: 'SVL-025',
-    role: 'Senior Full Stack Engineer',
-    skills: ['React', 'Node.js', 'TypeScript', 'AWS'],
-    experience: '8 years',
-    seniority: 'Senior',
-    cantons: ['ZH', 'ZG'],
-    salaryMin: 140000,
-    salaryMax: 160000,
-    availability: 'Immediate',
-    entryDate: 'Nov 18, 2025'
-  },
-  {
-    id: 'SVL-024',
-    role: 'Frontend Developer',
-    skills: ['Vue.js', 'Tailwind', 'Figma'],
-    experience: '3 years',
-    seniority: 'Mid-level',
-    cantons: ['GE', 'VD'],
-    salaryMin: 95000,
-    salaryMax: 110000,
-    availability: '1 Month Notice',
-    entryDate: 'Nov 17, 2025'
-  },
-  {
-    id: 'SVL-023',
-    role: 'DevOps Engineer',
-    skills: ['Kubernetes', 'Docker', 'Terraform', 'Python'],
-    experience: '5 years',
-    seniority: 'Mid-level',
-    cantons: ['ZH', 'BE'],
-    salaryMin: 120000,
-    salaryMax: 140000,
-    availability: 'Immediate',
-    entryDate: 'Nov 17, 2025'
-  },
-  {
-    id: 'SVL-022',
-    role: 'CTO / VP of Engineering',
-    skills: ['Leadership', 'Strategy', 'System Design', 'Go'],
-    experience: '12+ years',
-    seniority: 'Executive',
-    cantons: ['ZH', 'ZG', 'SZ'],
-    salaryMin: 180000,
-    salaryMax: 250000,
-    availability: '3 Months Notice',
-    entryDate: 'Nov 16, 2025'
-  },
-  {
-    id: 'SVL-021',
-    role: 'Junior Backend Dev',
-    skills: ['Java', 'Spring Boot', 'PostgreSQL'],
-    experience: '1 year',
-    seniority: 'Junior',
-    cantons: ['BS', 'BL'],
-    salaryMin: 80000,
-    salaryMax: 95000,
-    availability: 'Immediate',
-    entryDate: 'Nov 15, 2025'
-  },
-  {
-    id: 'SVL-020',
-    role: 'Product Manager',
-    skills: ['Agile', 'Scrum', 'Roadmapping', 'Jira'],
-    experience: '6 years',
-    seniority: 'Senior',
-    cantons: ['ZH'],
-    salaryMin: 130000,
-    salaryMax: 150000,
-    availability: 'Negotiable',
-    entryDate: 'Nov 14, 2025'
-  }
-];
 
 // ====================
 // WORK LOCATIONS
