@@ -701,7 +701,7 @@ export default function HomeContent() {
 
                                             {/* Highlight Box */}
                                             {candidate.highlight && (
-                                                <div className="mb-5 p-3 bg-[var(--bg-surface-2)] rounded-lg border border-[var(--gold-border)]">
+                                                <div className="mb-5 p-3 bg-[var(--bg-surface-2)] rounded-lg border border-[var(--blue-border)]">
                                                     <span className="text-sm text-[var(--text-secondary)] leading-relaxed">
                                                         &ldquo;{candidate.highlight}&rdquo;
                                                     </span>

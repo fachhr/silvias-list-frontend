@@ -27,6 +27,7 @@
 
     --blue: #3B82F6;
     --blue-dim: rgba(59, 130, 246, 0.15);
+    --blue-border: rgba(59, 130, 246, 0.3);
 
     /* Status */
     --error: #EF4444;
