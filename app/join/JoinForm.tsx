@@ -10,8 +10,7 @@ import {
     AlertCircle
 } from 'lucide-react';
 import { Button, Input, Badge } from '@/components/ui';
-import { CANTONS, NOTICE_PERIOD_OPTIONS, COUNTRY_CODES } from '@/lib/constants';
-import { LANGUAGE_PROFICIENCY_OPTIONS } from '@/lib/formOptions';
+import { WORK_LOCATIONS, NOTICE_PERIOD_OPTIONS, COUNTRY_CODES, WORK_ELIGIBILITY_OPTIONS, LANGUAGE_OPTIONS } from '@/lib/constants';
 
 const JoinForm: React.FC = () => {
     const router = useRouter();
@@ -31,21 +30,19 @@ const JoinForm: React.FC = () => {
         country_code: '',
         phoneNumber: '',
         years_of_experience: '',
+        work_eligibility: '',
+        desired_roles: '',
         notice_period_months: '',
         desired_locations: [] as string[],
         desired_other_location: '',
         salary_min: '',
         salary_max: '',
-        // Language proficiency
-        base_languages: [
-            { language: 'English', proficiency: '' },
-            { language: 'German', proficiency: '' },
-            { language: 'French', proficiency: '' },
-            { language: 'Italian', proficiency: '' },
-        ] as { language: string; proficiency: string }[],
+        // Languages with professional proficiency (simplified checkboxes)
+        languages: [] as string[],
         showOtherLanguage: false,
         otherLanguageName: '',
-        otherLanguageProficiency: '',
+        // Key achievement / highlight
+        highlight: '',
         accepted_terms: false
     });
 
@@ -110,17 +107,11 @@ const JoinForm: React.FC = () => {
 
             const { cvStoragePath, originalFilename } = await uploadResponse.json();
 
-            // Process languages: filter out empty proficiencies, add "Other" if filled
+            // Process languages: include base selections + "Other" if filled
             const processedLanguages = [
-                ...formData.base_languages.filter(lang =>
-                    lang.proficiency && lang.proficiency !== '' && lang.proficiency !== 'None'
-                ),
-                ...(formData.showOtherLanguage &&
-                    formData.otherLanguageName.trim() &&
-                    formData.otherLanguageProficiency &&
-                    formData.otherLanguageProficiency !== '' &&
-                    formData.otherLanguageProficiency !== 'None'
-                    ? [{ language: formData.otherLanguageName.trim(), proficiency: formData.otherLanguageProficiency }]
+                ...formData.languages,
+                ...(formData.showOtherLanguage && formData.otherLanguageName.trim()
+                    ? [formData.otherLanguageName.trim()]
                     : []
                 )
             ];
@@ -136,12 +127,15 @@ const JoinForm: React.FC = () => {
                 country_code: formData.country_code,
                 phoneNumber: formData.phoneNumber,
                 years_of_experience: parseInt(formData.years_of_experience),
+                work_eligibility: formData.work_eligibility,
+                desired_roles: formData.desired_roles,
                 notice_period_months: formData.notice_period_months,
                 desired_locations: formData.desired_locations,
                 desired_other_location: formData.desired_other_location || undefined,
                 salary_min: parseInt(formData.salary_min),
                 salary_max: parseInt(formData.salary_max),
-                base_languages: processedLanguages.length > 0 ? processedLanguages : null,
+                languages: processedLanguages.length > 0 ? processedLanguages : null,
+                highlight: formData.highlight || undefined,
                 cvStoragePath,
                 originalFilename,
                 accepted_terms: formData.accepted_terms,
@@ -376,6 +370,25 @@ const JoinForm: React.FC = () => {
                                 </div>
                             </div>
 
+                            {/* WORK ELIGIBILITY */}
+                            <div className="md:col-span-2">
+                                <label htmlFor="work_eligibility" className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
+                                    Work Eligibility <span className="text-red-500">*</span>
+                                </label>
+                                <select
+                                    id="work_eligibility"
+                                    required
+                                    value={formData.work_eligibility}
+                                    onChange={e => setFormData({ ...formData, work_eligibility: e.target.value })}
+                                    className="block w-full rounded-lg border-[var(--border-strong)] bg-[var(--bg-surface-2)] border p-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--blue)] focus:ring-[var(--blue)]"
+                                >
+                                    <option value="">Select your work eligibility...</option>
+                                    {WORK_ELIGIBILITY_OPTIONS.map(opt => (
+                                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                    ))}
+                                </select>
+                            </div>
+
                         </div>
                     </section>
 
@@ -394,87 +407,90 @@ const JoinForm: React.FC = () => {
                                 value={formData.years_of_experience} onChange={e => setFormData({ ...formData, years_of_experience: e.target.value })}
                             />
 
-                            {/* Languages subsection */}
+                            {/* Languages subsection - simplified checkboxes */}
                             <div className="pt-4">
                                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">
-                                    Languages
+                                    Languages spoken with professional proficiency
                                 </label>
-                                <p className="text-xs text-[var(--text-tertiary)] mb-4">
-                                    Select your proficiency level for each language you speak.
-                                </p>
 
                                 <div className="space-y-3">
-                                    {/* Standard Languages */}
-                                    {formData.base_languages.map((lang, index) => (
-                                        <div key={lang.language} className="grid grid-cols-2 gap-4 items-center">
-                                            <span className="text-sm text-[var(--text-secondary)]">
-                                                {lang.language}
-                                            </span>
-                                            <select
-                                                value={lang.proficiency}
-                                                onChange={(e) => {
-                                                    const updated = [...formData.base_languages];
-                                                    updated[index] = { ...updated[index], proficiency: e.target.value };
-                                                    setFormData({ ...formData, base_languages: updated });
-                                                }}
-                                                className="block w-full rounded-lg border-[var(--border-strong)] bg-[var(--bg-surface-2)] border p-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--blue)] focus:ring-[var(--blue)]"
-                                            >
-                                                {LANGUAGE_PROFICIENCY_OPTIONS.map(opt => (
-                                                    <option key={opt.value} value={opt.value}>{opt.label}</option>
-                                                ))}
-                                            </select>
-                                        </div>
-                                    ))}
-
-                                    {/* Other Language Toggle */}
-                                    {!formData.showOtherLanguage ? (
-                                        <button
-                                            type="button"
-                                            onClick={() => setFormData({ ...formData, showOtherLanguage: true })}
-                                            className="text-sm text-[var(--gold)] hover:text-[var(--text-primary)] transition-colors font-medium mt-2"
-                                        >
-                                            + Add another language
-                                        </button>
-                                    ) : (
-                                        <div className="space-y-3 pt-3 border-t border-[var(--border-subtle)] mt-3">
-                                            <div className="flex items-center justify-between">
-                                                <span className="text-sm text-[var(--text-secondary)]">
-                                                    Other
-                                                </span>
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setFormData({
-                                                        ...formData,
-                                                        showOtherLanguage: false,
-                                                        otherLanguageName: '',
-                                                        otherLanguageProficiency: ''
-                                                    })}
-                                                    className="text-xs text-[var(--text-tertiary)] hover:text-red-400 transition-colors"
-                                                >
-                                                    Remove
-                                                </button>
-                                            </div>
-                                            <div className="grid grid-cols-2 gap-4">
+                                    {/* Base language checkboxes - inline with labels */}
+                                    <div className="flex flex-wrap gap-x-6 gap-y-3">
+                                        {LANGUAGE_OPTIONS.map(lang => (
+                                            <label key={lang} className="flex items-center gap-2 cursor-pointer select-none group">
                                                 <input
-                                                    type="text"
-                                                    placeholder="e.g., Spanish"
-                                                    value={formData.otherLanguageName}
-                                                    onChange={(e) => setFormData({ ...formData, otherLanguageName: e.target.value })}
-                                                    className="block w-full rounded-lg border-[var(--border-strong)] bg-[var(--bg-surface-2)] border p-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--blue)] focus:ring-[var(--blue)] placeholder-[var(--text-tertiary)]"
+                                                    type="checkbox"
+                                                    className="w-4 h-4 rounded border-[var(--border-strong)] bg-[var(--bg-surface-2)] text-[var(--gold)] focus:ring-[var(--gold)] focus:ring-offset-[var(--bg-root)] cursor-pointer accent-[var(--gold)]"
+                                                    checked={formData.languages.includes(lang)}
+                                                    onChange={() => {
+                                                        setFormData(prev => ({
+                                                            ...prev,
+                                                            languages: prev.languages.includes(lang)
+                                                                ? prev.languages.filter(l => l !== lang)
+                                                                : [...prev.languages, lang]
+                                                        }));
+                                                    }}
                                                 />
-                                                <select
-                                                    value={formData.otherLanguageProficiency}
-                                                    onChange={(e) => setFormData({ ...formData, otherLanguageProficiency: e.target.value })}
-                                                    className="block w-full rounded-lg border-[var(--border-strong)] bg-[var(--bg-surface-2)] border p-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--blue)] focus:ring-[var(--blue)]"
-                                                >
-                                                    {LANGUAGE_PROFICIENCY_OPTIONS.map(opt => (
-                                                        <option key={opt.value} value={opt.value}>{opt.label}</option>
-                                                    ))}
-                                                </select>
-                                            </div>
+                                                <span className="text-sm text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors">
+                                                    {lang}
+                                                </span>
+                                            </label>
+                                        ))}
+
+                                        {/* Other checkbox - inline with base languages */}
+                                        <label className="flex items-center gap-2 cursor-pointer select-none group">
+                                            <input
+                                                type="checkbox"
+                                                className="w-4 h-4 rounded border-[var(--border-strong)] bg-[var(--bg-surface-2)] text-[var(--gold)] focus:ring-[var(--gold)] focus:ring-offset-[var(--bg-root)] cursor-pointer accent-[var(--gold)]"
+                                                checked={formData.showOtherLanguage}
+                                                onChange={(e) => {
+                                                    setFormData(prev => ({
+                                                        ...prev,
+                                                        showOtherLanguage: e.target.checked,
+                                                        otherLanguageName: e.target.checked ? prev.otherLanguageName : ''
+                                                    }));
+                                                }}
+                                            />
+                                            <span className="text-sm text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors">
+                                                Other
+                                            </span>
+                                        </label>
+                                    </div>
+
+                                    {/* Conditional text input for Other language */}
+                                    {formData.showOtherLanguage && (
+                                        <div className="animate-in fade-in slide-in-from-top-1 duration-200 pt-2">
+                                            <input
+                                                type="text"
+                                                placeholder="Please specify language..."
+                                                className="block w-full max-w-xs rounded-lg border-[var(--border-strong)] bg-[var(--bg-surface-2)] border p-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--blue)] focus:ring-[var(--blue)] placeholder-[var(--text-tertiary)]"
+                                                value={formData.otherLanguageName}
+                                                onChange={(e) => setFormData(prev => ({ ...prev, otherLanguageName: e.target.value }))}
+                                            />
                                         </div>
                                     )}
                                 </div>
+                            </div>
+
+                            {/* Key Achievement */}
+                            <div className="pt-4">
+                                <label htmlFor="highlight" className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
+                                    Key Achievement
+                                </label>
+                                <textarea
+                                    id="highlight"
+                                    rows={3}
+                                    maxLength={300}
+                                    placeholder="Describe a significant accomplishment that showcases your expertise..."
+                                    value={formData.highlight}
+                                    onChange={e => setFormData({ ...formData, highlight: e.target.value })}
+                                    className="block w-full rounded-lg border-[var(--border-strong)] bg-[var(--bg-surface-2)] border p-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--blue)] focus:ring-[var(--blue)] placeholder-[var(--text-tertiary)] resize-none"
+                                />
+                                {formData.highlight.length > 300 && (
+                                    <p className="text-xs text-red-500 mt-1.5">
+                                        {formData.highlight.length}/300 characters - exceeds limit
+                                    </p>
+                                )}
                             </div>
                         </div>
                     </section>
@@ -489,6 +505,25 @@ const JoinForm: React.FC = () => {
                         </h2>
 
                         <div className="space-y-6">
+
+                            {/* Desired Roles */}
+                            <div>
+                                <label htmlFor="desired_roles" className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
+                                    Desired Role(s) <span className="text-red-500">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    id="desired_roles"
+                                    required
+                                    placeholder="e.g., Senior Trader; Commodities Analyst; Risk Manager"
+                                    value={formData.desired_roles}
+                                    onChange={e => setFormData({ ...formData, desired_roles: e.target.value })}
+                                    className="block w-full rounded-lg border-[var(--border-strong)] bg-[var(--bg-surface-2)] border p-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--blue)] focus:ring-[var(--blue)] placeholder-[var(--text-tertiary)]"
+                                />
+                                <p className="text-xs text-[var(--text-tertiary)] mt-1.5">
+                                    Separate multiple roles with semicolons
+                                </p>
+                            </div>
 
                             {/* Notice Period */}
                             <div>
@@ -558,34 +593,34 @@ const JoinForm: React.FC = () => {
                             <div>
                                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">Preferred Locations (Max 5)</label>
                                 <div className="flex flex-wrap gap-2">
-                                    {CANTONS.map(canton => (
+                                    {WORK_LOCATIONS.map(location => (
                                         <label
-                                            key={canton.code}
+                                            key={location.code}
                                             className={`
                         cursor-pointer px-3 py-1.5 text-xs font-medium rounded border transition-all select-none
                         has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-[rgba(59,130,246,0.5)] has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-[var(--bg-root)]
-                        ${formData.desired_locations.includes(canton.code)
-                                                    ? 'bg-[var(--gold)] border-[var(--blue)] text-[#0A1628] shadow-md'
+                        ${formData.desired_locations.includes(location.code)
+                                                    ? 'bg-[var(--gold)] border-[var(--gold)] text-[#0A1628] shadow-md'
                                                     : 'bg-[var(--bg-surface-1)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:border-[var(--border-strong)]'}
-                        ${!formData.desired_locations.includes(canton.code) && formData.desired_locations.length >= 5 ? 'opacity-50 cursor-not-allowed' : ''}
+                        ${!formData.desired_locations.includes(location.code) && formData.desired_locations.length >= 5 ? 'opacity-50 cursor-not-allowed' : ''}
                       `}
                                         >
                                             <input
                                                 type="checkbox"
                                                 className="sr-only"
-                                                checked={formData.desired_locations.includes(canton.code)}
-                                                disabled={!formData.desired_locations.includes(canton.code) && formData.desired_locations.length >= 5}
+                                                checked={formData.desired_locations.includes(location.code)}
+                                                disabled={!formData.desired_locations.includes(location.code) && formData.desired_locations.length >= 5}
                                                 onChange={() => {
                                                     setLocationsTouched(true);
                                                     setFormData(prev => ({
                                                         ...prev,
-                                                        desired_locations: prev.desired_locations.includes(canton.code)
-                                                            ? prev.desired_locations.filter(l => l !== canton.code)
-                                                            : prev.desired_locations.length < 5 ? [...prev.desired_locations, canton.code] : prev.desired_locations
+                                                        desired_locations: prev.desired_locations.includes(location.code)
+                                                            ? prev.desired_locations.filter(l => l !== location.code)
+                                                            : prev.desired_locations.length < 5 ? [...prev.desired_locations, location.code] : prev.desired_locations
                                                     }))
                                                 }}
                                             />
-                                            {canton.name}
+                                            {location.name}
                                         </label>
                                     ))}
                                 </div>
@@ -601,14 +636,18 @@ const JoinForm: React.FC = () => {
                                 ) : null}
                             </div>
 
-                            {/* Other Location (Optional) */}
-                            <Input
-                                label="Other Preferred Location (Optional)"
-                                id="desired_other_location"
-                                placeholder="e.g., Remote, Berlin, Paris"
-                                value={formData.desired_other_location}
-                                onChange={e => setFormData({ ...formData, desired_other_location: e.target.value })}
-                            />
+                            {/* Other Location - only show when "Others" is selected */}
+                            {formData.desired_locations.includes('Others') && (
+                                <div className="animate-in fade-in slide-in-from-top-1 duration-200">
+                                    <Input
+                                        label="Other Preferred Location"
+                                        id="desired_other_location"
+                                        placeholder="e.g., Remote, Berlin, Paris"
+                                        value={formData.desired_other_location}
+                                        onChange={e => setFormData({ ...formData, desired_other_location: e.target.value })}
+                                    />
+                                </div>
+                            )}
                         </div>
                     </section>
 

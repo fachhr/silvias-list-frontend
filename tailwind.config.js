@@ -133,11 +133,16 @@ module.exports = {
           '0%, 100%': { opacity: '0.3' },
           '50%': { opacity: '0.5' },
         },
+        slideUp: {
+          '0%': { opacity: '0', transform: 'translateY(20px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
       },
       animation: {
         fadeInUp: 'fadeInUp var(--transition-slow-duration) var(--transition-timing-function) forwards',
         reveal: 'fadeInUp var(--transition-slow-duration) var(--transition-timing-function) var(--delay, 0s) forwards',
         'pulse-dark': 'pulseDark 2s infinite ease-in-out',
+        'slide-up': 'slideUp 0.3s ease-out forwards',
       },
     },
   },

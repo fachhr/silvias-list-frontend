@@ -21,8 +21,8 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
 
     // Remove cvFile from validation (already uploaded)
-    // Extract base_languages separately as it's not in the original schema validation
-    const { cvStoragePath, originalFilename, base_languages, ...formData } = body;
+    // Extract languages separately as it's not validated in the same way
+    const { cvStoragePath, originalFilename, languages, ...formData } = body;
 
     // Validate CV storage path exists
     if (!cvStoragePath || typeof cvStoragePath !== 'string') {
@@ -67,16 +67,21 @@ export async function POST(req: NextRequest) {
         country_code: validatedData.country_code,
         phoneNumber: validatedData.phoneNumber,
         years_of_experience: validatedData.years_of_experience,
+        work_eligibility: validatedData.work_eligibility || null,
 
         // Job Preferences (user-provided)
+        desired_roles: validatedData.desired_roles || null,
         notice_period_months: validatedData.notice_period_months,
         desired_locations: validatedData.desired_locations,
         desired_other_location: validatedData.desired_other_location || null,
         salary_min: validatedData.salary_min,
         salary_max: validatedData.salary_max,
 
-        // Language proficiency (user-provided)
-        base_languages: base_languages || null,
+        // Languages (simplified array of strings)
+        languages: languages || null,
+
+        // Key achievement/highlight (user-provided)
+        highlight: validatedData.highlight || null,
 
         // CV Info
         cv_storage_path: cvStoragePath,
@@ -88,7 +93,7 @@ export async function POST(req: NextRequest) {
         participates_in_talent_pool: true,
 
         // All other fields are NULL and will be filled by parser
-        // (education_history, professional_experience, skills, etc.)
+        // (education_history, professional_experience, skills, functional_expertise, etc.)
       })
       .select('id, email')
       .single();

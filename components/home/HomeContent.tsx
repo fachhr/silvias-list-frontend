@@ -14,11 +14,17 @@ import {
     LayoutGrid,
     Table as TableIcon,
     ArrowUp,
-    ArrowDown
+    ArrowDown,
+    Heart,
+    Globe,
+    FileCheck,
+    GraduationCap,
+    Layers
 } from 'lucide-react';
-import { CANTONS, MAIN_CANTON_CODES, SENIORITY_LEVELS } from '@/lib/constants';
-import { Badge, Button } from '@/components/ui';
+import { WORK_LOCATIONS, SENIORITY_LEVELS, WORK_ELIGIBILITY_OPTIONS, LANGUAGE_OPTIONS } from '@/lib/constants';
+import { Badge, Button, Toast } from '@/components/ui';
 import { Candidate } from '@/types/talentPool';
+import { CandidateDetailModal } from './CandidateDetailModal';
 
 interface ApiCandidate {
     talent_id: string;
@@ -30,18 +36,26 @@ interface ApiCandidate {
     salary_range: { min: number | null; max: number | null };
     availability: string;
     entry_date: string;
+    // New fields
+    highlight?: string | null;
+    education?: string | null;
+    work_eligibility?: string | null;
+    languages?: string[];
+    functional_expertise?: string[];
+    desired_roles?: string | null;
 }
 
 export default function HomeContent() {
     const [candidates, setCandidates] = useState<Candidate[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
-    const [selectedCantons, setSelectedCantons] = useState<string[]>([]);
+    const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
     const [selectedSeniority, setSelectedSeniority] = useState<string[]>([]);
+    const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
+    const [selectedWorkEligibility, setSelectedWorkEligibility] = useState<string[]>([]);
     const [salaryRange, setSalaryRange] = useState([0, 300000]);
     const [showContactModal, setShowContactModal] = useState<string | null>(null);
     const [isFiltersOpen, setIsFiltersOpen] = useState(false);
-    const [showAllCantons, setShowAllCantons] = useState(false);
     const [sortBy, setSortBy] = useState<'newest' | 'availability'>('newest');
     const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
     const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
@@ -49,6 +63,16 @@ export default function HomeContent() {
     const [sortConfig, setSortConfig] = useState<{ key: string | null; direction: 'asc' | 'desc' }>({
         key: null,
         direction: 'asc'
+    });
+    // New state for favorites, detail modal, toast
+    const [favorites, setFavorites] = useState<string[]>([]);
+    const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+    const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
+    const [showDetailModal, setShowDetailModal] = useState(false);
+    const [toast, setToast] = useState<{ message: string; isVisible: boolean; type: 'success' | 'error' | 'info' }>({
+        message: '',
+        isVisible: false,
+        type: 'success'
     });
 
     // Fetch candidates from API on mount
@@ -77,7 +101,13 @@ export default function HomeContent() {
                             month: 'short',
                             day: 'numeric',
                             year: 'numeric'
-                        })
+                        }),
+                        // New fields
+                        highlight: c.highlight || undefined,
+                        education: c.education || undefined,
+                        workPermit: c.work_eligibility || undefined,
+                        languages: c.languages || [],
+                        functionalExpertise: c.functional_expertise || []
                     }));
                     setCandidates(transformedCandidates);
                 }
@@ -94,24 +124,37 @@ export default function HomeContent() {
     // Filter Logic
     const filteredCandidates = useMemo(() => {
         return candidates.filter((candidate) => {
+            // Favorites filter
+            const matchesFavorites = !showFavoritesOnly || favorites.includes(candidate.id);
+
             const matchesSearch =
                 candidate.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 candidate.skills.some((s) => s.toLowerCase().includes(searchTerm.toLowerCase())) ||
                 candidate.id.toLowerCase().includes(searchTerm.toLowerCase());
 
-            const matchesCanton =
-                selectedCantons.length === 0 ||
-                candidate.cantons.some((c) => selectedCantons.includes(c));
+            const matchesLocation =
+                selectedLocations.length === 0 ||
+                candidate.cantons.some((c) => selectedLocations.includes(c));
 
             const matchesSeniority =
                 selectedSeniority.length === 0 || selectedSeniority.includes(candidate.seniority);
+
+            // Language filter (candidate must have ALL selected languages)
+            const matchesLanguage =
+                selectedLanguages.length === 0 ||
+                selectedLanguages.every((lang) => candidate.languages?.includes(lang));
+
+            // Work eligibility filter (candidate matches ANY selected eligibility)
+            const matchesWorkEligibility =
+                selectedWorkEligibility.length === 0 ||
+                selectedWorkEligibility.includes(candidate.workPermit || '');
 
             const matchesSalary =
                 salaryRange[1] === 300000
                     ? candidate.salaryMin >= salaryRange[0]
                     : candidate.salaryMin >= salaryRange[0] && candidate.salaryMax <= salaryRange[1];
 
-            return matchesSearch && matchesCanton && matchesSeniority && matchesSalary;
+            return matchesFavorites && matchesSearch && matchesLocation && matchesSeniority && matchesLanguage && matchesWorkEligibility && matchesSalary;
         }).sort((a, b) => {
             if (sortBy === 'newest') {
                 // Sort by entry date (newest first)
@@ -136,10 +179,10 @@ export default function HomeContent() {
                 return scoreA - scoreB;
             }
         });
-    }, [candidates, searchTerm, selectedCantons, selectedSeniority, salaryRange, sortBy]);
+    }, [candidates, searchTerm, selectedLocations, selectedSeniority, selectedLanguages, selectedWorkEligibility, salaryRange, sortBy, showFavoritesOnly, favorites]);
 
-    const toggleCanton = (code: string) => {
-        setSelectedCantons((prev) =>
+    const toggleLocation = (code: string) => {
+        setSelectedLocations((prev) =>
             prev.includes(code) ? prev.filter((c) => c !== code) : [...prev, code]
         );
     };
@@ -150,29 +193,35 @@ export default function HomeContent() {
         );
     };
 
-    // Logic to determine which cantons to display in the filter sidebar
-    const displayedCantons = useMemo(() => {
-        if (showAllCantons) {
-            return CANTONS;
-        }
-
-        // 1. Show the main, high-priority cantons
-        const mainCantons = CANTONS.filter((c) => MAIN_CANTON_CODES.includes(c.code));
-
-        // 2. Also ensure any currently selected cantons that are *not* main are still visible
-        const selectedButNotMain = CANTONS.filter(
-            (c) => selectedCantons.includes(c.code) && !MAIN_CANTON_CODES.includes(c.code)
+    const toggleLanguage = (lang: string) => {
+        setSelectedLanguages((prev) =>
+            prev.includes(lang) ? prev.filter((l) => l !== lang) : [...prev, lang]
         );
+    };
 
-        // Combine them
-        const combinedCantons = [...mainCantons, ...selectedButNotMain];
+    const toggleWorkEligibility = (value: string) => {
+        setSelectedWorkEligibility((prev) =>
+            prev.includes(value) ? prev.filter((e) => e !== value) : [...prev, value]
+        );
+    };
 
-        // Get unique canton codes
-        const uniqueCantonCodes = Array.from(new Set(combinedCantons.map((c) => c.code)));
+    const toggleFavorite = (id: string) => {
+        setFavorites((prev) => {
+            const newFavorites = prev.includes(id)
+                ? prev.filter((f) => f !== id)
+                : [...prev, id];
+            // Show toast on add
+            if (!prev.includes(id)) {
+                setToast({ message: 'Added to shortlist', isVisible: true, type: 'success' });
+            }
+            return newFavorites;
+        });
+    };
 
-        // Maintain the alphabetical order of the original list for display consistency
-        return CANTONS.filter((c) => uniqueCantonCodes.includes(c.code));
-    }, [showAllCantons, selectedCantons]);
+    const openDetailModal = (candidate: Candidate) => {
+        setSelectedCandidate(candidate);
+        setShowDetailModal(true);
+    };
 
     const formatCurrency = (val: number) => {
         return new Intl.NumberFormat('de-CH', {
@@ -274,9 +323,6 @@ export default function HomeContent() {
                         </span>
                     </h1>
                     <p className="mt-6 text-lg text-[var(--text-secondary)] max-w-2xl mx-auto font-light leading-relaxed">
-                        Discover exceptional talent across commodities, energy, hedge funds, financial services and tech growth.
-                    </p>
-                    <p className="mt-4 text-base text-[var(--text-tertiary)] max-w-2xl mx-auto font-light leading-relaxed">
                         Browse pre‑screened and personally interviewed professionals. Connect directly with candidates ready for their next opportunity.
                     </p>
                 </div>
@@ -347,45 +393,79 @@ export default function HomeContent() {
                                 </div>
                             </div>
 
-                            {/* Canton Filter */}
+                            {/* Location Filter */}
                             <div>
                                 <h3 className="text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider mb-4 flex items-center gap-2">
                                     <MapPin className="w-3.5 h-3.5 text-[var(--text-tertiary)]" /> Preferred Location
                                 </h3>
                                 <div className="flex flex-wrap gap-2">
-                                    {displayedCantons.map((canton) => (
+                                    {WORK_LOCATIONS.map((location) => (
                                         <button
-                                            key={canton.code}
-                                            onClick={() => toggleCanton(canton.code)}
-                                            className={`px-3 py-1.5 text-xs font-medium rounded border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[rgba(59,130,246,0.5)] focus:ring-offset-2 focus:ring-offset-[var(--bg-root)] ${selectedCantons.includes(canton.code)
+                                            key={location.code}
+                                            onClick={() => toggleLocation(location.code)}
+                                            className={`px-3 py-1.5 text-xs font-medium rounded border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[rgba(59,130,246,0.5)] focus:ring-offset-2 focus:ring-offset-[var(--bg-root)] ${selectedLocations.includes(location.code)
                                                 ? 'bg-[var(--blue)] border-[var(--blue)] text-white shadow-md'
                                                 : 'bg-[var(--bg-surface-2)] border-[var(--border-strong)] text-[var(--text-secondary)] hover:border-[var(--blue)]'
                                                 }`}
                                         >
-                                            {canton.name}
+                                            {location.name}
                                         </button>
                                     ))}
                                 </div>
+                            </div>
 
-                                {/* Toggle Button */}
-                                {CANTONS.length > MAIN_CANTON_CODES.length && (
-                                    <button
-                                        onClick={() => setShowAllCantons(!showAllCantons)}
-                                        className="mt-3 text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] font-medium flex items-center gap-1.5 transition-colors focus:outline-none focus:ring-2 focus:ring-[rgba(59,130,246,0.5)] focus:ring-offset-2 focus:ring-offset-[var(--bg-root)] rounded px-1"
-                                    >
-                                        {showAllCantons ? (
-                                            <>
-                                                Show fewer Cantons{' '}
-                                                <ChevronDown className="w-3.5 h-3.5 rotate-180 transition-transform" />
-                                            </>
-                                        ) : (
-                                            <>
-                                                Show all {CANTONS.length} Cantons{' '}
-                                                <ChevronDown className="w-3.5 h-3.5 transition-transform" />
-                                            </>
-                                        )}
-                                    </button>
-                                )}
+                            {/* Language Filter */}
+                            <div>
+                                <h3 className="text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider mb-4 flex items-center gap-2">
+                                    <Globe className="w-3.5 h-3.5 text-[var(--text-tertiary)]" /> Languages
+                                </h3>
+                                <div className="space-y-2.5">
+                                    {LANGUAGE_OPTIONS.map((lang) => (
+                                        <label
+                                            key={lang}
+                                            className="flex items-center gap-3 group cursor-pointer select-none"
+                                        >
+                                            <div className="relative flex items-center flex-shrink-0">
+                                                <input
+                                                    type="checkbox"
+                                                    className="checkbox-slate peer"
+                                                    checked={selectedLanguages.includes(lang)}
+                                                    onChange={() => toggleLanguage(lang)}
+                                                />
+                                            </div>
+                                            <span className="text-sm text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors">
+                                                {lang}
+                                            </span>
+                                        </label>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Work Eligibility Filter */}
+                            <div>
+                                <h3 className="text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider mb-4 flex items-center gap-2">
+                                    <FileCheck className="w-3.5 h-3.5 text-[var(--text-tertiary)]" /> Work Eligibility
+                                </h3>
+                                <div className="space-y-2.5">
+                                    {WORK_ELIGIBILITY_OPTIONS.map((opt) => (
+                                        <label
+                                            key={opt.value}
+                                            className="flex items-center gap-3 group cursor-pointer select-none"
+                                        >
+                                            <div className="relative flex items-center flex-shrink-0">
+                                                <input
+                                                    type="checkbox"
+                                                    className="checkbox-slate peer"
+                                                    checked={selectedWorkEligibility.includes(opt.value)}
+                                                    onChange={() => toggleWorkEligibility(opt.value)}
+                                                />
+                                            </div>
+                                            <span className="text-sm text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors">
+                                                {opt.label}
+                                            </span>
+                                        </label>
+                                    ))}
+                                </div>
                             </div>
 
                             {/* Salary Filter */}
@@ -409,11 +489,13 @@ export default function HomeContent() {
                             </div>
 
                             {/* Clear Filters */}
-                            {(selectedCantons.length > 0 || selectedSeniority.length > 0 || searchTerm) && (
+                            {(selectedLocations.length > 0 || selectedSeniority.length > 0 || selectedLanguages.length > 0 || selectedWorkEligibility.length > 0 || searchTerm) && (
                                 <button
                                     onClick={() => {
-                                        setSelectedCantons([]);
+                                        setSelectedLocations([]);
                                         setSelectedSeniority([]);
+                                        setSelectedLanguages([]);
+                                        setSelectedWorkEligibility([]);
                                         setSearchTerm('');
                                         setSalaryRange([0, 300000]);
                                     }}
@@ -436,6 +518,21 @@ export default function HomeContent() {
                             </h2>
 
                             <div className="flex items-center gap-3">
+                                {/* Shortlist Toggle */}
+                                {favorites.length > 0 && (
+                                    <button
+                                        onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
+                                        className={`flex items-center gap-2 px-3 py-2 rounded-lg border transition-colors text-sm font-medium ${
+                                            showFavoritesOnly
+                                                ? 'bg-red-500/10 border-red-500/30 text-red-400'
+                                                : 'bg-[var(--bg-surface-2)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                                        }`}
+                                    >
+                                        <Heart className={`w-4 h-4 ${showFavoritesOnly ? 'fill-current' : ''}`} />
+                                        <span>Shortlist ({favorites.length})</span>
+                                    </button>
+                                )}
+
                                 {/* Sidebar Toggle */}
                                 <button
                                     onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -551,10 +648,26 @@ export default function HomeContent() {
                                 {displayCandidates.map((candidate) => (
                                     <div
                                         key={candidate.id}
-                                        className="group glass-panel rounded-xl p-6 hover:border-[#D4AF37] hover:shadow-[0_4px_30px_rgba(212,175,55,0.2)] transition-all duration-300 relative"
+                                        className="group glass-panel rounded-xl p-6 hover:border-[#D4AF37] hover:shadow-[0_4px_30px_rgba(212,175,55,0.2)] transition-all duration-300 relative cursor-pointer"
+                                        onClick={() => openDetailModal(candidate)}
                                     >
+                                        {/* Favorite Button */}
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                toggleFavorite(candidate.id);
+                                            }}
+                                            className={`absolute top-4 right-4 p-2 rounded-lg transition-all z-10 ${
+                                                favorites.includes(candidate.id)
+                                                    ? 'text-red-400 bg-red-500/10'
+                                                    : 'text-[var(--text-tertiary)] hover:text-red-400 hover:bg-red-500/10'
+                                            }`}
+                                        >
+                                            <Heart className={`w-5 h-5 ${favorites.includes(candidate.id) ? 'fill-current' : ''}`} />
+                                        </button>
+
                                         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6">
-                                            <div className="flex-1 min-w-0">
+                                            <div className="flex-1 min-w-0 pr-10">
                                                 <div className="flex flex-wrap items-center gap-3 mb-3">
                                                     <span className="font-mono text-[10px] uppercase tracking-wider text-[var(--text-tertiary)] border border-[var(--border-strong)] px-1.5 py-0.5 rounded">
                                                         {candidate.id}
@@ -562,14 +675,23 @@ export default function HomeContent() {
                                                     <Badge style={candidate.seniority === 'Executive' ? 'gold' : 'default'}>
                                                         {candidate.seniority}
                                                     </Badge>
-                                                    <span className="text-xs text-[var(--text-tertiary)] flex items-center gap-1 ml-auto sm:ml-0">
-                                                        <Clock className="w-3 h-3" /> Added {candidate.entryDate}
-                                                    </span>
+                                                    {candidate.workPermit && (
+                                                        <Badge style="blue">
+                                                            {WORK_ELIGIBILITY_OPTIONS.find(o => o.value === candidate.workPermit)?.label || candidate.workPermit}
+                                                        </Badge>
+                                                    )}
                                                 </div>
 
                                                 <h3 className="text-xl font-bold text-[var(--text-primary)] mb-1 group-hover:text-[#D4AF37] transition-colors">
                                                     {candidate.role}
                                                 </h3>
+
+                                                {/* Highlight quote */}
+                                                {candidate.highlight && (
+                                                    <p className="text-sm italic text-[var(--text-secondary)] mt-2 mb-3 pl-3 border-l-2 border-[var(--gold-border)]">
+                                                        &ldquo;{candidate.highlight}&rdquo;
+                                                    </p>
+                                                )}
 
                                                 <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-[var(--text-secondary)] mt-4 mb-5">
                                                     <div className="flex items-center gap-2">
@@ -578,15 +700,36 @@ export default function HomeContent() {
                                                     </div>
                                                     <div className="flex items-center gap-2">
                                                         <MapPin className="w-4 h-4 text-[var(--text-tertiary)]" />
-                                                        {candidate.cantons.map(code => CANTONS.find(c => c.code === code)?.name ?? code).join(', ')}
+                                                        {candidate.cantons.map(code => WORK_LOCATIONS.find(c => c.code === code)?.name ?? code).join(', ')}
                                                     </div>
-                                                    <div className="flex items-center gap-2">
-                                                        <DollarSign className="w-4 h-4 text-[var(--text-tertiary)]" />
-                                                        <span className="font-mono">
-                                                            {formatCurrency(candidate.salaryMin)} – {formatCurrency(candidate.salaryMax)}
-                                                        </span>
-                                                    </div>
+                                                    {candidate.education && (
+                                                        <div className="flex items-center gap-2">
+                                                            <GraduationCap className="w-4 h-4 text-[var(--text-tertiary)]" />
+                                                            {candidate.education}
+                                                        </div>
+                                                    )}
+                                                    {candidate.languages && candidate.languages.length > 0 && (
+                                                        <div className="flex items-center gap-2">
+                                                            <Globe className="w-4 h-4 text-[var(--text-tertiary)]" />
+                                                            {candidate.languages.join(', ')}
+                                                        </div>
+                                                    )}
                                                 </div>
+
+                                                {/* Functional Expertise badges */}
+                                                {candidate.functionalExpertise && candidate.functionalExpertise.length > 0 && (
+                                                    <div className="flex flex-wrap gap-2 mb-3">
+                                                        {candidate.functionalExpertise.map((exp) => (
+                                                            <span
+                                                                key={exp}
+                                                                className="px-2 py-0.5 bg-purple-500/10 border border-purple-500/30 text-purple-400 text-xs font-medium rounded flex items-center gap-1"
+                                                            >
+                                                                <Layers className="w-3 h-3" />
+                                                                {exp}
+                                                            </span>
+                                                        ))}
+                                                    </div>
+                                                )}
 
                                                 <div className="flex flex-wrap gap-2">
                                                     {candidate.skills.map((skill) => (
@@ -606,11 +749,26 @@ export default function HomeContent() {
                                                         Availability
                                                     </p>
                                                     <p className="text-sm font-medium text-[var(--text-primary)]">{candidate.availability}</p>
+                                                    <p className="text-xs text-[var(--text-tertiary)] mt-2">
+                                                        <Clock className="w-3 h-3 inline mr-1" />
+                                                        Added {candidate.entryDate}
+                                                    </p>
+                                                </div>
+                                                <div className="text-right hidden sm:block">
+                                                    <p className="text-[10px] uppercase tracking-wider text-[var(--text-tertiary)] mb-1 font-semibold">
+                                                        Salary
+                                                    </p>
+                                                    <p className="text-sm font-mono font-medium text-[var(--text-primary)]">
+                                                        {formatCurrency(candidate.salaryMin)} – {formatCurrency(candidate.salaryMax)}
+                                                    </p>
                                                 </div>
                                                 <Button
                                                     variant="primary"
                                                     className="w-full sm:w-auto text-xs sm:text-sm"
-                                                    onClick={() => setShowContactModal(candidate.id)}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        setShowContactModal(candidate.id);
+                                                    }}
                                                 >
                                                     Request Intro
                                                 </Button>
@@ -682,7 +840,7 @@ export default function HomeContent() {
                                                         {formatCurrency(candidate.salaryMin)}
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)]">
-                                                        {candidate.cantons.map(code => CANTONS.find(c => c.code === code)?.name ?? code).join(', ')}
+                                                        {candidate.cantons.map(code => WORK_LOCATIONS.find(c => c.code === code)?.name ?? code).join(', ')}
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)]">
                                                         {candidate.availability}
@@ -763,6 +921,28 @@ export default function HomeContent() {
                     </div>
                 </div>
             )}
+
+            {/* Candidate Detail Modal */}
+            <CandidateDetailModal
+                candidate={selectedCandidate}
+                isOpen={showDetailModal}
+                onClose={() => {
+                    setShowDetailModal(false);
+                    setSelectedCandidate(null);
+                }}
+                onRequestIntroduction={(id) => {
+                    setShowDetailModal(false);
+                    setShowContactModal(id);
+                }}
+            />
+
+            {/* Toast Notification */}
+            <Toast
+                message={toast.message}
+                isVisible={toast.isVisible}
+                type={toast.type}
+                onClose={() => setToast({ ...toast, isVisible: false })}
+            />
         </div>
     );
 }

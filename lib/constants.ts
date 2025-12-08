@@ -1,4 +1,12 @@
-import { Candidate, Canton, SelectOption } from '@/types/talentPool';
+import { Candidate, SelectOption } from '@/types/talentPool';
+
+// ====================
+// WORK LOCATION TYPE
+// ====================
+export interface WorkLocation {
+  code: string;
+  name: string;
+}
 
 /**
  * Shared application constants
@@ -119,17 +127,36 @@ export const CANDIDATES: Candidate[] = [
   }
 ];
 
-// Oil & Gas hub locations in Switzerland
-export const CANTONS: Canton[] = [
+// ====================
+// WORK LOCATIONS
+// ====================
+export const WORK_LOCATIONS: WorkLocation[] = [
   { code: 'ZG', name: 'Zug' },
   { code: 'ZH', name: 'Zurich' },
   { code: 'GE', name: 'Geneva' },
   { code: 'BE', name: 'Bern' },
   { code: 'TI', name: 'Ticino' },
-  { code: 'GLOBAL', name: 'Global' },
+  { code: 'CH', name: 'Switzerland' },
+  { code: 'Global', name: 'Global' },
+  { code: 'Others', name: 'Others' },
 ];
 
-export const MAIN_CANTON_CODES = ['ZG', 'ZH', 'GE', 'BE', 'TI', 'GLOBAL'];
+// ====================
+// WORK ELIGIBILITY OPTIONS
+// ====================
+export const WORK_ELIGIBILITY_OPTIONS: SelectOption[] = [
+  { value: 'swiss_citizen', label: 'Swiss Citizen' },
+  { value: 'c_permit', label: 'Swiss C Permit (Permanent)' },
+  { value: 'eu_efta', label: 'EU/EFTA Citizen' },
+  { value: 'b_permit', label: 'Swiss B Permit (Non-EU)' },
+  { value: 'g_permit', label: 'Swiss G Permit (Cross-border)' },
+  { value: 'requires_sponsorship', label: 'Non-EU / Requires Sponsorship' },
+];
+
+// ====================
+// LANGUAGE OPTIONS
+// ====================
+export const LANGUAGE_OPTIONS = ['English', 'German', 'French', 'Italian'] as const;
 
 export const SENIORITY_LEVELS: SelectOption[] = [
   { label: 'Junior (0-2 years)', value: 'Junior' },

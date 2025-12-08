@@ -13,6 +13,12 @@ export interface Candidate {
   salaryMax: number;
   availability: string;
   entryDate: string;
+  // New fields from sample integration
+  highlight?: string;           // Key achievement quote (from form)
+  functionalExpertise?: string[]; // e.g., ['Quant', 'Tech', 'Trading'] (from CV parser)
+  education?: string;           // e.g., 'MSc Computer Science, ETH Zurich' (from CV parser)
+  workPermit?: string;          // e.g., 'Swiss G Permit' (from form)
+  languages?: string[];         // e.g., ['English', 'German'] (from form)
 }
 
 export interface Canton {
@@ -48,6 +54,12 @@ export interface TalentPoolProfile {
   accepted_terms_at: string;
   created_at: string;
   parsing_completed_at?: string | null;
+  // New fields from sample integration
+  work_eligibility?: string | null;
+  desired_roles?: string | null;
+  highlight?: string | null;
+  languages?: string[] | null;
+  functional_expertise?: string[] | null;
 }
 
 export interface CVUploadResponse {
@@ -85,6 +97,13 @@ export interface AnonymizedTalentProfile {
     max: number | null;
   };
   seniority_level: SeniorityLevel;
+  // New fields from sample integration
+  highlight?: string | null;
+  functional_expertise?: string[] | null;
+  education?: string | null;
+  work_eligibility?: string | null;
+  languages?: string[] | null;
+  desired_roles?: string | null;
 }
 
 // Talent pool list response
@@ -113,6 +132,8 @@ export interface TalentPoolQueryParams {
   cantons?: string;
   salary_min?: number;
   salary_max?: number;
+  languages?: string;         // Comma-separated language filter
+  work_eligibility?: string;  // Comma-separated work eligibility filter
   sort_by?: 'talent_id' | 'created_at' | 'years_of_experience' | 'salary_max';
   sort_order?: 'asc' | 'desc';
   page?: number;

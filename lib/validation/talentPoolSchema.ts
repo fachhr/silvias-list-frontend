@@ -55,9 +55,19 @@ export const talentPoolSchema = z.object({
     .max(50, 'Please enter a value between 0 and 50')
     .int('Please enter a whole number'),
 
+  // Work eligibility / permit status
+  work_eligibility: z.string()
+    .min(1, 'Please select your work eligibility'),
+
   // ============================================
   // JOB PREFERENCES (user-provided, required)
   // ============================================
+
+  // Desired roles (text input)
+  desired_roles: z.string()
+    .min(1, 'Please describe your desired role(s)')
+    .max(200, 'Role description must be less than 200 characters')
+    .trim(),
 
   // Notice period in months
   notice_period_months: z.string()
@@ -73,13 +83,20 @@ export const talentPoolSchema = z.object({
     .optional()
     .or(z.literal('')),
 
-  // Language proficiency (optional array)
-  base_languages: z.array(
-    z.object({
-      language: z.string().min(1),
-      proficiency: z.string().min(1),
-    })
-  ).nullable().optional(),
+  // Languages with professional proficiency (simple checkboxes)
+  languages: z.array(z.string()).optional(),
+
+  // Other language (text input when "Other" is selected)
+  other_language: z.string()
+    .max(50, 'Language name must be less than 50 characters')
+    .optional()
+    .or(z.literal('')),
+
+  // Key achievement / career highlight (optional)
+  highlight: z.string()
+    .max(300, 'Achievement must be less than 300 characters')
+    .optional()
+    .or(z.literal('')),
 
   // Salary expectation (required number inputs)
   salary_min: z.number({
@@ -163,12 +180,17 @@ export const talentPoolContactSchema = talentPoolSchema.pick({
   country_code: true,
   phoneNumber: true,
   years_of_experience: true,
+  work_eligibility: true,
 });
 
 export const talentPoolPreferencesSchema = talentPoolSchema.pick({
+  desired_roles: true,
   notice_period_months: true,
   desired_locations: true,
   desired_other_location: true,
+  languages: true,
+  other_language: true,
+  highlight: true,
   salary_min: true,
   salary_max: true,
 });

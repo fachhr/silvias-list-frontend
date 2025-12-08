@@ -17,12 +17,14 @@ export async function GET(req: NextRequest) {
     const seniority = searchParams.get('seniority') as SeniorityLevel | 'all' | null;
     const cantonsParam = searchParams.get('cantons');
     const salaryMax = searchParams.get('salary_max');
+    const languagesParam = searchParams.get('languages');
+    const workEligibilityParam = searchParams.get('work_eligibility');
     const sortBy = searchParams.get('sort_by') || 'created_at';
     const limit = Math.min(parseInt(searchParams.get('limit') || '100', 10), 100);
 
     let query = supabaseAdmin.from('user_profiles').select('*');
 
-    // 1. Filter by Cantons
+    // 1. Filter by Cantons / Locations
     if (cantonsParam) {
       const cantons = cantonsParam.split(',').map(c => c.trim()).filter(Boolean);
       if (cantons.length > 0) {
@@ -35,12 +37,27 @@ export async function GET(req: NextRequest) {
     if (salaryMax) {
       const max = parseInt(salaryMax, 10);
       if (!isNaN(max)) {
-        // Changed from 'salary_min' to 'salary_max'
         query = query.lte('salary_max', max);
       }
     }
 
-    // 3. Sort
+    // 3. Filter by Languages (candidates must have ALL selected languages)
+    if (languagesParam) {
+      const languages = languagesParam.split(',').map(l => l.trim()).filter(Boolean);
+      if (languages.length > 0) {
+        query = query.contains('languages', languages);
+      }
+    }
+
+    // 4. Filter by Work Eligibility (candidates match ANY selected eligibility)
+    if (workEligibilityParam) {
+      const eligibilities = workEligibilityParam.split(',').map(e => e.trim()).filter(Boolean);
+      if (eligibilities.length > 0) {
+        query = query.in('work_eligibility', eligibilities);
+      }
+    }
+
+    // 5. Sort
     if (sortBy === 'experience') {
       query = query.order('years_of_experience', { ascending: false });
     } else {
@@ -53,7 +70,7 @@ export async function GET(req: NextRequest) {
 
     if (error) throw error;
 
-    // 4. Filter by Seniority (In Memory)
+    // 6. Filter by Seniority (In Memory)
     let filteredData = data || [];
     if (seniority && seniority !== 'all') {
       const yearsRange = getSeniorityYearsRange(seniority);
@@ -67,13 +84,16 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    // 5. Transform Response
+    // 7. Transform Response
     const candidates = filteredData.map((profile) => {
       const years = parseFloat(profile.years_of_experience || '0');
 
-      // Extract Role (most recent job title)
+      // Extract Role - prefer desired_roles, fall back to parsed experience
       let roleStr = 'Professional'; // Default fallback
-      if (Array.isArray(profile.professional_experience) && profile.professional_experience.length > 0) {
+      if (profile.desired_roles) {
+        // Use the first desired role if multiple are provided
+        roleStr = profile.desired_roles.split(';')[0].trim();
+      } else if (Array.isArray(profile.professional_experience) && profile.professional_experience.length > 0) {
         const mostRecentJob = profile.professional_experience[0];
         if (mostRecentJob && mostRecentJob.positionName) {
           roleStr = mostRecentJob.positionName;
@@ -98,6 +118,17 @@ export async function GET(req: NextRequest) {
         }
       }
 
+      // Extract Education (most recent/highest degree)
+      let educationStr: string | null = null;
+      if (Array.isArray(profile.education_history) && profile.education_history.length > 0) {
+        const mostRecentEdu = profile.education_history[0];
+        if (mostRecentEdu) {
+          const degree = mostRecentEdu.degree || mostRecentEdu.fieldOfStudy || '';
+          const institution = mostRecentEdu.institutionName || '';
+          educationStr = [degree, institution].filter(Boolean).join(', ');
+        }
+      }
+
       return {
         talent_id: formatTalentId(profile.talent_id || profile.id),
         role: roleStr,
@@ -110,7 +141,14 @@ export async function GET(req: NextRequest) {
         },
         seniority_level: getSeniorityLevel(years),
         skills: topSkills,
-        availability: availabilityStr
+        availability: availabilityStr,
+        // New fields
+        highlight: profile.highlight || null,
+        education: educationStr,
+        work_eligibility: profile.work_eligibility || null,
+        languages: profile.languages || [],
+        functional_expertise: profile.functional_expertise || [],
+        desired_roles: profile.desired_roles || null
       };
     });
 
