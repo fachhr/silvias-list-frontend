@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import {
     Search,
     MapPin,
@@ -19,12 +19,103 @@ import {
     Globe,
     FileCheck,
     GraduationCap,
-    Layers
+    Layers,
+    Check
 } from 'lucide-react';
 import { WORK_LOCATIONS, SENIORITY_LEVELS, WORK_ELIGIBILITY_OPTIONS, LANGUAGE_OPTIONS } from '@/lib/constants';
 import { Badge, Button, Toast } from '@/components/ui';
 import { Candidate } from '@/types/talentPool';
 import { CandidateDetailModal } from './CandidateDetailModal';
+
+// Multi-Select Filter Component for Table View
+interface MultiSelectFilterProps {
+    options: { value: string; label: string }[];
+    selected: string[];
+    onChange: (values: string[]) => void;
+    placeholder?: string;
+}
+
+const MultiSelectFilter: React.FC<MultiSelectFilterProps> = ({ options, selected, onChange, placeholder = 'All' }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+                setIsOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    const toggleOption = (value: string) => {
+        const newSelected = selected.includes(value)
+            ? selected.filter(item => item !== value)
+            : [...selected, value];
+        onChange(newSelected);
+    };
+
+    const displayText = selected.length === 0
+        ? placeholder
+        : selected.length === 1
+            ? options.find(o => o.value === selected[0])?.label || selected[0]
+            : `${selected.length} selected`;
+
+    return (
+        <div className="relative" ref={containerRef}>
+            <button
+                onClick={() => setIsOpen(!isOpen)}
+                className={`w-full text-left text-xs border rounded py-1 pl-2 pr-6 relative focus:outline-none focus:ring-1 focus:ring-[var(--blue)] font-normal truncate h-7 flex items-center transition-colors
+                    ${selected.length > 0
+                        ? 'bg-[var(--blue-dim)] border-[var(--blue)] text-[var(--text-primary)]'
+                        : 'bg-[var(--bg-surface-1)] border-[var(--border-subtle)] text-[var(--text-tertiary)]'
+                    }`}
+            >
+                {displayText}
+                <ChevronDown className="w-3 h-3 absolute right-1.5 top-2 text-[var(--text-tertiary)]" />
+            </button>
+
+            {isOpen && (
+                <div className="absolute top-full left-0 mt-1 w-48 bg-[var(--bg-surface-1)] border border-[var(--border-strong)] rounded-lg shadow-xl z-50 animate-in fade-in zoom-in-95 duration-100">
+                    <div className="p-1 max-h-60 overflow-y-auto">
+                        {options.map((option) => {
+                            const isSelected = selected.includes(option.value);
+                            return (
+                                <div
+                                    key={option.value}
+                                    onClick={() => toggleOption(option.value)}
+                                    className="flex items-center gap-2 px-2 py-1.5 hover:bg-[var(--bg-surface-2)] rounded cursor-pointer select-none"
+                                >
+                                    <div className={`w-3.5 h-3.5 rounded border flex items-center justify-center transition-colors ${
+                                        isSelected
+                                            ? 'bg-[var(--blue)] border-[var(--blue)]'
+                                            : 'border-[var(--border-strong)] bg-[var(--bg-surface-1)]'
+                                    }`}>
+                                        {isSelected && <Check className="w-2.5 h-2.5 text-white" />}
+                                    </div>
+                                    <span className={`text-xs text-left flex-1 ${isSelected ? 'text-[var(--text-primary)] font-medium' : 'text-[var(--text-secondary)]'}`}>
+                                        {option.label}
+                                    </span>
+                                </div>
+                            );
+                        })}
+                    </div>
+                    {selected.length > 0 && (
+                        <div className="border-t border-[var(--border-subtle)] p-1">
+                            <button
+                                onClick={() => { onChange([]); setIsOpen(false); }}
+                                className="w-full text-center text-[10px] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-2)] py-1.5 rounded transition-colors"
+                            >
+                                Clear Filters
+                            </button>
+                        </div>
+                    )}
+                </div>
+            )}
+        </div>
+    );
+};
 
 interface ApiCandidate {
     talent_id: string;
@@ -74,6 +165,30 @@ export default function HomeContent() {
         isVisible: false,
         type: 'success'
     });
+
+    // Table column filters state
+    const [tableFilters, setTableFilters] = useState<{
+        id: string;
+        role: string;
+        highlight: string;
+        expertise: string;
+        experience: string;
+        seniority: string[];
+        salary: string;
+        education: string;
+        cantons: string[];
+        workPermit: string[];
+        availability: string;
+        languages: string[];
+    }>({
+        id: '', role: '', highlight: '', expertise: '', experience: '',
+        seniority: [], salary: '', education: '', cantons: [],
+        workPermit: [], availability: '', languages: []
+    });
+
+    const updateTableFilter = (key: keyof typeof tableFilters, value: string | string[]) => {
+        setTableFilters(prev => ({ ...prev, [key]: value }));
+    };
 
     // Fetch candidates from API on mount
     useEffect(() => {
@@ -154,7 +269,50 @@ export default function HomeContent() {
                     ? candidate.salaryMin >= salaryRange[0]
                     : candidate.salaryMin >= salaryRange[0] && candidate.salaryMax <= salaryRange[1];
 
-            return matchesFavorites && matchesSearch && matchesLocation && matchesSeniority && matchesLanguage && matchesWorkEligibility && matchesSalary;
+            // Table column filters (only apply in table view)
+            const matchesTableFilters = viewMode !== 'table' || Object.entries(tableFilters).every(([key, filterValue]) => {
+                // Skip if filter is empty
+                if (!filterValue || (Array.isArray(filterValue) && filterValue.length === 0)) return true;
+
+                // Handle multi-select array filters
+                if (Array.isArray(filterValue)) {
+                    if (key === 'seniority') {
+                        return filterValue.includes(candidate.seniority);
+                    }
+                    if (key === 'cantons') {
+                        return candidate.cantons.some(c => filterValue.includes(c));
+                    }
+                    if (key === 'workPermit') {
+                        return filterValue.includes(candidate.workPermit || '');
+                    }
+                    if (key === 'languages') {
+                        return candidate.languages?.some(l => filterValue.includes(l)) || false;
+                    }
+                    return true;
+                }
+
+                // Handle text filters
+                const searchVal = filterValue.toLowerCase();
+
+                if (key === 'id') return candidate.id.toLowerCase().includes(searchVal);
+                if (key === 'role') return candidate.role.toLowerCase().includes(searchVal);
+                if (key === 'highlight') return (candidate.highlight || '').toLowerCase().includes(searchVal);
+                if (key === 'expertise') return candidate.functionalExpertise?.some(e => e.toLowerCase().includes(searchVal)) || false;
+                if (key === 'experience') return candidate.experience.toLowerCase().includes(searchVal);
+                if (key === 'education') return (candidate.education || '').toLowerCase().includes(searchVal);
+                if (key === 'availability') return candidate.availability.toLowerCase().includes(searchVal);
+                if (key === 'salary') {
+                    const numVal = parseFloat(searchVal);
+                    if (!isNaN(numVal)) {
+                        return candidate.salaryMin >= numVal;
+                    }
+                    return formatSalaryRange(candidate.salaryMin, candidate.salaryMax).toLowerCase().includes(searchVal);
+                }
+
+                return true;
+            });
+
+            return matchesFavorites && matchesSearch && matchesLocation && matchesSeniority && matchesLanguage && matchesWorkEligibility && matchesSalary && matchesTableFilters;
         }).sort((a, b) => {
             if (sortBy === 'newest') {
                 // Sort by entry date (newest first)
@@ -179,7 +337,7 @@ export default function HomeContent() {
                 return scoreA - scoreB;
             }
         });
-    }, [candidates, searchTerm, selectedLocations, selectedSeniority, selectedLanguages, selectedWorkEligibility, salaryRange, sortBy, showFavoritesOnly, favorites]);
+    }, [candidates, searchTerm, selectedLocations, selectedSeniority, selectedLanguages, selectedWorkEligibility, salaryRange, sortBy, showFavoritesOnly, favorites, tableFilters, viewMode]);
 
     const toggleLocation = (code: string) => {
         setSelectedLocations((prev) =>
@@ -206,16 +364,11 @@ export default function HomeContent() {
     };
 
     const toggleFavorite = (id: string) => {
-        setFavorites((prev) => {
-            const newFavorites = prev.includes(id)
+        setFavorites((prev) =>
+            prev.includes(id)
                 ? prev.filter((f) => f !== id)
-                : [...prev, id];
-            // Show toast on add
-            if (!prev.includes(id)) {
-                setToast({ message: 'Added to shortlist', isVisible: true, type: 'success' });
-            }
-            return newFavorites;
-        });
+                : [...prev, id]
+        );
     };
 
     const openDetailModal = (candidate: Candidate) => {
@@ -339,7 +492,8 @@ export default function HomeContent() {
             {/* DASHBOARD CONTENT AREA */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <div className="flex flex-col lg:flex-row gap-10">
-                    {/* SIDEBAR FILTERS */}
+                    {/* SIDEBAR FILTERS - Only show in grid view */}
+                    {viewMode === 'grid' && (
                     <aside className={`w-full lg:w-72 flex-shrink-0 space-y-4 lg:space-y-0 ${
                             !isSidebarOpen ? 'lg:hidden' : 'lg:block'
                         } lg:animate-in lg:slide-in-from-left-4 lg:fade-in lg:duration-300`}>
@@ -487,6 +641,7 @@ export default function HomeContent() {
                                         min="50000"
                                         max="300000"
                                         step="10000"
+                                        value={salaryRange[1]}
                                         className="w-full h-1 bg-[var(--bg-surface-3)] rounded-lg appearance-none cursor-pointer accent-[var(--blue)]"
                                         onChange={(e) => setSalaryRange([50000, parseInt(e.target.value)])}
                                     />
@@ -514,6 +669,7 @@ export default function HomeContent() {
                             )}
                         </div>
                     </aside>
+                    )}
 
                     {/* RESULTS GRID */}
                     <main className="flex-1 overflow-hidden transition-all duration-300">
@@ -541,21 +697,25 @@ export default function HomeContent() {
                                     </button>
                                 )}
 
-                                {/* Sidebar Toggle */}
-                                <button
-                                    onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                                    className={`hidden lg:flex p-2 rounded-lg border transition-colors items-center gap-2 text-sm font-medium ${
-                                        isSidebarOpen
-                                            ? 'bg-[var(--bg-surface-2)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-                                            : 'bg-[var(--gold)] border-[var(--gold)] text-[var(--bg-root)] shadow-sm'
-                                    }`}
-                                    title={isSidebarOpen ? "Hide Filters" : "Show Filters"}
-                                >
-                                    <Filter className="w-4 h-4" />
-                                    <span>Filters</span>
-                                </button>
+                                {/* Sidebar Toggle - Only show in grid view */}
+                                {viewMode === 'grid' && (
+                                    <>
+                                        <button
+                                            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                                            className={`hidden lg:flex p-2 rounded-lg border transition-colors items-center gap-2 text-sm font-medium ${
+                                                isSidebarOpen
+                                                    ? 'bg-[var(--bg-surface-2)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                                                    : 'bg-[var(--gold)] border-[var(--gold)] text-[var(--bg-root)] shadow-sm'
+                                            }`}
+                                            title={isSidebarOpen ? "Hide Filters" : "Show Filters"}
+                                        >
+                                            <Filter className="w-4 h-4" />
+                                            <span>Filters</span>
+                                        </button>
 
-                                <div className="hidden lg:block h-6 w-px bg-[var(--border-subtle)] mx-1"></div>
+                                        <div className="hidden lg:block h-6 w-px bg-[var(--border-subtle)] mx-1"></div>
+                                    </>
+                                )}
 
                                 {/* View Toggle */}
                                 <div className="flex bg-[var(--bg-surface-2)] rounded-lg p-1 border border-[var(--border-subtle)]">
@@ -641,7 +801,7 @@ export default function HomeContent() {
                                     Fetching latest talent pool data.
                                 </p>
                             </div>
-                        ) : displayCandidates.length === 0 ? (
+                        ) : displayCandidates.length === 0 && viewMode === 'grid' ? (
                             <div className="glass-panel rounded-xl border-dashed p-16 text-center">
                                 <div className="w-12 h-12 bg-[var(--bg-surface-2)] rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm border border-[var(--border-subtle)]">
                                     <Search className="w-5 h-5 text-[var(--text-tertiary)]" />
@@ -784,30 +944,30 @@ export default function HomeContent() {
                             /* TABLE VIEW */
                             <div className="glass-panel rounded-xl overflow-hidden">
                                 <div className="table-scroll">
-                                    <table className="min-w-[1400px] w-full divide-y divide-[var(--border-subtle)]">
+                                    <table className="min-w-[1800px] w-full divide-y divide-[var(--border-subtle)] table-fixed">
                                         <thead className="bg-[var(--bg-surface-2)]">
                                             <tr>
                                                 {/* Favorite column (no sort) */}
                                                 <th className="px-4 py-3 w-10"></th>
                                                 {/* Sortable columns */}
                                                 {[
-                                                    { label: 'ID', key: 'id', sortable: true },
-                                                    { label: 'Role', key: 'role', sortable: true },
-                                                    { label: 'Highlight', key: 'highlight', sortable: false },
-                                                    { label: 'Expertise', key: 'expertise', sortable: false },
-                                                    { label: 'Exp.', key: 'experience', sortable: true },
-                                                    { label: 'Seniority', key: 'seniority', sortable: true },
-                                                    { label: 'Salary', key: 'salary', sortable: true },
-                                                    { label: 'Education', key: 'education', sortable: false },
-                                                    { label: 'Pref. Location', key: 'cantons', sortable: true },
-                                                    { label: 'Work Eligibility', key: 'workPermit', sortable: false },
-                                                    { label: 'Availability', key: 'availability', sortable: true },
-                                                    { label: 'Languages', key: 'languages', sortable: false },
+                                                    { label: 'ID', key: 'id', sortable: true, width: 'w-20' },
+                                                    { label: 'Role', key: 'role', sortable: true, width: 'w-56' },
+                                                    { label: 'Highlight', key: 'highlight', sortable: false, width: 'w-72' },
+                                                    { label: 'Expertise', key: 'expertise', sortable: false, width: 'w-40' },
+                                                    { label: 'Exp.', key: 'experience', sortable: true, width: 'w-24' },
+                                                    { label: 'Seniority', key: 'seniority', sortable: true, width: 'w-32' },
+                                                    { label: 'Salary', key: 'salary', sortable: true, width: 'w-40' },
+                                                    { label: 'Education', key: 'education', sortable: false, width: 'w-96' },
+                                                    { label: 'Pref. Location', key: 'cantons', sortable: true, width: 'w-36' },
+                                                    { label: 'Work Eligibility', key: 'workPermit', sortable: false, width: 'w-48' },
+                                                    { label: 'Availability', key: 'availability', sortable: true, width: 'w-36' },
+                                                    { label: 'Languages', key: 'languages', sortable: false, width: 'w-36' },
                                                 ].map((col) => (
                                                     <th
                                                         key={col.key}
                                                         onClick={() => col.sortable && requestSort(col.key)}
-                                                        className={`px-4 py-3 text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider select-none group whitespace-nowrap ${
+                                                        className={`px-4 py-3 ${col.width} text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider select-none group whitespace-nowrap ${
                                                             col.sortable ? 'cursor-pointer hover:bg-[var(--bg-surface-3)] transition-colors' : ''
                                                         }`}
                                                     >
@@ -823,13 +983,155 @@ export default function HomeContent() {
                                                         </div>
                                                     </th>
                                                 ))}
-                                                <th className="relative px-4 py-3">
+                                                <th className="relative px-4 py-3 w-20">
                                                     <span className="sr-only">Actions</span>
                                                 </th>
                                             </tr>
+                                            {/* Filter Row */}
+                                            <tr className="bg-[var(--bg-surface-2)] border-t border-[var(--border-subtle)]">
+                                                <th className="px-4 py-2">
+                                                    <Filter className="w-3 h-3 text-[var(--text-tertiary)]" />
+                                                </th>
+                                                {/* ID */}
+                                                <th className="px-4 py-2">
+                                                    <input
+                                                        type="text"
+                                                        placeholder="ID"
+                                                        className="w-full text-xs border-[var(--border-subtle)] bg-[var(--bg-surface-1)] text-[var(--text-primary)] rounded py-1 px-2 focus:ring-1 focus:ring-[var(--blue)] focus:border-[var(--blue)] font-normal placeholder:text-[var(--text-tertiary)] h-7"
+                                                        value={tableFilters.id}
+                                                        onChange={(e) => updateTableFilter('id', e.target.value)}
+                                                    />
+                                                </th>
+                                                {/* Role */}
+                                                <th className="px-4 py-2">
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Role"
+                                                        className="w-full text-xs border-[var(--border-subtle)] bg-[var(--bg-surface-1)] text-[var(--text-primary)] rounded py-1 px-2 focus:ring-1 focus:ring-[var(--blue)] focus:border-[var(--blue)] font-normal placeholder:text-[var(--text-tertiary)] h-7"
+                                                        value={tableFilters.role}
+                                                        onChange={(e) => updateTableFilter('role', e.target.value)}
+                                                    />
+                                                </th>
+                                                {/* Highlight */}
+                                                <th className="px-4 py-2">
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Search"
+                                                        className="w-full text-xs border-[var(--border-subtle)] bg-[var(--bg-surface-1)] text-[var(--text-primary)] rounded py-1 px-2 focus:ring-1 focus:ring-[var(--blue)] focus:border-[var(--blue)] font-normal placeholder:text-[var(--text-tertiary)] h-7"
+                                                        value={tableFilters.highlight}
+                                                        onChange={(e) => updateTableFilter('highlight', e.target.value)}
+                                                    />
+                                                </th>
+                                                {/* Expertise */}
+                                                <th className="px-4 py-2">
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Expertise"
+                                                        className="w-full text-xs border-[var(--border-subtle)] bg-[var(--bg-surface-1)] text-[var(--text-primary)] rounded py-1 px-2 focus:ring-1 focus:ring-[var(--blue)] focus:border-[var(--blue)] font-normal placeholder:text-[var(--text-tertiary)] h-7"
+                                                        value={tableFilters.expertise}
+                                                        onChange={(e) => updateTableFilter('expertise', e.target.value)}
+                                                    />
+                                                </th>
+                                                {/* Experience */}
+                                                <th className="px-4 py-2">
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Exp"
+                                                        className="w-full text-xs border-[var(--border-subtle)] bg-[var(--bg-surface-1)] text-[var(--text-primary)] rounded py-1 px-2 focus:ring-1 focus:ring-[var(--blue)] focus:border-[var(--blue)] font-normal placeholder:text-[var(--text-tertiary)] h-7 w-16"
+                                                        value={tableFilters.experience}
+                                                        onChange={(e) => updateTableFilter('experience', e.target.value)}
+                                                    />
+                                                </th>
+                                                {/* Seniority - MultiSelect */}
+                                                <th className="px-4 py-2">
+                                                    <div className="w-28">
+                                                        <MultiSelectFilter
+                                                            options={SENIORITY_LEVELS.map(s => ({ value: s.value, label: s.value }))}
+                                                            selected={tableFilters.seniority}
+                                                            onChange={(val) => updateTableFilter('seniority', val)}
+                                                            placeholder="All"
+                                                        />
+                                                    </div>
+                                                </th>
+                                                {/* Salary */}
+                                                <th className="px-4 py-2">
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Min"
+                                                        className="w-full text-xs border-[var(--border-subtle)] bg-[var(--bg-surface-1)] text-[var(--text-primary)] rounded py-1 px-2 focus:ring-1 focus:ring-[var(--blue)] focus:border-[var(--blue)] font-normal placeholder:text-[var(--text-tertiary)] h-7 w-20"
+                                                        value={tableFilters.salary}
+                                                        onChange={(e) => updateTableFilter('salary', e.target.value)}
+                                                    />
+                                                </th>
+                                                {/* Education */}
+                                                <th className="px-4 py-2">
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Degree"
+                                                        className="w-full text-xs border-[var(--border-subtle)] bg-[var(--bg-surface-1)] text-[var(--text-primary)] rounded py-1 px-2 focus:ring-1 focus:ring-[var(--blue)] focus:border-[var(--blue)] font-normal placeholder:text-[var(--text-tertiary)] h-7"
+                                                        value={tableFilters.education}
+                                                        onChange={(e) => updateTableFilter('education', e.target.value)}
+                                                    />
+                                                </th>
+                                                {/* Location - MultiSelect */}
+                                                <th className="px-4 py-2">
+                                                    <div className="w-32">
+                                                        <MultiSelectFilter
+                                                            options={WORK_LOCATIONS.map(l => ({ value: l.code, label: l.name }))}
+                                                            selected={tableFilters.cantons}
+                                                            onChange={(val) => updateTableFilter('cantons', val)}
+                                                            placeholder="All"
+                                                        />
+                                                    </div>
+                                                </th>
+                                                {/* Work Eligibility - MultiSelect */}
+                                                <th className="px-4 py-2">
+                                                    <div className="w-40">
+                                                        <MultiSelectFilter
+                                                            options={WORK_ELIGIBILITY_OPTIONS.map(o => ({ value: o.value, label: o.label }))}
+                                                            selected={tableFilters.workPermit}
+                                                            onChange={(val) => updateTableFilter('workPermit', val)}
+                                                            placeholder="All"
+                                                        />
+                                                    </div>
+                                                </th>
+                                                {/* Availability */}
+                                                <th className="px-4 py-2">
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Notice"
+                                                        className="w-full text-xs border-[var(--border-subtle)] bg-[var(--bg-surface-1)] text-[var(--text-primary)] rounded py-1 px-2 focus:ring-1 focus:ring-[var(--blue)] focus:border-[var(--blue)] font-normal placeholder:text-[var(--text-tertiary)] h-7"
+                                                        value={tableFilters.availability}
+                                                        onChange={(e) => updateTableFilter('availability', e.target.value)}
+                                                    />
+                                                </th>
+                                                {/* Languages - MultiSelect */}
+                                                <th className="px-4 py-2">
+                                                    <div className="w-32">
+                                                        <MultiSelectFilter
+                                                            options={LANGUAGE_OPTIONS.map(l => ({ value: l, label: l }))}
+                                                            selected={tableFilters.languages}
+                                                            onChange={(val) => updateTableFilter('languages', val)}
+                                                            placeholder="All"
+                                                        />
+                                                    </div>
+                                                </th>
+                                                {/* Actions column - empty */}
+                                                <th className="px-4 py-2"></th>
+                                            </tr>
                                         </thead>
                                         <tbody className="divide-y divide-[var(--border-subtle)]">
-                                            {displayCandidates.map((candidate) => (
+                                            {displayCandidates.length === 0 ? (
+                                                <tr>
+                                                    <td colSpan={14} className="px-4 py-12 text-center">
+                                                        <div className="flex flex-col items-center justify-center gap-2">
+                                                            <Search className="w-5 h-5 text-[var(--text-tertiary)]" />
+                                                            <span className="text-[var(--text-secondary)]">No candidates match your filters</span>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            ) : (
+                                            displayCandidates.map((candidate) => (
                                                 <tr
                                                     key={candidate.id}
                                                     onClick={() => openDetailModal(candidate)}
@@ -854,17 +1156,19 @@ export default function HomeContent() {
                                                     </td>
                                                     {/* Role */}
                                                     <td className="px-4 py-4">
-                                                        <div className="text-sm font-bold text-[var(--text-primary)] min-w-[180px]">{candidate.role}</div>
+                                                        <div className="text-sm font-bold text-[var(--text-primary)]">{candidate.role}</div>
                                                     </td>
                                                     {/* Highlight */}
-                                                    <td className="px-4 py-4 text-sm text-[var(--text-secondary)] min-w-[200px] max-w-[250px]">
-                                                        <span className="line-clamp-2" title={candidate.highlight || ''}>
+                                                    <td className="px-4 py-4 text-sm text-[var(--text-secondary)]">
+                                                        <span>
                                                             {candidate.highlight || '-'}
                                                         </span>
                                                     </td>
                                                     {/* Expertise */}
-                                                    <td className="px-4 py-4 text-sm text-[var(--text-secondary)] whitespace-nowrap">
-                                                        {candidate.functionalExpertise?.join('; ') || '-'}
+                                                    <td className="px-4 py-4 text-sm text-[var(--text-secondary)]">
+                                                        <span>
+                                                            {candidate.functionalExpertise?.join('; ') || '-'}
+                                                        </span>
                                                     </td>
                                                     {/* Experience */}
                                                     <td className="px-4 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)]">
@@ -877,31 +1181,39 @@ export default function HomeContent() {
                                                         </Badge>
                                                     </td>
                                                     {/* Salary */}
-                                                    <td className="px-4 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)]">
+                                                    <td className="px-4 py-4 text-sm text-[var(--text-secondary)]">
                                                         {formatSalaryRange(candidate.salaryMin, candidate.salaryMax)}
                                                     </td>
                                                     {/* Education */}
-                                                    <td className="px-4 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)]">
-                                                        {candidate.education || '-'}
+                                                    <td className="px-4 py-4 text-sm text-[var(--text-secondary)]">
+                                                        <span>
+                                                            {candidate.education || '-'}
+                                                        </span>
                                                     </td>
                                                     {/* Location */}
-                                                    <td className="px-4 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)]">
-                                                        {candidate.cantons.map(code => WORK_LOCATIONS.find(c => c.code === code)?.name ?? code).join('; ')}
+                                                    <td className="px-4 py-4 text-sm text-[var(--text-secondary)]">
+                                                        <span>
+                                                            {candidate.cantons.map(code => WORK_LOCATIONS.find(c => c.code === code)?.name ?? code).join('; ')}
+                                                        </span>
                                                     </td>
                                                     {/* Work Eligibility */}
-                                                    <td className="px-4 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)]">
-                                                        {candidate.workPermit
-                                                            ? WORK_ELIGIBILITY_OPTIONS.find(o => o.value === candidate.workPermit)?.label || candidate.workPermit
-                                                            : '-'
-                                                        }
+                                                    <td className="px-4 py-4 text-sm text-[var(--text-secondary)]">
+                                                        <span>
+                                                            {candidate.workPermit
+                                                                ? WORK_ELIGIBILITY_OPTIONS.find(o => o.value === candidate.workPermit)?.label || candidate.workPermit
+                                                                : '-'
+                                                            }
+                                                        </span>
                                                     </td>
                                                     {/* Availability */}
                                                     <td className="px-4 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)]">
                                                         {candidate.availability}
                                                     </td>
                                                     {/* Languages */}
-                                                    <td className="px-4 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)]">
-                                                        {candidate.languages?.join('; ') || '-'}
+                                                    <td className="px-4 py-4 text-sm text-[var(--text-secondary)]">
+                                                        <span>
+                                                            {candidate.languages?.join('; ') || '-'}
+                                                        </span>
                                                     </td>
                                                     {/* Actions */}
                                                     <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -916,7 +1228,8 @@ export default function HomeContent() {
                                                         </button>
                                                     </td>
                                                 </tr>
-                                            ))}
+                                            ))
+                                            )}
                                         </tbody>
                                     </table>
                                 </div>
