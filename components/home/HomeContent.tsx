@@ -624,17 +624,19 @@ export default function HomeContent() {
                         </div>
 
                         {/* Zen Mode / Full Screen Toggle */}
-                        <button
-                            onClick={toggleZenMode}
-                            className={`p-2 rounded-lg border transition-colors ${
-                                isZenMode
-                                    ? 'bg-[var(--gold)] border-[var(--gold)] text-[var(--bg-root)] shadow-sm'
-                                    : 'bg-[var(--bg-surface-2)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-                            }`}
-                            title={isZenMode ? 'Exit Full Screen' : 'Enter Full Screen'}
-                        >
-                            {isZenMode ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
-                        </button>
+                        <div className="flex bg-[var(--bg-surface-2)] rounded-lg p-1 border border-[var(--border-subtle)]">
+                            <button
+                                onClick={toggleZenMode}
+                                className={`p-1.5 rounded-md transition-all ${
+                                    isZenMode
+                                        ? 'bg-[var(--bg-surface-3)] text-[var(--text-primary)] shadow-sm'
+                                        : 'text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]'
+                                }`}
+                                title={isZenMode ? 'Exit Full Screen' : 'Enter Full Screen'}
+                            >
+                                {isZenMode ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -1151,22 +1153,22 @@ export default function HomeContent() {
                                                     </td>
                                                     {/* Role */}
                                                     <td className="px-4 py-4 overflow-hidden">
-                                                        <div className="text-sm font-bold text-[var(--text-primary)] break-words">{candidate.role}</div>
+                                                        <div className="text-xs font-bold text-[var(--text-primary)] break-words">{candidate.role}</div>
                                                     </td>
                                                     {/* Highlight */}
-                                                    <td className="px-4 py-4 text-sm text-[var(--text-secondary)] overflow-hidden">
+                                                    <td className="px-4 py-4 text-xs text-[var(--text-secondary)] overflow-hidden">
                                                         <span className="break-words line-clamp-3">
                                                             {candidate.highlight || '-'}
                                                         </span>
                                                     </td>
                                                     {/* Expertise */}
-                                                    <td className="px-4 py-4 text-sm text-[var(--text-secondary)] overflow-hidden">
+                                                    <td className="px-4 py-4 text-xs text-[var(--text-secondary)] overflow-hidden">
                                                         <span className="break-words">
                                                             {candidate.functionalExpertise?.join('; ') || '-'}
                                                         </span>
                                                     </td>
                                                     {/* Experience */}
-                                                    <td className="px-4 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)]">
+                                                    <td className="px-4 py-4 whitespace-nowrap text-xs text-[var(--text-secondary)]">
                                                         {candidate.experience}
                                                     </td>
                                                     {/* Seniority */}
@@ -1176,23 +1178,23 @@ export default function HomeContent() {
                                                         </Badge>
                                                     </td>
                                                     {/* Salary */}
-                                                    <td className="px-4 py-4 text-sm text-[var(--text-secondary)] overflow-hidden">
+                                                    <td className="px-4 py-4 text-xs text-[var(--text-secondary)] overflow-hidden">
                                                         <span className="break-words">{formatSalaryRange(candidate.salaryMin, candidate.salaryMax)}</span>
                                                     </td>
                                                     {/* Education */}
-                                                    <td className="px-4 py-4 text-sm text-[var(--text-secondary)] overflow-hidden">
+                                                    <td className="px-4 py-4 text-xs text-[var(--text-secondary)] overflow-hidden">
                                                         <span className="break-words">
                                                             {candidate.education || '-'}
                                                         </span>
                                                     </td>
                                                     {/* Location */}
-                                                    <td className="px-4 py-4 text-sm text-[var(--text-secondary)] overflow-hidden">
+                                                    <td className="px-4 py-4 text-xs text-[var(--text-secondary)] overflow-hidden">
                                                         <span className="break-words">
                                                             {candidate.cantons.map(code => WORK_LOCATIONS.find(c => c.code === code)?.name ?? code).join('; ')}
                                                         </span>
                                                     </td>
                                                     {/* Work Eligibility */}
-                                                    <td className="px-4 py-4 text-sm text-[var(--text-secondary)] overflow-hidden">
+                                                    <td className="px-4 py-4 text-xs text-[var(--text-secondary)] overflow-hidden">
                                                         <span className="break-words">
                                                             {candidate.workPermit
                                                                 ? WORK_ELIGIBILITY_OPTIONS.find(o => o.value === candidate.workPermit)?.label || candidate.workPermit
@@ -1201,11 +1203,11 @@ export default function HomeContent() {
                                                         </span>
                                                     </td>
                                                     {/* Availability */}
-                                                    <td className="px-4 py-4 text-sm text-[var(--text-secondary)] overflow-hidden">
+                                                    <td className="px-4 py-4 text-xs text-[var(--text-secondary)] overflow-hidden">
                                                         <span className="break-words">{candidate.availability}</span>
                                                     </td>
                                                     {/* Languages */}
-                                                    <td className="px-4 py-4 text-sm text-[var(--text-secondary)] overflow-hidden">
+                                                    <td className="px-4 py-4 text-xs text-[var(--text-secondary)] overflow-hidden">
                                                         <span className="break-words">
                                                             {candidate.languages?.join('; ') || '-'}
                                                         </span>
