@@ -22,7 +22,8 @@ import {
     Layers,
     Check,
     Maximize2,
-    Minimize2
+    Minimize2,
+    ArrowUpDown
 } from 'lucide-react';
 import { WORK_LOCATIONS, SENIORITY_LEVELS, WORK_ELIGIBILITY_OPTIONS, LANGUAGE_OPTIONS } from '@/lib/constants';
 import { Badge, Button, Toast } from '@/components/ui';
@@ -165,11 +166,9 @@ export default function HomeContent() {
     const [selectedWorkEligibility, setSelectedWorkEligibility] = useState<string[]>([]);
     const [salaryRange, setSalaryRange] = useState([0, 300000]);
     const [showContactModal, setShowContactModal] = useState<string | null>(null);
-    const [isFiltersOpen, setIsFiltersOpen] = useState(false);
     const [sortBy, setSortBy] = useState<'newest' | 'availability'>('newest');
-    const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
     const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [sortConfig, setSortConfig] = useState<{ key: string | null; direction: 'asc' | 'desc' }>({
         key: null,
         direction: 'asc'
@@ -184,6 +183,13 @@ export default function HomeContent() {
         isVisible: false,
         type: 'success'
     });
+
+    // Auto-reset shortlist view when all favorites are removed
+    useEffect(() => {
+        if (favorites.length === 0 && showFavoritesOnly) {
+            setShowFavoritesOnly(false);
+        }
+    }, [favorites.length, showFavoritesOnly]);
 
     // Table column filters state
     const [tableFilters, setTableFilters] = useState<{
@@ -525,84 +531,80 @@ export default function HomeContent() {
                         </span>
                     </h2>
 
-                    <div className="flex items-center gap-3">
-                        {/* Shortlist Toggle */}
+                    <div className="flex items-center gap-3 self-end sm:self-auto">
+                        {/* Shortlist Toggle - Only show when there are favorites */}
                         {favorites.length > 0 && (
                             <button
                                 onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
-                                className={`flex items-center gap-2 px-3 py-2 rounded-lg border transition-colors text-sm font-medium ${
+                                className={`flex items-center gap-2 p-2 rounded-lg border transition-colors text-sm font-medium ${
                                     showFavoritesOnly
                                         ? 'bg-red-500/10 border-red-500/30 text-red-400'
                                         : 'bg-[var(--bg-surface-2)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                                 }`}
                             >
                                 <Heart className={`w-4 h-4 ${showFavoritesOnly ? 'fill-current' : ''}`} />
-                                <span>Shortlist ({favorites.length})</span>
+                                <span className="hidden sm:inline">Shortlist ({favorites.length})</span>
                             </button>
                         )}
 
-                        {/* Sort Dropdown - Only show in grid view (moved before Filters) */}
-                        {viewMode === 'grid' && (
-                            <div className="relative">
-                                <button
-                                    onClick={() => setIsSortDropdownOpen(!isSortDropdownOpen)}
-                                    className="flex items-center gap-2 text-sm text-[var(--text-secondary)] group cursor-pointer hover:text-[var(--text-primary)] transition-colors focus:outline-none"
-                                >
-                                    Sort by: <span className="font-medium text-[var(--text-primary)]">
-                                        {sortBy === 'newest' ? 'Newest' : 'Availability'}
-                                    </span>
-                                    <ChevronDown className={`w-4 h-4 transition-transform ${isSortDropdownOpen ? 'rotate-180' : ''}`} />
-                                </button>
-
-                                {isSortDropdownOpen && (
-                                    <>
-                                        <div
-                                            className="fixed inset-0 z-10"
-                                            onClick={() => setIsSortDropdownOpen(false)}
-                                        ></div>
-                                        <div className="absolute right-0 mt-2 w-40 bg-[var(--bg-surface-1)] border border-[var(--border-subtle)] rounded-lg shadow-lg z-20 py-1 animate-in fade-in zoom-in-95 duration-100">
-                                            <button
-                                                onClick={() => {
-                                                    setSortBy('newest');
-                                                    setIsSortDropdownOpen(false);
-                                                }}
-                                                className={`w-full text-left px-4 py-2 text-sm hover:bg-[var(--bg-surface-2)] transition-colors ${sortBy === 'newest' ? 'text-[var(--text-primary)] font-medium' : 'text-[var(--text-secondary)]'}`}
-                                            >
-                                                Newest
-                                            </button>
-                                            <button
-                                                onClick={() => {
-                                                    setSortBy('availability');
-                                                    setIsSortDropdownOpen(false);
-                                                }}
-                                                className={`w-full text-left px-4 py-2 text-sm hover:bg-[var(--bg-surface-2)] transition-colors ${sortBy === 'availability' ? 'text-[var(--text-primary)] font-medium' : 'text-[var(--text-secondary)]'}`}
-                                            >
-                                                Availability
-                                            </button>
-                                        </div>
-                                    </>
-                                )}
-                            </div>
-                        )}
-
-                        {/* Sidebar Toggle - Only show in grid view, hidden in Zen Mode */}
+                        {/* Filters - Only show in grid view, hidden in Zen Mode */}
                         {viewMode === 'grid' && !isZenMode && (
                             <>
+                                {favorites.length > 0 && (
+                                    <div className="h-6 w-px bg-[var(--border-subtle)] mx-1"></div>
+                                )}
                                 <button
                                     onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                                    className={`hidden lg:flex p-2 rounded-lg border transition-colors items-center gap-2 text-sm font-medium ${
+                                    className={`flex p-2 rounded-lg border transition-colors items-center gap-2 text-sm font-medium ${
                                         isSidebarOpen
-                                            ? 'bg-[var(--bg-surface-2)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-                                            : 'bg-[var(--gold)] border-[var(--gold)] text-[var(--bg-root)] shadow-sm'
+                                            ? 'bg-[var(--gold)] border-[var(--gold)] text-[var(--bg-root)] shadow-sm'
+                                            : 'bg-[var(--bg-surface-2)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                                     }`}
                                     title={isSidebarOpen ? "Hide Filters" : "Show Filters"}
                                 >
                                     <Filter className="w-4 h-4" />
-                                    <span>Filters</span>
+                                    <span className="hidden sm:inline">Filters</span>
                                 </button>
-
-                                <div className="hidden lg:block h-6 w-px bg-[var(--border-subtle)] mx-1"></div>
                             </>
+                        )}
+
+                        {/* Sort Dropdown - Only show in grid view */}
+                        {viewMode === 'grid' && (
+                            <>
+                                {/* Sort Dropdown - Desktop */}
+                                <div className="relative group hidden sm:block">
+                                    <select
+                                        onChange={(e) => setSortBy(e.target.value as 'newest' | 'availability')}
+                                        value={sortBy}
+                                        className="appearance-none pl-8 pr-8 py-2 rounded-lg border border-[var(--border-subtle)] text-sm font-medium text-[var(--text-secondary)] bg-[var(--bg-surface-2)] hover:border-[var(--border-default)] hover:text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--gold)] transition-all cursor-pointer"
+                                    >
+                                        <option value="newest">Newest</option>
+                                        <option value="availability">Availability</option>
+                                    </select>
+                                    <ArrowUpDown className="w-4 h-4 text-[var(--text-tertiary)] absolute left-2.5 top-2.5 pointer-events-none" />
+                                    <ChevronDown className="w-4 h-4 text-[var(--text-tertiary)] absolute right-2.5 top-2.5 pointer-events-none" />
+                                </div>
+
+                                {/* Sort Dropdown - Mobile (Icon Only) */}
+                                <div className="relative sm:hidden">
+                                    <select
+                                        onChange={(e) => setSortBy(e.target.value as 'newest' | 'availability')}
+                                        value={sortBy}
+                                        className="appearance-none w-full h-full opacity-0 absolute inset-0 z-10 cursor-pointer"
+                                    >
+                                        <option value="newest">Newest</option>
+                                        <option value="availability">Availability</option>
+                                    </select>
+                                    <button className="p-2 rounded-lg border transition-colors flex items-center justify-center bg-[var(--bg-surface-2)] border-[var(--border-subtle)] text-[var(--text-secondary)]">
+                                        <ArrowUpDown className="w-4 h-4" />
+                                    </button>
+                                </div>
+                            </>
+                        )}
+
+                        {/* Separator before View Toggle - Only show in grid view */}
+                        {viewMode === 'grid' && (
+                            <div className="h-6 w-px bg-[var(--border-subtle)] mx-1 ml-auto sm:ml-1"></div>
                         )}
 
                         {/* View Toggle */}
@@ -648,30 +650,9 @@ export default function HomeContent() {
                 </div>
 
                 <div className="flex flex-col lg:flex-row gap-10">
-                    {/* SIDEBAR FILTERS - Only show in grid view, hidden in Zen Mode */}
-                    {viewMode === 'grid' && !isZenMode && (
-                    <aside className={`w-full lg:w-72 flex-shrink-0 space-y-4 lg:space-y-0 ${
-                            !isSidebarOpen ? 'lg:hidden' : 'lg:block'
-                        } lg:animate-in lg:slide-in-from-left-4 lg:fade-in lg:duration-300`}>
-                        {/* Mobile Filter Toggle */}
-                        <div className="lg:hidden mb-4">
-                            <button
-                                onClick={() => setIsFiltersOpen(!isFiltersOpen)}
-                                className="w-full flex items-center justify-between px-4 py-3 bg-[var(--bg-surface-2)] border border-[var(--border-strong)] rounded-lg text-sm font-medium text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[rgba(59,130,246,0.5)] focus:ring-offset-2 focus:ring-offset-[var(--bg-root)]"
-                            >
-                                <span className="flex items-center gap-2">
-                                    <Filter className="w-4 h-4" /> Filters
-                                </span>
-                                <ChevronDown
-                                    className={`w-4 h-4 transition-transform ${isFiltersOpen ? 'rotate-180' : ''}`}
-                                />
-                            </button>
-                        </div>
-
-                        {/* Filter Content Container */}
-                        <div
-                            className={`space-y-8 ${isFiltersOpen ? 'block' : 'hidden'} lg:block animate-in slide-in-from-top-2 duration-200`}
-                        >
+                    {/* SIDEBAR FILTERS - Only show in grid view when open, hidden in Zen Mode */}
+                    {viewMode === 'grid' && !isZenMode && isSidebarOpen && (
+                    <aside className="w-full lg:w-72 flex-shrink-0 space-y-8 animate-in slide-in-from-left-4 fade-in duration-300">
                             {/* Search */}
                             <div className="relative group">
                                 <input
@@ -823,7 +804,6 @@ export default function HomeContent() {
                                     <X className="w-3 h-3" /> Clear all filters
                                 </button>
                             )}
-                        </div>
                     </aside>
                     )}
 
