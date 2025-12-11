@@ -877,8 +877,8 @@ export default function HomeContent() {
                                             }}
                                             className={`absolute top-4 right-4 p-2 rounded-lg transition-all z-10 ${
                                                 favorites.includes(candidate.id)
-                                                    ? 'text-red-400 bg-red-500/10'
-                                                    : 'text-[var(--text-tertiary)] hover:text-red-400 hover:bg-red-500/10'
+                                                    ? 'text-red-400'
+                                                    : 'text-[var(--text-tertiary)] hover:text-red-400'
                                             }`}
                                         >
                                             <Heart className={`w-5 h-5 ${favorites.includes(candidate.id) ? 'fill-current' : ''}`} />
