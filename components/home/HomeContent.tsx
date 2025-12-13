@@ -558,6 +558,49 @@ export default function HomeContent() {
                         </h2>
 
                         <div className="flex items-center gap-3">
+                            {/* Mobile only: Shortlist, Filters, Sort (icon buttons) */}
+                            <div className="flex sm:hidden items-center gap-2">
+                                {favorites.length > 0 && (
+                                    <button
+                                        onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
+                                        className={`p-2 rounded-lg border transition-colors ${
+                                            showFavoritesOnly
+                                                ? 'bg-red-500/10 border-red-500/30 text-red-400'
+                                                : 'bg-[var(--bg-surface-2)] border-[var(--border-subtle)] text-[var(--text-secondary)]'
+                                        }`}
+                                    >
+                                        <Heart className={`w-4 h-4 ${showFavoritesOnly ? 'fill-current' : ''}`} />
+                                    </button>
+                                )}
+                                {viewMode === 'grid' && !isZenMode && (
+                                    <button
+                                        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                                        className={`p-2 rounded-lg border transition-colors ${
+                                            isSidebarOpen
+                                                ? 'bg-[var(--gold)] border-[var(--gold)] text-[var(--bg-root)] shadow-sm'
+                                                : 'bg-[var(--bg-surface-2)] border-[var(--border-subtle)] text-[var(--text-secondary)]'
+                                        }`}
+                                    >
+                                        <Filter className="w-4 h-4" />
+                                    </button>
+                                )}
+                                {viewMode === 'grid' && (
+                                    <div className="relative">
+                                        <select
+                                            onChange={(e) => setSortBy(e.target.value as 'newest' | 'availability')}
+                                            value={sortBy}
+                                            className="appearance-none w-full h-full opacity-0 absolute inset-0 z-10 cursor-pointer"
+                                        >
+                                            <option value="newest">Newest</option>
+                                            <option value="availability">Availability</option>
+                                        </select>
+                                        <div className="p-2 rounded-lg border bg-[var(--bg-surface-2)] border-[var(--border-subtle)] text-[var(--text-secondary)]">
+                                            <ArrowUpDown className="w-4 h-4" />
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
                             {/* Desktop only: Shortlist, Filters, Sort */}
                             <div className="hidden sm:flex items-center gap-3">
                                 {/* Shortlist Toggle */}
@@ -608,8 +651,8 @@ export default function HomeContent() {
                                 )}
                             </div>
 
-                            {/* View Toggle - Always visible */}
-                            <div className="flex bg-[var(--bg-surface-2)] rounded-lg p-1 border border-[var(--border-subtle)]">
+                            {/* View Toggle - Desktop only */}
+                            <div className="hidden md:flex bg-[var(--bg-surface-2)] rounded-lg p-1 border border-[var(--border-subtle)]">
                                 <button
                                     onClick={() => setViewMode('grid')}
                                     className={`p-1.5 rounded-md transition-all ${
@@ -634,10 +677,10 @@ export default function HomeContent() {
                                 </button>
                             </div>
 
-                            {/* Zen Mode / Full Screen Toggle - Always visible */}
+                            {/* Zen Mode / Full Screen Toggle - Desktop only */}
                             <button
                                 onClick={toggleZenMode}
-                                className={`p-2.5 rounded-lg border transition-colors ${
+                                className={`hidden md:block p-2.5 rounded-lg border transition-colors ${
                                     isZenMode
                                         ? 'bg-[var(--gold)] border-[var(--gold)] text-[var(--bg-root)] shadow-sm'
                                         : 'bg-[var(--bg-surface-2)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
@@ -647,55 +690,6 @@ export default function HomeContent() {
                                 {isZenMode ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
                             </button>
                         </div>
-                    </div>
-
-                    {/* Row 2: Mobile only - Shortlist, Filters, Sort */}
-                    <div className="flex sm:hidden items-center gap-3 mt-4">
-                        {/* Shortlist Toggle */}
-                        {favorites.length > 0 && (
-                            <button
-                                onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
-                                className={`flex items-center gap-2 p-2 rounded-lg border transition-colors text-sm font-medium ${
-                                    showFavoritesOnly
-                                        ? 'bg-red-500/10 border-red-500/30 text-red-400'
-                                        : 'bg-[var(--bg-surface-2)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-                                }`}
-                            >
-                                <Heart className={`w-4 h-4 ${showFavoritesOnly ? 'fill-current' : ''}`} />
-                            </button>
-                        )}
-
-                        {/* Filters - Only in grid view, hidden in Zen Mode */}
-                        {viewMode === 'grid' && !isZenMode && (
-                            <button
-                                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                                className={`flex p-2 rounded-lg border transition-colors items-center gap-2 text-sm font-medium ${
-                                    isSidebarOpen
-                                        ? 'bg-[var(--gold)] border-[var(--gold)] text-[var(--bg-root)] shadow-sm'
-                                        : 'bg-[var(--bg-surface-2)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-                                }`}
-                                title={isSidebarOpen ? "Hide Filters" : "Show Filters"}
-                            >
-                                <Filter className="w-4 h-4" />
-                            </button>
-                        )}
-
-                        {/* Sort - Only in grid view */}
-                        {viewMode === 'grid' && (
-                            <div className="relative">
-                                <select
-                                    onChange={(e) => setSortBy(e.target.value as 'newest' | 'availability')}
-                                    value={sortBy}
-                                    className="appearance-none w-full h-full opacity-0 absolute inset-0 z-10 cursor-pointer"
-                                >
-                                    <option value="newest">Newest</option>
-                                    <option value="availability">Availability</option>
-                                </select>
-                                <button className="p-2 rounded-lg border transition-colors flex items-center justify-center bg-[var(--bg-surface-2)] border-[var(--border-subtle)] text-[var(--text-secondary)]">
-                                    <ArrowUpDown className="w-4 h-4" />
-                                </button>
-                            </div>
-                        )}
                     </div>
                 </div>
 
