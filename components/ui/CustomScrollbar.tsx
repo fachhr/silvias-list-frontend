@@ -41,7 +41,7 @@ export function CustomScrollbar({
 
   // Refs for drag tracking
   const thumbDragData = useRef({ startX: 0, startScrollLeft: 0 });
-  const contentDragData = useRef({ startX: 0, startScrollLeft: 0 });
+  const contentDragData = useRef({ startX: 0, startScrollLeft: 0, hasMoved: false });
 
   // Measure and update thumb + scroll shadows
   const measure = useCallback(() => {
@@ -175,6 +175,7 @@ export function CustomScrollbar({
     contentDragData.current = {
       startX: e.clientX,
       startScrollLeft: scrollRef.current?.scrollLeft || 0,
+      hasMoved: false,
     };
     document.body.style.cursor = 'grabbing';
     document.body.style.userSelect = 'none';
@@ -183,18 +184,40 @@ export function CustomScrollbar({
   useEffect(() => {
     if (!isDraggingContent) return;
 
+    // Minimum movement (px) to be considered a drag vs a click
+    const DRAG_THRESHOLD = 5;
+
     const onMouseMove = (e: MouseEvent) => {
       const scrollEl = scrollRef.current;
       if (!scrollEl) return;
 
       const dx = e.clientX - contentDragData.current.startX;
+
+      // Mark as dragged once movement exceeds threshold
+      if (!contentDragData.current.hasMoved && Math.abs(dx) > DRAG_THRESHOLD) {
+        contentDragData.current.hasMoved = true;
+      }
+
       scrollEl.scrollLeft = contentDragData.current.startScrollLeft - dx;
     };
 
     const onMouseUp = () => {
+      const didDrag = contentDragData.current.hasMoved;
+
       setIsDraggingContent(false);
       document.body.style.cursor = '';
       document.body.style.userSelect = '';
+
+      // If user actually dragged, suppress the subsequent click event
+      // to prevent opening modals/links after drag-to-pan
+      if (didDrag) {
+        const suppressClick = (e: MouseEvent) => {
+          e.stopPropagation();
+          e.preventDefault();
+        };
+        // Capture phase + once: intercept click before it reaches any handler
+        window.addEventListener('click', suppressClick, { capture: true, once: true });
+      }
     };
 
     window.addEventListener('mousemove', onMouseMove);
@@ -216,7 +239,9 @@ export function CustomScrollbar({
     const handleWheel = (e: WheelEvent) => {
       if (e.shiftKey && canScroll) {
         e.preventDefault();
-        scrollEl.scrollLeft += e.deltaY;
+        // Cross-browser: macOS trackpad sends deltaX, Windows mouse sends deltaY
+        const delta = Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+        scrollEl.scrollLeft += delta;
       }
     };
 
