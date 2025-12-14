@@ -184,7 +184,7 @@ const JoinForm: React.FC = () => {
             <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 animate-in fade-in duration-500">
                 <div className="glass-panel max-w-2xl mx-auto pt-12 pb-24 px-4 text-center rounded-2xl">
                     <div className="w-16 h-16 bg-[var(--gold)] rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
-                        <CheckCircle className="w-8 h-8 text-[#0A1628]" />
+                        <CheckCircle className="w-8 h-8 text-[var(--bg-root)]" />
                     </div>
                     <h2 className="text-3xl font-bold text-[var(--text-primary)] mb-4">Application Received</h2>
                     <p className="text-[var(--text-secondary)] mb-8 max-w-md mx-auto text-lg">
@@ -234,7 +234,7 @@ const JoinForm: React.FC = () => {
                     <section>
                         <div className="flex items-center justify-between mb-4">
                             <h2 className="text-lg font-semibold text-[var(--text-primary)] flex items-center gap-2">
-                                <div className="w-6 h-6 rounded bg-[var(--gold)] text-[#0A1628] text-xs flex items-center justify-center font-bold">1</div>
+                                <div className="w-6 h-6 rounded bg-[var(--gold)] text-[var(--bg-root)] text-xs flex items-center justify-center font-bold">1</div>
                                 Upload CV <span className="text-red-500">*</span>
                             </h2>
                             {cvFile && <Badge style="success">File Selected</Badge>}
@@ -311,7 +311,7 @@ const JoinForm: React.FC = () => {
                     {/* SECTION 2: PERSONAL DETAILS */}
                     <section>
                         <h2 className="text-lg font-semibold text-[var(--text-primary)] flex items-center gap-2 mb-6">
-                            <div className="w-6 h-6 rounded bg-[var(--gold)] text-[#0A1628] text-xs flex items-center justify-center">2</div>
+                            <div className="w-6 h-6 rounded bg-[var(--gold)] text-[var(--bg-root)] text-xs flex items-center justify-center">2</div>
                             Personal Details
                         </h2>
 
@@ -461,7 +461,7 @@ const JoinForm: React.FC = () => {
                     {/* SECTION 3: EXPERIENCE */}
                     <section>
                         <h2 className="text-lg font-semibold text-[var(--text-primary)] flex items-center gap-2 mb-6">
-                            <div className="w-6 h-6 rounded bg-[var(--gold)] text-[#0A1628] text-xs flex items-center justify-center">3</div>
+                            <div className="w-6 h-6 rounded bg-[var(--gold)] text-[var(--bg-root)] text-xs flex items-center justify-center">3</div>
                             Experience
                         </h2>
 
@@ -575,7 +575,7 @@ const JoinForm: React.FC = () => {
                     {/* SECTION 4: JOB PREFERENCES */}
                     <section>
                         <h2 className="text-lg font-semibold text-[var(--text-primary)] flex items-center gap-2 mb-6">
-                            <div className="w-6 h-6 rounded bg-[var(--gold)] text-[#0A1628] text-xs flex items-center justify-center">4</div>
+                            <div className="w-6 h-6 rounded bg-[var(--gold)] text-[var(--bg-root)] text-xs flex items-center justify-center">4</div>
                             Job Preferences
                         </h2>
 
@@ -685,7 +685,7 @@ const JoinForm: React.FC = () => {
                         cursor-pointer px-3 py-1.5 text-xs font-medium rounded border transition-all select-none
                         has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-[rgba(59,130,246,0.5)] has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-[var(--bg-root)]
                         ${(desiredLocations || []).some(loc => loc === location.code)
-                                                    ? 'bg-[var(--gold)] border-[var(--gold)] text-[#0A1628] shadow-md'
+                                                    ? 'bg-[var(--gold)] border-[var(--gold)] text-[var(--bg-root)] shadow-md'
                                                     : 'bg-[var(--bg-surface-1)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:border-[var(--border-strong)]'}
                         ${!(desiredLocations || []).some(loc => loc === location.code) && (desiredLocations || []).length >= 5 ? 'opacity-50 cursor-not-allowed' : ''}
                       `}

@@ -17,7 +17,7 @@ export function Footer() {
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-[var(--gold)] rounded-md flex items-center justify-center">
-              <span className="text-[#0A1628] font-bold text-sm font-serif">S</span>
+              <span className="text-[var(--bg-root)] font-bold text-sm font-serif">S</span>
             </div>
             <div className="flex flex-col">
               <span className="font-bold text-[var(--text-primary)] text-sm leading-none">Silvia&apos;s List</span>

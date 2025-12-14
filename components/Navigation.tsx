@@ -22,7 +22,7 @@ export function Navigation() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group">
             <div className="w-8 h-8 bg-[var(--gold)] rounded-md flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform duration-200">
-              <span className="text-[#0A1628] font-bold text-lg font-serif">S</span>
+              <span className="text-[var(--bg-root)] font-bold text-lg font-serif">S</span>
             </div>
             <span className="text-lg font-bold tracking-tight text-[var(--text-primary)]">
               Silvia&apos;s <span className="font-light text-[var(--text-tertiary)]">List</span>

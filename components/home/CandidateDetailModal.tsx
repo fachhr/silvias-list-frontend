@@ -65,7 +65,7 @@ export const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
 
     return (
         <div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0A1628]/60 backdrop-blur-sm animate-in fade-in duration-200"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--bg-root)]/60 backdrop-blur-sm animate-in fade-in duration-200"
             onClick={onClose}
         >
             {/* Modal */}

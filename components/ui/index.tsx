@@ -14,7 +14,7 @@ export const Badge: React.FC<BadgeProps> = ({ children, style = 'default', icon:
         outline: 'bg-transparent text-[var(--text-secondary)] border-[var(--border-subtle)]',
         success: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
         gold: 'bg-[var(--gold-dim)] text-[var(--gold)] border-[var(--gold-border)]',
-        blue: 'bg-[var(--blue-dim)] text-[var(--blue)] border-[rgba(59,130,246,0.3)]',
+        blue: 'bg-[var(--bg-surface-3)] text-[var(--text-secondary)] border-[var(--border-strong)]',
         purple: 'bg-purple-500/10 text-purple-400 border-purple-500/30',
     };
     return (

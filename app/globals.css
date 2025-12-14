@@ -5,14 +5,14 @@
     /* --- PREMIUM SWISS NAVY PALETTE --- */
 
     /* Backgrounds */
-    --bg-root: #0A1628;
-    --bg-surface-1: #0D1B2E; /* Cards */
-    --bg-surface-2: #162943; /* Inputs/Hovers */
-    --bg-surface-3: #1F3A5F; /* Dropdowns */
+    --bg-root: #0C1929;
+    --bg-surface-1: #0F2035; /* Cards - recalibrated */
+    --bg-surface-2: #162D47; /* Inputs/Hovers - recalibrated */
+    --bg-surface-3: #1E3A5A; /* Dropdowns - recalibrated */
 
     /* Borders & Dividers */
-    --border-subtle: #1F3A5F;
-    --border-strong: #2C4A6E;
+    --border-subtle: #1E3A5A;
+    --border-strong: #2A4A6B;
 
     /* Typography */
     --text-primary: #F8FAFC;   /* White */
@@ -59,7 +59,6 @@
 
   body {
     background-color: var(--bg-root);
-    background-image: radial-gradient(circle at 50% 0%, #162943 0%, #0A1628 40%);
     color: var(--text-primary);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
@@ -110,7 +109,7 @@
 
   .btn-gold {
     background: var(--gold);
-    color: #0A1628;
+    color: var(--bg-root);
     font-weight: 600;
     transition: all 0.2s;
   }

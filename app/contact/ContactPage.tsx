@@ -20,7 +20,7 @@ const ContactPage: React.FC = () => {
             <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 animate-in fade-in duration-500">
                 <div className="glass-panel max-w-2xl mx-auto pt-12 pb-24 px-4 text-center rounded-2xl">
                     <div className="w-16 h-16 bg-[var(--gold)] rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
-                        <Send className="w-8 h-8 text-[#0A1628]" />
+                        <Send className="w-8 h-8 text-[var(--bg-root)]" />
                     </div>
                     <h2 className="text-3xl font-bold text-[var(--text-primary)] mb-4">Message Sent</h2>
                     <p className="text-[var(--text-secondary)] mb-8 text-lg">
