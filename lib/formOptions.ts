@@ -4,10 +4,21 @@
 import { SelectOption } from '@/types/talentPool';
 
 // ====================
+// VALUE CONSTANTS (for z.enum validation)
+// ====================
+export const WORK_LOCATION_CODES = ['ZG', 'ZH', 'GE', 'BE', 'TI', 'CH', 'Global', 'Others'] as const;
+export const WORK_ELIGIBILITY_VALUES = [
+  'swiss_citizen', 'c_permit', 'eu_efta', 'b_permit', 'g_permit', 'requires_sponsorship'
+] as const;
+export const NOTICE_PERIOD_VALUES = ['0', '1', '2', '3', '4', '5', '6', '-1'] as const;
+
+// ====================
 // TYPES & INTERFACES
 // ====================
+export type WorkLocationCode = typeof WORK_LOCATION_CODES[number];
+
 export interface WorkLocation {
-  code: string;
+  code: WorkLocationCode;
   name: string;
 }
 

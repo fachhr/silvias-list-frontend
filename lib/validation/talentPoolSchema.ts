@@ -1,5 +1,11 @@
 import { z } from 'zod';
-import { MAX_CV_FILE_SIZE, VALID_CV_MIME_TYPES } from '@/lib/formOptions';
+import {
+  MAX_CV_FILE_SIZE,
+  VALID_CV_MIME_TYPES,
+  WORK_ELIGIBILITY_VALUES,
+  NOTICE_PERIOD_VALUES,
+  WORK_LOCATION_CODES
+} from '@/lib/formOptions';
 
 /**
  * Base schema for Silvia's List Talent Pool - shared fields between client and server
@@ -56,8 +62,9 @@ export const talentPoolBaseSchema = z.object({
     .int('Please enter a whole number'),
 
   // Work eligibility / permit status
-  work_eligibility: z.string()
-    .min(1, 'Please select your work eligibility'),
+  work_eligibility: z.enum(WORK_ELIGIBILITY_VALUES, {
+    errorMap: () => ({ message: 'Please select your work eligibility' })
+  }),
 
   // ============================================
   // JOB PREFERENCES (user-provided, required)
@@ -70,11 +77,12 @@ export const talentPoolBaseSchema = z.object({
     .trim(),
 
   // Notice period in months
-  notice_period_months: z.string()
-    .min(1, 'Please select your notice period'),
+  notice_period_months: z.enum(NOTICE_PERIOD_VALUES, {
+    errorMap: () => ({ message: 'Please select your notice period' })
+  }),
 
   // Locations (at least 1 required, max 5)
-  desired_locations: z.array(z.string())
+  desired_locations: z.array(z.enum(WORK_LOCATION_CODES))
     .min(1, 'Please select at least one preferred location')
     .max(5, 'You can select up to 5 locations'),
 

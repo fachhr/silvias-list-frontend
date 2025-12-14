@@ -31,9 +31,8 @@ const JoinForm: React.FC = () => {
     const [isDragging, setIsDragging] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    // Additional UI state not covered by Zod schema
+    // UI state for showing/hiding the "Other" language input
     const [showOtherLanguage, setShowOtherLanguage] = useState(false);
-    const [otherLanguageName, setOtherLanguageName] = useState('');
 
     // React Hook Form with Zod validation
     const {
@@ -53,14 +52,15 @@ const JoinForm: React.FC = () => {
             country_code: '',
             phoneNumber: '',
             years_of_experience: 0,
-            work_eligibility: '',
+            work_eligibility: undefined,
             desired_roles: '',
-            notice_period_months: '',
+            notice_period_months: undefined,
             desired_locations: [],
             desired_other_location: '',
             salary_min: null,
             salary_max: null,
             languages: [],
+            other_language: '',
             highlight: '',
             accepted_terms: false as unknown as true, // Will be validated on submit
         }
@@ -73,6 +73,7 @@ const JoinForm: React.FC = () => {
     const salaryMin = watch('salary_min');
     const salaryMax = watch('salary_max');
     const languages = watch('languages');
+    const otherLanguage = watch('other_language');
     const acceptedTerms = watch('accepted_terms');
 
     // File handlers with Zod validation
@@ -121,8 +122,8 @@ const JoinForm: React.FC = () => {
             // Process languages: include base selections + "Other" if filled
             const processedLanguages = [
                 ...(data.languages || []),
-                ...(showOtherLanguage && otherLanguageName.trim()
-                    ? [otherLanguageName.trim()]
+                ...(data.other_language?.trim()
+                    ? [data.other_language.trim()]
                     : []
                 )
             ];
@@ -309,21 +310,43 @@ const JoinForm: React.FC = () => {
                         </h2>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <Input
-                                label="First Name" id="contact_first_name" required
-                                placeholder="Sarah"
-                                value={watch('contact_first_name')} onChange={e => setValue('contact_first_name', e.target.value)}
-                            />
-                            <Input
-                                label="Last Name" id="contact_last_name" required
-                                placeholder="Miller"
-                                value={watch('contact_last_name')} onChange={e => setValue('contact_last_name', e.target.value)}
-                            />
+                            <div>
+                                <Input
+                                    label="First Name" id="contact_first_name" required
+                                    placeholder="Sarah"
+                                    value={watch('contact_first_name')} onChange={e => setValue('contact_first_name', e.target.value)}
+                                />
+                                {errors.contact_first_name && (
+                                    <div className="flex items-center gap-2 mt-2 text-red-600 text-xs animate-in slide-in-from-top-2">
+                                        <AlertCircle className="w-3.5 h-3.5" />
+                                        <span className="font-medium">{errors.contact_first_name.message}</span>
+                                    </div>
+                                )}
+                            </div>
+                            <div>
+                                <Input
+                                    label="Last Name" id="contact_last_name" required
+                                    placeholder="Miller"
+                                    value={watch('contact_last_name')} onChange={e => setValue('contact_last_name', e.target.value)}
+                                />
+                                {errors.contact_last_name && (
+                                    <div className="flex items-center gap-2 mt-2 text-red-600 text-xs animate-in slide-in-from-top-2">
+                                        <AlertCircle className="w-3.5 h-3.5" />
+                                        <span className="font-medium">{errors.contact_last_name.message}</span>
+                                    </div>
+                                )}
+                            </div>
                             <div className="md:col-span-2">
                                 <Input
                                     label="Email Address" id="email" type="email" placeholder="you@company.com" required
                                     value={watch('email')} onChange={e => setValue('email', e.target.value)}
                                 />
+                                {errors.email && (
+                                    <div className="flex items-center gap-2 mt-2 text-red-600 text-xs animate-in slide-in-from-top-2">
+                                        <AlertCircle className="w-3.5 h-3.5" />
+                                        <span className="font-medium">{errors.email.message}</span>
+                                    </div>
+                                )}
                             </div>
                             <div className="relative">
                                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
@@ -385,6 +408,18 @@ const JoinForm: React.FC = () => {
                                         />
                                     </div>
                                 </div>
+                                {errors.country_code && (
+                                    <div className="flex items-center gap-2 mt-2 text-red-600 text-xs animate-in slide-in-from-top-2">
+                                        <AlertCircle className="w-3.5 h-3.5" />
+                                        <span className="font-medium">{errors.country_code.message}</span>
+                                    </div>
+                                )}
+                                {errors.phoneNumber && (
+                                    <div className="flex items-center gap-2 mt-2 text-red-600 text-xs animate-in slide-in-from-top-2">
+                                        <AlertCircle className="w-3.5 h-3.5" />
+                                        <span className="font-medium">{errors.phoneNumber.message}</span>
+                                    </div>
+                                )}
                             </div>
 
                             {/* WORK ELIGIBILITY */}
@@ -395,8 +430,8 @@ const JoinForm: React.FC = () => {
                                 <select
                                     id="work_eligibility"
                                     required
-                                    value={watch('work_eligibility')}
-                                    onChange={e => setValue('work_eligibility', e.target.value)}
+                                    value={watch('work_eligibility') ?? ''}
+                                    onChange={e => setValue('work_eligibility', e.target.value as TalentPoolFormData['work_eligibility'])}
                                     className="block w-full rounded-lg border-[var(--border-strong)] bg-[var(--bg-surface-2)] border p-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--blue)] focus:ring-[var(--blue)]"
                                 >
                                     <option value="">Select your work eligibility...</option>
@@ -404,6 +439,12 @@ const JoinForm: React.FC = () => {
                                         <option key={opt.value} value={opt.value}>{opt.label}</option>
                                     ))}
                                 </select>
+                                {errors.work_eligibility && (
+                                    <div className="flex items-center gap-2 mt-2 text-red-600 text-xs animate-in slide-in-from-top-2">
+                                        <AlertCircle className="w-3.5 h-3.5" />
+                                        <span className="font-medium">{errors.work_eligibility.message}</span>
+                                    </div>
+                                )}
                             </div>
 
                         </div>
@@ -419,10 +460,18 @@ const JoinForm: React.FC = () => {
                         </h2>
 
                         <div className="space-y-6">
-                            <Input
-                                label="Years of Relevant Experience" id="years_of_experience" type="number" placeholder="e.g. 5" required min="0" max="50"
-                                value={watch('years_of_experience')?.toString() || ''} onChange={e => setValue('years_of_experience', parseInt(e.target.value) || 0)}
-                            />
+                            <div>
+                                <Input
+                                    label="Years of Relevant Experience" id="years_of_experience" type="number" placeholder="e.g. 5" required min="0" max="50"
+                                    value={watch('years_of_experience')?.toString() || ''} onChange={e => setValue('years_of_experience', parseInt(e.target.value) || 0)}
+                                />
+                                {errors.years_of_experience && (
+                                    <div className="flex items-center gap-2 mt-2 text-red-600 text-xs animate-in slide-in-from-top-2">
+                                        <AlertCircle className="w-3.5 h-3.5" />
+                                        <span className="font-medium">{errors.years_of_experience.message}</span>
+                                    </div>
+                                )}
+                            </div>
 
                             {/* Languages subsection - simplified checkboxes */}
                             <div>
@@ -461,7 +510,7 @@ const JoinForm: React.FC = () => {
                                                 checked={showOtherLanguage}
                                                 onChange={(e) => {
                                                     setShowOtherLanguage(e.target.checked);
-                                                    if (!e.target.checked) setOtherLanguageName('');
+                                                    if (!e.target.checked) setValue('other_language', '');
                                                 }}
                                             />
                                             <span className="text-sm text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors">
@@ -477,9 +526,16 @@ const JoinForm: React.FC = () => {
                                                 type="text"
                                                 placeholder="Please specify language..."
                                                 className="block w-full max-w-xs rounded-lg border-[var(--border-strong)] bg-[var(--bg-surface-2)] border p-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--blue)] focus:ring-[var(--blue)] placeholder-[var(--text-tertiary)]"
-                                                value={otherLanguageName}
-                                                onChange={(e) => setOtherLanguageName(e.target.value)}
+                                                maxLength={50}
+                                                value={otherLanguage || ''}
+                                                onChange={(e) => setValue('other_language', e.target.value)}
                                             />
+                                            {errors.other_language && (
+                                                <div className="flex items-center gap-2 mt-2 text-red-600 text-xs animate-in slide-in-from-top-2">
+                                                    <AlertCircle className="w-3.5 h-3.5" />
+                                                    <span className="font-medium">{errors.other_language.message}</span>
+                                                </div>
+                                            )}
                                         </div>
                                     )}
                                 </div>
@@ -536,6 +592,12 @@ const JoinForm: React.FC = () => {
                                 <p className="text-xs text-[var(--text-tertiary)] mt-1.5">
                                     Separate multiple roles with semicolons
                                 </p>
+                                {errors.desired_roles && (
+                                    <div className="flex items-center gap-2 mt-2 text-red-600 text-xs animate-in slide-in-from-top-2">
+                                        <AlertCircle className="w-3.5 h-3.5" />
+                                        <span className="font-medium">{errors.desired_roles.message}</span>
+                                    </div>
+                                )}
                             </div>
 
                             {/* Notice Period */}
@@ -546,8 +608,8 @@ const JoinForm: React.FC = () => {
                                 <select
                                     id="notice_period_months"
                                     required
-                                    value={watch('notice_period_months')}
-                                    onChange={e => setValue('notice_period_months', e.target.value)}
+                                    value={watch('notice_period_months') ?? ''}
+                                    onChange={e => setValue('notice_period_months', e.target.value as TalentPoolFormData['notice_period_months'])}
                                     className="block w-full rounded-lg border-[var(--border-strong)] bg-[var(--bg-surface-2)] border p-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--blue)] focus:ring-[var(--blue)]"
                                 >
                                     <option value="">Select...</option>
@@ -555,6 +617,12 @@ const JoinForm: React.FC = () => {
                                         <option key={opt.value} value={opt.value}>{opt.label}</option>
                                     ))}
                                 </select>
+                                {errors.notice_period_months && (
+                                    <div className="flex items-center gap-2 mt-2 text-red-600 text-xs animate-in slide-in-from-top-2">
+                                        <AlertCircle className="w-3.5 h-3.5" />
+                                        <span className="font-medium">{errors.notice_period_months.message}</span>
+                                    </div>
+                                )}
                             </div>
 
                             {/* Salary Expectation */}
