@@ -195,6 +195,7 @@ export default function HomeContent() {
     const [tableFilters, setTableFilters] = useState<{
         id: string;
         role: string;
+        shortSummary: string;
         highlight: string;
         expertise: string;
         experience: string;
@@ -207,7 +208,7 @@ export default function HomeContent() {
         languages: string[];
         entryDate: string;
     }>({
-        id: '', role: '', highlight: '', expertise: '', experience: '',
+        id: '', role: '', shortSummary: '', highlight: '', expertise: '', experience: '',
         seniority: [], salary: '', education: '', cantons: [],
         workPermit: [], availability: '', languages: [], entryDate: ''
     });
@@ -356,6 +357,7 @@ export default function HomeContent() {
 
                 if (key === 'id') return candidate.id.toLowerCase().includes(searchVal);
                 if (key === 'role') return candidate.role.toLowerCase().includes(searchVal);
+                if (key === 'shortSummary') return (candidate.shortSummary || '').toLowerCase().includes(searchVal);
                 if (key === 'highlight') return (candidate.highlight || '').toLowerCase().includes(searchVal);
                 if (key === 'expertise') return candidate.functionalExpertise?.some(e => e.toLowerCase().includes(searchVal)) || false;
                 if (key === 'experience') return candidate.experience.toLowerCase().includes(searchVal);
@@ -1027,7 +1029,7 @@ export default function HomeContent() {
                             /* TABLE VIEW */
                             <div className="glass-panel rounded-xl overflow-hidden">
                                 <CustomScrollbar>
-                                    <table className="min-w-[1800px] w-full divide-y divide-[var(--border-subtle)] table-fixed">
+                                    <table className="min-w-[2100px] w-full divide-y divide-[var(--border-subtle)] table-fixed">
                                         <thead className="bg-[var(--bg-surface-2)]">
                                             <tr>
                                                 {/* Favorite column (no sort) */}
@@ -1036,6 +1038,7 @@ export default function HomeContent() {
                                                 {[
                                                     { label: 'ID', key: 'id', sortable: true, width: 'w-20' },
                                                     { label: 'Role', key: 'role', sortable: true, width: 'w-56' },
+                                                    { label: 'Summary', key: 'shortSummary', sortable: false, width: 'w-72' },
                                                     { label: 'Highlight', key: 'highlight', sortable: false, width: 'w-72' },
                                                     { label: 'Expertise', key: 'expertise', sortable: false, width: 'w-40' },
                                                     { label: 'Exp.', key: 'experience', sortable: true, width: 'w-24' },
@@ -1094,6 +1097,16 @@ export default function HomeContent() {
                                                         className="w-full text-xs border-[var(--border-subtle)] bg-[var(--bg-surface-1)] text-[var(--text-primary)] rounded py-1 px-2 focus:ring-1 focus:ring-[var(--blue)] focus:border-[var(--blue)] font-normal placeholder:text-[var(--text-tertiary)] h-7"
                                                         value={tableFilters.role}
                                                         onChange={(e) => updateTableFilter('role', e.target.value)}
+                                                    />
+                                                </th>
+                                                {/* Short Summary */}
+                                                <th className="px-4 py-2">
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Search"
+                                                        className="w-full text-xs border-[var(--border-subtle)] bg-[var(--bg-surface-1)] text-[var(--text-primary)] rounded py-1 px-2 focus:ring-1 focus:ring-[var(--blue)] focus:border-[var(--blue)] font-normal placeholder:text-[var(--text-tertiary)] h-7"
+                                                        value={tableFilters.shortSummary}
+                                                        onChange={(e) => updateTableFilter('shortSummary', e.target.value)}
                                                     />
                                                 </th>
                                                 {/* Highlight */}
@@ -1233,6 +1246,12 @@ export default function HomeContent() {
                                                     {/* Role */}
                                                     <td className="px-4 py-4 overflow-hidden">
                                                         <div className="text-xs font-bold text-[var(--text-primary)] break-words">{candidate.role}</div>
+                                                    </td>
+                                                    {/* Short Summary */}
+                                                    <td className="px-4 py-4 text-xs text-[var(--text-secondary)] overflow-hidden">
+                                                        <span className="break-words line-clamp-2">
+                                                            {candidate.shortSummary || '-'}
+                                                        </span>
                                                     </td>
                                                     {/* Highlight */}
                                                     <td className="px-4 py-4 text-xs text-[var(--text-secondary)] overflow-hidden">
