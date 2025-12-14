@@ -68,7 +68,7 @@ const JoinForm: React.FC = () => {
 
     // Watch values for conditional rendering
     const cvFile = watch('cvFile');
-    const desiredLocations = watch('desired_locations');
+    const desiredLocations = watch('desired_locations') as TalentPoolFormData['desired_locations'] | undefined;
     const linkedinUrl = watch('linkedinUrl');
     const salaryMin = watch('salary_min');
     const salaryMax = watch('salary_max');
@@ -228,7 +228,7 @@ const JoinForm: React.FC = () => {
 
             {/* Main Form Content - No Shadow Card */}
             <div className="max-w-3xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-                <form onSubmit={handleSubmit(onSubmit)} className="glass-panel rounded-2xl overflow-hidden p-8 space-y-10 md:p-12">
+                <form noValidate onSubmit={handleSubmit(onSubmit)} className="glass-panel rounded-2xl overflow-hidden p-8 space-y-10 md:p-12">
 
                     {/* SECTION 1: CV UPLOAD */}
                     <section>
@@ -678,22 +678,22 @@ const JoinForm: React.FC = () => {
                                             className={`
                         cursor-pointer px-3 py-1.5 text-xs font-medium rounded border transition-all select-none
                         has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-[rgba(59,130,246,0.5)] has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-[var(--bg-root)]
-                        ${(desiredLocations || []).includes(location.code)
+                        ${(desiredLocations || []).some(loc => loc === location.code)
                                                     ? 'bg-[var(--gold)] border-[var(--gold)] text-[#0A1628] shadow-md'
                                                     : 'bg-[var(--bg-surface-1)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:border-[var(--border-strong)]'}
-                        ${!(desiredLocations || []).includes(location.code) && (desiredLocations || []).length >= 5 ? 'opacity-50 cursor-not-allowed' : ''}
+                        ${!(desiredLocations || []).some(loc => loc === location.code) && (desiredLocations || []).length >= 5 ? 'opacity-50 cursor-not-allowed' : ''}
                       `}
                                         >
                                             <input
                                                 type="checkbox"
                                                 className="sr-only"
-                                                checked={(desiredLocations || []).includes(location.code)}
-                                                disabled={!(desiredLocations || []).includes(location.code) && (desiredLocations || []).length >= 5}
+                                                checked={(desiredLocations || []).some(loc => loc === location.code)}
+                                                disabled={!(desiredLocations || []).some(loc => loc === location.code) && (desiredLocations || []).length >= 5}
                                                 onChange={() => {
                                                     const current = desiredLocations || [];
-                                                    const updated = current.includes(location.code)
+                                                    const updated = current.some(loc => loc === location.code)
                                                         ? current.filter(l => l !== location.code)
-                                                        : current.length < 5 ? [...current, location.code] : current;
+                                                        : current.length < 5 ? [...current, location.code as typeof current[number]] : current;
                                                     setValue('desired_locations', updated, { shouldValidate: true });
                                                 }}
                                             />
