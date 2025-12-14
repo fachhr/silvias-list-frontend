@@ -500,7 +500,7 @@ const JoinForm: React.FC = () => {
                             {/* Languages subsection - simplified checkboxes */}
                             <div>
                                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">
-                                    Languages spoken with professional proficiency
+                                    Languages spoken with professional proficiency <span className="text-red-500">*</span>
                                 </label>
 
                                 <div className="space-y-3">
@@ -560,6 +560,14 @@ const JoinForm: React.FC = () => {
                                                     <span className="font-medium">{errors.other_language.message}</span>
                                                 </div>
                                             )}
+                                        </div>
+                                    )}
+
+                                    {/* Validation Error for Languages */}
+                                    {errors.languages && (
+                                        <div className="flex items-center gap-2 mt-2 text-red-600 text-xs animate-in slide-in-from-top-2">
+                                            <AlertCircle className="w-3.5 h-3.5" />
+                                            <span className="font-medium">{errors.languages.message}</span>
                                         </div>
                                     )}
                                 </div>

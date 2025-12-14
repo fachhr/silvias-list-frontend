@@ -199,19 +199,34 @@ const otherLocationRefinementConfig = {
   path: ['desired_other_location']
 };
 
+
+
+const languageRefinement = (data: { languages?: string[] | null; other_language?: string | null }) => {
+  const hasSelectedLanguage = data.languages && data.languages.length > 0;
+  const hasOtherLanguage = data.other_language && data.other_language.trim().length > 0;
+  return hasSelectedLanguage || hasOtherLanguage;
+};
+
+const languageRefinementConfig = {
+  message: "Please select at least one language or specify one in 'Other'",
+  path: ['languages']
+};
+
 /**
  * Client-side refined schema with salary and location validation
  */
 export const talentPoolSchemaRefined = talentPoolSchema
   .refine(salaryRefinement, salaryRefinementConfig)
-  .refine(otherLocationRefinement, otherLocationRefinementConfig);
+  .refine(otherLocationRefinement, otherLocationRefinementConfig)
+  .refine(languageRefinement, languageRefinementConfig);
 
 /**
  * Server-side refined schema with salary and location validation
  */
 export const talentPoolServerSchemaRefined = talentPoolServerSchema
   .refine(salaryRefinement, salaryRefinementConfig)
-  .refine(otherLocationRefinement, otherLocationRefinementConfig);
+  .refine(otherLocationRefinement, otherLocationRefinementConfig)
+  .refine(languageRefinement, languageRefinementConfig);
 
 // ============================================
 // TYPESCRIPT TYPES
