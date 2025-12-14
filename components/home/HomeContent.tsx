@@ -1038,14 +1038,13 @@ export default function HomeContent() {
                                                 {[
                                                     { label: 'ID', key: 'id', sortable: true, width: 'w-20' },
                                                     { label: 'Role', key: 'role', sortable: true, width: 'w-56' },
+                                                    { label: 'Years Exp.', key: 'experience', sortable: true, width: 'w-24' },
+                                                    { label: 'Expertise', key: 'expertise', sortable: false, width: 'w-40' },
+                                                    { label: 'Pref. Location', key: 'cantons', sortable: true, width: 'w-36' },
+                                                    { label: 'Salary', key: 'salary', sortable: true, width: 'w-40' },
                                                     { label: 'Summary', key: 'shortSummary', sortable: false, width: 'w-72' },
                                                     { label: 'Highlight', key: 'highlight', sortable: false, width: 'w-72' },
-                                                    { label: 'Expertise', key: 'expertise', sortable: false, width: 'w-40' },
-                                                    { label: 'Exp.', key: 'experience', sortable: true, width: 'w-24' },
-                                                    { label: 'Seniority', key: 'seniority', sortable: true, width: 'w-32' },
-                                                    { label: 'Salary', key: 'salary', sortable: true, width: 'w-40' },
                                                     { label: 'Education', key: 'education', sortable: false, width: 'w-64' },
-                                                    { label: 'Pref. Location', key: 'cantons', sortable: true, width: 'w-36' },
                                                     { label: 'Work Eligibility', key: 'workPermit', sortable: false, width: 'w-36' },
                                                     { label: 'Availability', key: 'availability', sortable: true, width: 'w-28' },
                                                     { label: 'Languages', key: 'languages', sortable: false, width: 'w-28' },
@@ -1099,6 +1098,45 @@ export default function HomeContent() {
                                                         onChange={(e) => updateTableFilter('role', e.target.value)}
                                                     />
                                                 </th>
+                                                {/* Experience */}
+                                                <th className="px-4 py-2">
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Exp"
+                                                        className="w-full text-xs border-[var(--border-subtle)] bg-[var(--bg-surface-1)] text-[var(--text-primary)] rounded py-1 px-2 focus:ring-1 focus:ring-[var(--blue)] focus:border-[var(--blue)] font-normal placeholder:text-[var(--text-tertiary)] h-7"
+                                                        value={tableFilters.experience}
+                                                        onChange={(e) => updateTableFilter('experience', e.target.value)}
+                                                    />
+                                                </th>
+                                                {/* Expertise */}
+                                                <th className="px-4 py-2">
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Expertise"
+                                                        className="w-full text-xs border-[var(--border-subtle)] bg-[var(--bg-surface-1)] text-[var(--text-primary)] rounded py-1 px-2 focus:ring-1 focus:ring-[var(--blue)] focus:border-[var(--blue)] font-normal placeholder:text-[var(--text-tertiary)] h-7"
+                                                        value={tableFilters.expertise}
+                                                        onChange={(e) => updateTableFilter('expertise', e.target.value)}
+                                                    />
+                                                </th>
+                                                {/* Location - MultiSelect */}
+                                                <th className="px-4 py-2">
+                                                    <MultiSelectFilter
+                                                        options={WORK_LOCATIONS.map(l => ({ value: l.code, label: l.name }))}
+                                                        selected={tableFilters.cantons}
+                                                        onChange={(val) => updateTableFilter('cantons', val)}
+                                                        placeholder="All"
+                                                    />
+                                                </th>
+                                                {/* Salary */}
+                                                <th className="px-4 py-2">
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Min"
+                                                        className="w-full text-xs border-[var(--border-subtle)] bg-[var(--bg-surface-1)] text-[var(--text-primary)] rounded py-1 px-2 focus:ring-1 focus:ring-[var(--blue)] focus:border-[var(--blue)] font-normal placeholder:text-[var(--text-tertiary)] h-7"
+                                                        value={tableFilters.salary}
+                                                        onChange={(e) => updateTableFilter('salary', e.target.value)}
+                                                    />
+                                                </th>
                                                 {/* Short Summary */}
                                                 <th className="px-4 py-2">
                                                     <input
@@ -1119,45 +1157,6 @@ export default function HomeContent() {
                                                         onChange={(e) => updateTableFilter('highlight', e.target.value)}
                                                     />
                                                 </th>
-                                                {/* Expertise */}
-                                                <th className="px-4 py-2">
-                                                    <input
-                                                        type="text"
-                                                        placeholder="Expertise"
-                                                        className="w-full text-xs border-[var(--border-subtle)] bg-[var(--bg-surface-1)] text-[var(--text-primary)] rounded py-1 px-2 focus:ring-1 focus:ring-[var(--blue)] focus:border-[var(--blue)] font-normal placeholder:text-[var(--text-tertiary)] h-7"
-                                                        value={tableFilters.expertise}
-                                                        onChange={(e) => updateTableFilter('expertise', e.target.value)}
-                                                    />
-                                                </th>
-                                                {/* Experience */}
-                                                <th className="px-4 py-2">
-                                                    <input
-                                                        type="text"
-                                                        placeholder="Exp"
-                                                        className="w-full text-xs border-[var(--border-subtle)] bg-[var(--bg-surface-1)] text-[var(--text-primary)] rounded py-1 px-2 focus:ring-1 focus:ring-[var(--blue)] focus:border-[var(--blue)] font-normal placeholder:text-[var(--text-tertiary)] h-7"
-                                                        value={tableFilters.experience}
-                                                        onChange={(e) => updateTableFilter('experience', e.target.value)}
-                                                    />
-                                                </th>
-                                                {/* Seniority - MultiSelect */}
-                                                <th className="px-4 py-2">
-                                                    <MultiSelectFilter
-                                                        options={SENIORITY_LEVELS.map(s => ({ value: s.value, label: s.value }))}
-                                                        selected={tableFilters.seniority}
-                                                        onChange={(val) => updateTableFilter('seniority', val)}
-                                                        placeholder="All"
-                                                    />
-                                                </th>
-                                                {/* Salary */}
-                                                <th className="px-4 py-2">
-                                                    <input
-                                                        type="text"
-                                                        placeholder="Min"
-                                                        className="w-full text-xs border-[var(--border-subtle)] bg-[var(--bg-surface-1)] text-[var(--text-primary)] rounded py-1 px-2 focus:ring-1 focus:ring-[var(--blue)] focus:border-[var(--blue)] font-normal placeholder:text-[var(--text-tertiary)] h-7"
-                                                        value={tableFilters.salary}
-                                                        onChange={(e) => updateTableFilter('salary', e.target.value)}
-                                                    />
-                                                </th>
                                                 {/* Education */}
                                                 <th className="px-4 py-2">
                                                     <input
@@ -1166,15 +1165,6 @@ export default function HomeContent() {
                                                         className="w-full text-xs border-[var(--border-subtle)] bg-[var(--bg-surface-1)] text-[var(--text-primary)] rounded py-1 px-2 focus:ring-1 focus:ring-[var(--blue)] focus:border-[var(--blue)] font-normal placeholder:text-[var(--text-tertiary)] h-7"
                                                         value={tableFilters.education}
                                                         onChange={(e) => updateTableFilter('education', e.target.value)}
-                                                    />
-                                                </th>
-                                                {/* Location - MultiSelect */}
-                                                <th className="px-4 py-2">
-                                                    <MultiSelectFilter
-                                                        options={WORK_LOCATIONS.map(l => ({ value: l.code, label: l.name }))}
-                                                        selected={tableFilters.cantons}
-                                                        onChange={(val) => updateTableFilter('cantons', val)}
-                                                        placeholder="All"
                                                     />
                                                 </th>
                                                 {/* Work Eligibility - MultiSelect */}
@@ -1247,6 +1237,26 @@ export default function HomeContent() {
                                                     <td className="px-4 py-4 overflow-hidden">
                                                         <div className="text-xs font-bold text-[var(--text-primary)] break-words">{candidate.role}</div>
                                                     </td>
+                                                    {/* Experience */}
+                                                    <td className="px-4 py-4 whitespace-nowrap text-xs text-[var(--text-secondary)]">
+                                                        {candidate.experience}
+                                                    </td>
+                                                    {/* Expertise */}
+                                                    <td className="px-4 py-4 text-xs text-[var(--text-secondary)] overflow-hidden">
+                                                        <span className="break-words">
+                                                            {candidate.functionalExpertise?.join('; ') || '-'}
+                                                        </span>
+                                                    </td>
+                                                    {/* Location */}
+                                                    <td className="px-4 py-4 text-xs text-[var(--text-secondary)] overflow-hidden">
+                                                        <span className="break-words">
+                                                            {candidate.cantons.map(code => WORK_LOCATIONS.find(c => c.code === code)?.name ?? code).join('; ')}
+                                                        </span>
+                                                    </td>
+                                                    {/* Salary */}
+                                                    <td className="px-4 py-4 text-xs text-[var(--text-secondary)] overflow-hidden">
+                                                        <span className="break-words">{formatSalaryRange(candidate.salaryMin, candidate.salaryMax)}</span>
+                                                    </td>
                                                     {/* Short Summary */}
                                                     <td className="px-4 py-4 text-xs text-[var(--text-secondary)] overflow-hidden">
                                                         <span className="break-words line-clamp-2">
@@ -1259,36 +1269,10 @@ export default function HomeContent() {
                                                             {candidate.highlight || '-'}
                                                         </span>
                                                     </td>
-                                                    {/* Expertise */}
-                                                    <td className="px-4 py-4 text-xs text-[var(--text-secondary)] overflow-hidden">
-                                                        <span className="break-words">
-                                                            {candidate.functionalExpertise?.join('; ') || '-'}
-                                                        </span>
-                                                    </td>
-                                                    {/* Experience */}
-                                                    <td className="px-4 py-4 whitespace-nowrap text-xs text-[var(--text-secondary)]">
-                                                        {candidate.experience}
-                                                    </td>
-                                                    {/* Seniority */}
-                                                    <td className="px-4 py-4 whitespace-nowrap">
-                                                        <Badge style={candidate.seniority === 'Executive' ? 'gold' : 'default'}>
-                                                            {candidate.seniority}
-                                                        </Badge>
-                                                    </td>
-                                                    {/* Salary */}
-                                                    <td className="px-4 py-4 text-xs text-[var(--text-secondary)] overflow-hidden">
-                                                        <span className="break-words">{formatSalaryRange(candidate.salaryMin, candidate.salaryMax)}</span>
-                                                    </td>
                                                     {/* Education */}
                                                     <td className="px-4 py-4 text-xs text-[var(--text-secondary)] overflow-hidden">
                                                         <span className="break-words">
                                                             {candidate.education || '-'}
-                                                        </span>
-                                                    </td>
-                                                    {/* Location */}
-                                                    <td className="px-4 py-4 text-xs text-[var(--text-secondary)] overflow-hidden">
-                                                        <span className="break-words">
-                                                            {candidate.cantons.map(code => WORK_LOCATIONS.find(c => c.code === code)?.name ?? code).join('; ')}
                                                         </span>
                                                     </td>
                                                     {/* Work Eligibility */}
