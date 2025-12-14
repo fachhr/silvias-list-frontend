@@ -119,14 +119,22 @@ const JoinForm: React.FC = () => {
 
             const { cvStoragePath, originalFilename } = await uploadResponse.json();
 
-            // Process languages: include base selections + "Other" if filled
-            const processedLanguages = [
-                ...(data.languages || []),
-                ...(data.other_language?.trim()
-                    ? [data.other_language.trim()]
-                    : []
-                )
-            ];
+            // Process languages: include base selections + split "Other" by semicolon
+            const baseLanguages = data.languages || [];
+            const otherLanguages = data.other_language?.trim()
+                ? data.other_language.split(';').map(l => l.trim()).filter(l => l.length > 0)
+                : [];
+
+            // Deduplicate (case-insensitive), preserving first occurrence
+            const seen = new Set<string>();
+            const processedLanguages: string[] = [];
+            for (const lang of [...baseLanguages, ...otherLanguages]) {
+                const lower = lang.toLowerCase();
+                if (!seen.has(lower)) {
+                    seen.add(lower);
+                    processedLanguages.push(lang);
+                }
+            }
 
             // STEP 2: Submit Profile
             const profileData = {
@@ -228,7 +236,17 @@ const JoinForm: React.FC = () => {
 
             {/* Main Form Content - No Shadow Card */}
             <div className="max-w-3xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-                <form noValidate onSubmit={handleSubmit(onSubmit)} className="glass-panel rounded-2xl overflow-hidden p-8 space-y-10 md:p-12">
+                <form
+                    noValidate
+                    onSubmit={handleSubmit(onSubmit)}
+                    onKeyDown={(e) => {
+                        // Prevent Enter key from submitting the form unless focused on submit button
+                        if (e.key === 'Enter' && (e.target as HTMLElement).tagName !== 'BUTTON' && (e.target as HTMLElement).getAttribute('type') !== 'submit') {
+                            e.preventDefault();
+                        }
+                    }}
+                    className="glass-panel rounded-2xl overflow-hidden p-8 space-y-10 md:p-12"
+                >
 
                     {/* SECTION 1: CV UPLOAD */}
                     <section>
@@ -530,9 +548,9 @@ const JoinForm: React.FC = () => {
                                         <div className="animate-in fade-in slide-in-from-top-1 duration-200 pt-2">
                                             <input
                                                 type="text"
-                                                placeholder="Please specify language..."
-                                                className="block w-full max-w-xs rounded-lg border-[var(--border-strong)] bg-[var(--bg-surface-2)] border p-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--blue)] focus:ring-[var(--blue)] placeholder-[var(--text-tertiary)]"
-                                                maxLength={50}
+                                                placeholder="e.g. Spanish; Portuguese; Mandarin"
+                                                className="block w-full rounded-lg border-[var(--border-strong)] bg-[var(--bg-surface-2)] border p-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--blue)] focus:ring-[var(--blue)] placeholder-[var(--text-tertiary)]"
+                                                maxLength={200}
                                                 value={otherLanguage || ''}
                                                 onChange={(e) => setValue('other_language', e.target.value)}
                                             />

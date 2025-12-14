@@ -94,9 +94,9 @@ export const talentPoolBaseSchema = z.object({
   // Languages with professional proficiency (simple checkboxes)
   languages: z.array(z.string()).optional(),
 
-  // Other language (text input when "Other" is selected)
+  // Other languages (semicolon-separated, e.g. "Spanish; Portuguese; Mandarin")
   other_language: z.string()
-    .max(50, 'Language name must be less than 50 characters')
+    .max(200, 'Languages must be less than 200 characters')
     .optional()
     .or(z.literal('')),
 
