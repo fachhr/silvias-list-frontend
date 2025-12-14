@@ -150,7 +150,8 @@ export async function GET(req: NextRequest) {
         languages: profile.languages || [],
         functional_expertise: profile.functional_expertise || [],
         desired_roles: profile.desired_roles || null,
-        profile_bio: profile.profile_bio || null
+        profile_bio: profile.profile_bio || null,
+        short_summary: profile.short_summary || null
       };
     });
 

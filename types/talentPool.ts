@@ -20,6 +20,7 @@ export interface Candidate {
   workPermit?: string;          // e.g., 'Swiss G Permit' (from form)
   languages?: string[];         // e.g., ['English', 'German'] (from form)
   profileBio?: string;          // AI-generated professional summary (from parser)
+  shortSummary?: string;        // AI-generated 2-sentence summary for cards (from parser)
 }
 
 export interface Canton {
@@ -62,6 +63,7 @@ export interface TalentPoolProfile {
   languages?: string[] | null;
   functional_expertise?: string[] | null;
   profile_bio?: string | null;  // AI-generated professional summary
+  short_summary?: string | null;  // AI-generated 2-sentence summary for cards
 }
 
 export interface CVUploadResponse {
@@ -107,6 +109,7 @@ export interface AnonymizedTalentProfile {
   languages?: string[] | null;
   desired_roles?: string | null;
   profile_bio?: string | null;  // AI-generated professional summary
+  short_summary?: string | null;  // AI-generated 2-sentence summary for cards
 }
 
 // Talent pool list response

@@ -153,6 +153,7 @@ interface ApiCandidate {
     functional_expertise?: string[];
     desired_roles?: string | null;
     profile_bio?: string | null;
+    short_summary?: string | null;
 }
 
 export default function HomeContent() {
@@ -265,7 +266,8 @@ export default function HomeContent() {
                         workPermit: c.work_eligibility || undefined,
                         languages: c.languages || [],
                         functionalExpertise: c.functional_expertise || [],
-                        profileBio: c.profile_bio || undefined
+                        profileBio: c.profile_bio || undefined,
+                        shortSummary: c.short_summary || undefined
                     }));
                     setCandidates(transformedCandidates);
                 }
@@ -932,6 +934,13 @@ export default function HomeContent() {
                                             <h3 className="text-xl font-bold text-[var(--text-primary)] mb-3 group-hover:text-[#D4AF37] group-hover:underline decoration-[var(--gold-border)] underline-offset-4 decoration-2 transition-all leading-snug pr-8">
                                                 {candidate.role}
                                             </h3>
+
+                                            {/* Short Summary - 2 sentence professional summary */}
+                                            {candidate.shortSummary && (
+                                                <p className="text-sm text-[var(--text-secondary)] leading-relaxed mb-4">
+                                                    {candidate.shortSummary}
+                                                </p>
+                                            )}
 
                                             {/* Highlight Box - Key Achievement Quote */}
                                             {candidate.highlight && (
