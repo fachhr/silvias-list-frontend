@@ -21,8 +21,8 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
 
     // Remove cvFile from validation (already uploaded)
-    // Extract languages separately as it's not validated in the same way
-    const { cvStoragePath, originalFilename, languages, ...formData } = body;
+    // Extract languages and functional_expertise separately
+    const { cvStoragePath, originalFilename, languages, functional_expertise, other_expertise, ...formData } = body;
 
     // Validate form data using server schema (expects cvStoragePath, not File)
     const validationResult = talentPoolServerSchemaRefined.safeParse({
@@ -30,6 +30,8 @@ export async function POST(req: NextRequest) {
       cvStoragePath,
       originalFilename,
       languages,
+      functional_expertise,
+      other_expertise,
     });
 
     if (!validationResult.success) {
@@ -73,6 +75,10 @@ export async function POST(req: NextRequest) {
         // Key achievement/highlight (user-provided)
         highlight: validatedData.highlight || null,
 
+        // Functional expertise (user-selected, parser may supplement)
+        functional_expertise: validatedData.functional_expertise || null,
+        other_expertise: validatedData.other_expertise || null,
+
         // CV Info
         cv_storage_path: cvStoragePath,
         cv_original_filename: originalFilename,
@@ -83,7 +89,7 @@ export async function POST(req: NextRequest) {
         participates_in_talent_pool: true,
 
         // All other fields are NULL and will be filled by parser
-        // (education_history, professional_experience, skills, functional_expertise, etc.)
+        // (education_history, professional_experience, skills, etc.)
       })
       .select('id, email')
       .single();

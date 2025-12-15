@@ -12,7 +12,7 @@ import {
     AlertCircle
 } from 'lucide-react';
 import { Button, Input, Badge } from '@/components/ui';
-import { WORK_LOCATIONS, NOTICE_PERIOD_OPTIONS, COUNTRY_CODES, WORK_ELIGIBILITY_OPTIONS, LANGUAGE_OPTIONS } from '@/lib/formOptions';
+import { WORK_LOCATIONS, NOTICE_PERIOD_OPTIONS, COUNTRY_CODES, WORK_ELIGIBILITY_OPTIONS, LANGUAGE_OPTIONS, FUNCTIONAL_EXPERTISE_OPTIONS } from '@/lib/formOptions';
 import { talentPoolSchemaRefined, type TalentPoolFormData } from '@/lib/validation/talentPoolSchema';
 
 // Helper for parsing non-JSON error responses
@@ -62,6 +62,8 @@ const JoinForm: React.FC = () => {
             languages: [],
             other_language: '',
             highlight: '',
+            functional_expertise: [],
+            other_expertise: '',
             accepted_terms: false as unknown as true, // Will be validated on submit
         }
     });
@@ -75,6 +77,8 @@ const JoinForm: React.FC = () => {
     const languages = watch('languages');
     const otherLanguage = watch('other_language');
     const acceptedTerms = watch('accepted_terms');
+    const functionalExpertise = watch('functional_expertise') as TalentPoolFormData['functional_expertise'] | undefined;
+    const showOtherExpertise = functionalExpertise?.includes('Other');
 
     // File handlers with Zod validation
     const handleDrop = (e: React.DragEvent) => {
@@ -156,6 +160,8 @@ const JoinForm: React.FC = () => {
                 salary_max: data.salary_max,
                 languages: processedLanguages.length > 0 ? processedLanguages : null,
                 highlight: data.highlight || undefined,
+                functional_expertise: data.functional_expertise,
+                other_expertise: data.other_expertise || undefined,
                 cvStoragePath,
                 originalFilename,
                 accepted_terms: data.accepted_terms,
@@ -591,6 +597,85 @@ const JoinForm: React.FC = () => {
                                     <p className="text-xs text-red-500 mt-1.5">
                                         {watch('highlight')?.length || 0}/300 characters - exceeds limit
                                     </p>
+                                )}
+                            </div>
+
+                            {/* Functional Expertise */}
+                            <div>
+                                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">
+                                    Functional Expertise <span className="text-red-500">*</span>
+                                    <span className="text-xs text-[var(--text-tertiary)] block mt-1 font-normal">
+                                        Select 1-5 areas where you have professional experience
+                                    </span>
+                                </label>
+
+                                <div className="flex flex-wrap gap-2">
+                                    {FUNCTIONAL_EXPERTISE_OPTIONS.map(expertise => (
+                                        <label
+                                            key={expertise}
+                                            className={`
+                                                cursor-pointer px-3 py-1.5 text-xs font-medium rounded border transition-all select-none
+                                                has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-[rgba(59,130,246,0.5)] has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-[var(--bg-root)]
+                                                ${(functionalExpertise || []).includes(expertise)
+                                                    ? 'bg-[var(--gold)] border-[var(--gold)] text-[var(--bg-root)] shadow-md'
+                                                    : 'bg-[var(--bg-surface-1)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:border-[var(--border-strong)]'}
+                                                ${!(functionalExpertise || []).includes(expertise) && (functionalExpertise || []).length >= 5 ? 'opacity-50 cursor-not-allowed' : ''}
+                                            `}
+                                        >
+                                            <input
+                                                type="checkbox"
+                                                className="sr-only"
+                                                checked={(functionalExpertise || []).includes(expertise)}
+                                                disabled={!(functionalExpertise || []).includes(expertise) && (functionalExpertise || []).length >= 5}
+                                                onChange={() => {
+                                                    const current = functionalExpertise || [];
+                                                    const updated = current.includes(expertise)
+                                                        ? current.filter(e => e !== expertise)
+                                                        : current.length < 5 ? [...current, expertise as typeof current[number]] : current;
+                                                    setValue('functional_expertise', updated, { shouldValidate: true });
+                                                }}
+                                            />
+                                            {expertise}
+                                        </label>
+                                    ))}
+                                </div>
+
+                                {/* Selection counter */}
+                                {(functionalExpertise || []).length > 0 && (
+                                    <p className="text-xs text-[var(--text-tertiary)] mt-2">
+                                        {(functionalExpertise || []).length}/5 selected
+                                    </p>
+                                )}
+
+                                {/* Validation error */}
+                                {errors.functional_expertise && (
+                                    <div className="flex items-center gap-2 mt-2 text-red-600 text-xs animate-in slide-in-from-top-2">
+                                        <AlertCircle className="w-3.5 h-3.5" />
+                                        <span className="font-medium">{errors.functional_expertise.message}</span>
+                                    </div>
+                                )}
+
+                                {/* Other expertise text input - conditional */}
+                                {showOtherExpertise && (
+                                    <div className="animate-in fade-in slide-in-from-top-1 duration-200 mt-3">
+                                        <input
+                                            type="text"
+                                            placeholder="e.g., Structured Products; Derivatives; LNG Trading"
+                                            className="block w-full rounded-lg border-[var(--border-strong)] bg-[var(--bg-surface-2)] border p-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--blue)] focus:ring-[var(--blue)] placeholder-[var(--text-tertiary)]"
+                                            maxLength={200}
+                                            value={watch('other_expertise') || ''}
+                                            onChange={(e) => setValue('other_expertise', e.target.value)}
+                                        />
+                                        <p className="text-xs text-[var(--text-tertiary)] mt-1">
+                                            Separate multiple areas with semicolons
+                                        </p>
+                                        {errors.other_expertise && (
+                                            <div className="flex items-center gap-2 mt-2 text-red-600 text-xs animate-in slide-in-from-top-2">
+                                                <AlertCircle className="w-3.5 h-3.5" />
+                                                <span className="font-medium">{errors.other_expertise.message}</span>
+                                            </div>
+                                        )}
+                                    </div>
                                 )}
                             </div>
                         </div>

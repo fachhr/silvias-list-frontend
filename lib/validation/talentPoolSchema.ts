@@ -4,7 +4,8 @@ import {
   VALID_CV_MIME_TYPES,
   WORK_ELIGIBILITY_VALUES,
   NOTICE_PERIOD_VALUES,
-  WORK_LOCATION_CODES
+  WORK_LOCATION_CODES,
+  FUNCTIONAL_EXPERTISE_OPTIONS
 } from '@/lib/formOptions';
 
 /**
@@ -106,6 +107,17 @@ export const talentPoolBaseSchema = z.object({
     .optional()
     .or(z.literal('')),
 
+  // Functional expertise areas (1-5 required)
+  functional_expertise: z.array(z.enum(FUNCTIONAL_EXPERTISE_OPTIONS))
+    .min(1, 'Please select at least one area of expertise')
+    .max(5, 'Please select up to 5 areas of expertise'),
+
+  // Free-text for "Other" expertise (semicolon-separated)
+  other_expertise: z.string()
+    .max(200, 'Other expertise must be less than 200 characters')
+    .optional()
+    .or(z.literal('')),
+
   // Salary expectation (optional number inputs)
   salary_min: z.number({
     invalid_type_error: 'Please enter a valid number'
@@ -169,6 +181,8 @@ export const talentPoolServerSchema = talentPoolBaseSchema.extend({
   cvStoragePath: z.string().min(1, 'CV storage path is required'),
   originalFilename: z.string().min(1, 'Original filename is required'),
   languages: z.array(z.string()).nullable().optional(), // Server receives processed languages
+  functional_expertise: z.array(z.string()).min(1).max(5), // Server receives string array
+  other_expertise: z.string().max(200).optional().or(z.literal('')),
 });
 
 // ============================================
@@ -212,13 +226,26 @@ const languageRefinementConfig = {
   path: ['languages']
 };
 
+const otherExpertiseRefinement = (data: { functional_expertise: readonly string[]; other_expertise?: string | null }) => {
+  if (data.functional_expertise.includes('Other')) {
+    return data.other_expertise && data.other_expertise.trim().length > 0;
+  }
+  return true;
+};
+
+const otherExpertiseRefinementConfig = {
+  message: 'Please specify your other expertise areas',
+  path: ['other_expertise']
+};
+
 /**
  * Client-side refined schema with salary and location validation
  */
 export const talentPoolSchemaRefined = talentPoolSchema
   .refine(salaryRefinement, salaryRefinementConfig)
   .refine(otherLocationRefinement, otherLocationRefinementConfig)
-  .refine(languageRefinement, languageRefinementConfig);
+  .refine(languageRefinement, languageRefinementConfig)
+  .refine(otherExpertiseRefinement, otherExpertiseRefinementConfig);
 
 /**
  * Server-side refined schema with salary and location validation
@@ -226,7 +253,8 @@ export const talentPoolSchemaRefined = talentPoolSchema
 export const talentPoolServerSchemaRefined = talentPoolServerSchema
   .refine(salaryRefinement, salaryRefinementConfig)
   .refine(otherLocationRefinement, otherLocationRefinementConfig)
-  .refine(languageRefinement, languageRefinementConfig);
+  .refine(languageRefinement, languageRefinementConfig)
+  .refine(otherExpertiseRefinement, otherExpertiseRefinementConfig);
 
 // ============================================
 // TYPESCRIPT TYPES

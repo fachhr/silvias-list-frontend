@@ -75,6 +75,27 @@ export const WORK_ELIGIBILITY_OPTIONS: SelectOption[] = [
 export const LANGUAGE_OPTIONS = ['English', 'German', 'French', 'Italian'] as const;
 
 // ====================
+// FUNCTIONAL EXPERTISE OPTIONS (Commodities/Energy/Finance domain)
+// ====================
+export const FUNCTIONAL_EXPERTISE_OPTIONS = [
+  'Trading',
+  'Risk Management',
+  'Quantitative Analysis',
+  'Technology',
+  'Operations',
+  'Finance',
+  'Leadership',
+  'Legal',
+  'Compliance',
+  'Research',
+  'Analytics',
+  'Engineering',
+  'Other'  // Triggers free-text input
+] as const;
+
+export type FunctionalExpertise = typeof FUNCTIONAL_EXPERTISE_OPTIONS[number];
+
+// ====================
 // SENIORITY LEVELS
 // ====================
 export const SENIORITY_LEVELS: SelectOption[] = [
