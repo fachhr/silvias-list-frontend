@@ -62,7 +62,7 @@ export const WORK_LOCATIONS: WorkLocation[] = [
 // ====================
 export const WORK_ELIGIBILITY_OPTIONS: SelectOption[] = [
   { value: 'swiss_citizen', label: 'Swiss Citizen' },
-  { value: 'c_permit', label: 'Swiss C Permit (Permanent)' },
+  { value: 'c_permit', label: 'Swiss C Permit' },
   { value: 'eu_efta', label: 'EU/EFTA Citizen' },
   { value: 'b_permit', label: 'Swiss B Permit (Non-EU)' },
   { value: 'g_permit', label: 'Swiss G Permit (Cross-border)' },

@@ -1033,7 +1033,7 @@ export default function HomeContent() {
                                                     { label: 'ID', key: 'id', sortable: true, width: 'w-20' },
                                                     { label: 'Role', key: 'role', sortable: true, width: 'w-56' },
                                                     { label: 'Years Exp.', key: 'experience', sortable: true, width: 'w-24' },
-                                                    { label: 'Expertise', key: 'expertise', sortable: false, width: 'w-40' },
+                                                    { label: 'Expertise', key: 'expertise', sortable: false, width: 'w-52' },
                                                     { label: 'Pref. Location', key: 'cantons', sortable: true, width: 'w-36' },
                                                     { label: 'Salary', key: 'salary', sortable: true, width: 'w-40' },
                                                     { label: 'Summary', key: 'shortSummary', sortable: false, width: 'w-72' },
