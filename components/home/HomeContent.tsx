@@ -982,25 +982,19 @@ export default function HomeContent() {
                                                 )}
                                             </div>
 
-                                            {/* Functional Expertise Badges */}
-                                            {candidate.functionalExpertise && candidate.functionalExpertise.length > 0 && (
-                                                <div className="flex flex-wrap gap-2 mb-4">
-                                                    {candidate.functionalExpertise.map((exp) => (
-                                                        <span
-                                                            key={exp}
-                                                            className="inline-flex items-center px-2.5 py-1 bg-[var(--expertise-dim)] border border-[var(--expertise-border)] text-[var(--expertise)] text-xs font-medium rounded-md"
-                                                        >
-                                                            {exp}
-                                                        </span>
-                                                    ))}
-                                                </div>
-                                            )}
-
-                                            {/* Skills */}
+                                            {/* Functional Expertise + Skills Pills */}
                                             <div className="flex flex-wrap gap-2">
+                                                {candidate.functionalExpertise?.map((exp) => (
+                                                    <span
+                                                        key={`exp-${exp}`}
+                                                        className="inline-flex items-center px-2.5 py-1 bg-[var(--expertise-dim)] border border-[var(--expertise-border)] text-[var(--expertise)] text-xs font-medium rounded-md"
+                                                    >
+                                                        {exp}
+                                                    </span>
+                                                ))}
                                                 {candidate.skills.map((skill) => (
                                                     <span
-                                                        key={skill}
+                                                        key={`skill-${skill}`}
                                                         className="px-2.5 py-1 bg-[var(--bg-surface-2)] border border-[var(--border-strong)] text-[var(--text-secondary)] text-xs font-medium rounded hover:border-[var(--gold-border)] hover:text-[var(--text-primary)] transition-colors cursor-default"
                                                     >
                                                         {skill}
